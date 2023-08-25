@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, FlatList, Pressable, Animated } from 'react-native'
-import Modal  from 'react-native-modal';
+import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, FlatList, Pressable, Animated, Alert } from 'react-native'
+import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Feather';
-
+import CustomAlert from '../../Components/alertBox';
 
 const data = [
     { img: '', name: 'John', designation: 'Contractor', quantity: 10 },
@@ -32,6 +32,30 @@ const Requests = () => {
     const [name, setName] = useState('')
     const [designation, setDesignation] = useState('')
     const [quantity, setQuantity] = useState('')
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertAcceptVisible,setAlertAcceptVisible] =useState(false)
+    const showAlert = () => {
+        setAlertVisible(true);
+    };
+    const showAcceptAlert=()=>{
+        setAlertAcceptVisible(true)
+    }
+    const hideAlert = () => {
+        setAlertVisible(false);
+        setAlertAcceptVisible(false)
+    };
+
+    const handleAccept = () => {
+        // Handle accept button press
+        hideAlert();
+        // Additional logic as needed
+    };
+
+    const handleReject = () => {
+        // Handle reject button press
+        hideAlert();
+        // Additional logic as needed
+    };
     const modalItem = ({ item }) => {
         setName(item.name)
         setDesignation(item.designation)
@@ -41,8 +65,10 @@ const Requests = () => {
     const scrollY = new Animated.Value(0);
     const requestData = ({ item }) => (
         <View style={[styles.card, styles.shadowProp]}>
-            <Pressable onPress={() => { setModalVisible(!modalVisible); 
-                modalItem({ item }) }} style={{ borderRadius: 8 }}>
+            <Pressable onPress={() => {
+                setModalVisible(!modalVisible);
+                modalItem({ item })
+            }} style={{ borderRadius: 8 }}>
 
                 <Image
                     style={styles.tinyLogo}
@@ -52,26 +78,29 @@ const Requests = () => {
                 />
             </Pressable>
 
-            <View style={{justifyContent: 'center' }}>
-                <Text style={{ marginLeft: 14, fontFamily: 'Poppins-Medium', fontSize: 16,color:'rgba(57, 57, 57, 1)'}}> {item.name}</Text>
+            <View style={{ justifyContent: 'center' }}>
+                <Text style={{ marginLeft: 14, fontFamily: 'Poppins-Medium', fontSize: 16, color: 'rgba(57, 57, 57, 1)' }}> {item.name}</Text>
                 <View style={styles.subContainer}>
                     <Text style={{
-                        fontFamily: 'Poppins-Medium', fontWeight: '200', fontSize: 13.33, color: '#B1292C',marginHorizontal:5
+                        fontFamily: 'Poppins-Medium', fontWeight: '200', fontSize: 13.33, color: '#B1292C', marginHorizontal: 5
                     }}>{item.quantity} tons</Text>
-                    <Text style={{  fontWeight: '500', fontSize: 6,color:'rgba(57, 57, 57, 1)', marginTop:5}}>{'\u2B24'}</Text>
+                    <Text style={{ fontWeight: '500', fontSize: 6, color: 'rgba(57, 57, 57, 1)', marginTop: 5 }}>{'\u2B24'}</Text>
                     <Text style={{
                         fontFamily: 'Poppins-Medium', fontWeight: '500', fontSize: 13, color: '#393939', marginLeft: 5, marginBottom: 4
                     }}>{item.designation}</Text>
 
                 </View>
                 <View style={styles.buttonsContainer}>
-                    <Pressable style={styles.buttonReject}>
+                    <Pressable onPress={showAlert} style={styles.buttonReject}>
                         <Text style={styles.buttonText}>Reject</Text>
                     </Pressable>
-                    <Pressable style={styles.buttonAccept}>
+                    <Pressable onPress={showAcceptAlert} style={styles.buttonAccept}>
                         <Text style={styles.buttonText}>Accept</Text>
                     </Pressable>
                 </View>
+            </View>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+
             </View>
         </View>
     );
@@ -79,12 +108,12 @@ const Requests = () => {
         <View style={styles.mainContainer}>
             <Animated.View
                 style={[{
-                height: HEADER_HEIGHT,
-                marginTop: scrollY.interpolate({
-                    inputRange: [0, HEADER_HEIGHT],
-                    outputRange: [0, -HEADER_HEIGHT],
-                    extrapolate: 'clamp',
-                }),
+                    height: HEADER_HEIGHT,
+                    marginTop: scrollY.interpolate({
+                        inputRange: [0, HEADER_HEIGHT],
+                        outputRange: [0, -HEADER_HEIGHT],
+                        extrapolate: 'clamp',
+                    }),
                 }, styles.container]}
             >
                 <TextInput
@@ -105,86 +134,134 @@ const Requests = () => {
                 onScroll={Animated.event(
                     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                     { useNativeDriver: false }
-                  )}
+                )}
             />
 
             {/* Modal */}
-                <Modal
-                    animationIn="slideInUp"
-                    animationOut="slideOutDown"
-                    isVisible={modalVisible}
-                    hasBackdrop={true}
-                    backdropColor="black"
-                    backdropOpacity={0.70}
-                    onBackdropPress={() => setModalVisible(!modalVisible)}
-                    width={'100%'}
-                    style={{alignItems: 'center' ,justifyContent: 'flex-end', margin: 0}}
-                >
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <TouchableOpacity
-                                style={[styles.button, styles.buttonClose, { alignItems: 'flex-end'}]}
-                                onPress={() => setModalVisible(!modalVisible)}>
-                                <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff'  />
-                            
-                            </TouchableOpacity>
-                            <View style={[styles.Modalcard, styles.shadowProp]}>
+            <Modal
+                animationIn="slideInUp"
+                animationOut="slideOutDown"
+                isVisible={modalVisible}
+                hasBackdrop={true}
+                backdropColor="black"
+                backdropOpacity={0.70}
+                onBackdropPress={() => setModalVisible(!modalVisible)}
+                width={'100%'}
+                style={{ alignItems: 'center', justifyContent: 'flex-end', margin: 0 }}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <TouchableOpacity
+                            style={[styles.button, styles.buttonClose, { alignItems: 'flex-end' }]}
+                            onPress={() => setModalVisible(!modalVisible)}>
+                            <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
 
-                                <Image
-                                    style={styles.modalImage}
-                                    source={require('../../../assets/Images/Man.jpg')}
-                                    resizeMode='cover'
-                                />
-                                <View style={{justifyContent: 'center', marginLeft: 15,height:100,width:'35%'}}>
-                                    <Text style={{ fontFamily: 'Poppins-Medium',fontSize: 17 , color:'rgba(57, 57, 57, 1)'}}> {name}</Text>
-                                    <Text style={{
-                                        fontFamily: 'Poppins-Medium', fontSize: 12,
-                                         color: '#393939',marginLeft:5
-                                    }}>{designation}</Text>
-                                    <Text style={{
-                                        fontFamily: 'Poppins-Regular',fontSize: 13,
-                                         color: '#848484',marginTop:12,marginLeft:5
-                                    }}>Quantity</Text>
-                                    <Text style={{
-                                        fontFamily: 'Poppins-Medium', fontSize: 17,
-                                        color: '#B1292C',marginLeft:5
-                                    }}>{quantity} Tons</Text>
-                                </View>
-                            </View>
-                            <View style={[styles.ModalSecondCard, styles.shadowProp]}>
-                                <View style={{ flexDirection: 'row',justifyContent: 'space-between' }}>
-                                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>Transaction ID</Text>
-                                    <Text style={{color:'#393939',fontFamily:'Poppins-Regular',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>A1234455667</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5}}>
-                                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>Unique ID</Text>
-                                    <Text style={{ color:'#393939',fontFamily:'Poppins-Regular',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>A1234455667</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5 }}>
-                                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>Mobile</Text>
-                                    <Text style={{ color:'#393939',fontFamily:'Poppins-Regular',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>A1234455667</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5}}>
-                                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>Location</Text>
-                                    <Text style={{ color:'#393939',fontFamily:'Poppins-Regular',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>Bhopal</Text>
-                                </View>
-                            </View>
-                            <View style={styles.modalButtonContainer}>
-                                <TouchableOpacity style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: '#EB1C1C', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
-                                    <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 ,fontFamily:'Poppins-Regular'}}>
-                                        Reject
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={{ width: '100%', backgroundColor: '#18B758', borderRadius: 6, alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
-                                    <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24,fontFamily:'Poppins-Regular' }}>
-                                        Accept
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
+                        </TouchableOpacity>
+                        <View style={[styles.Modalcard, styles.shadowProp]}>
 
+                            <Image
+                                style={styles.modalImage}
+                                source={require('../../../assets/Images/Man.jpg')}
+                                resizeMode='cover'
+                            />
+                            <View style={{ justifyContent: 'center', marginLeft: 15, height: 100, width: '35%' }}>
+                                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 17, color: 'rgba(57, 57, 57, 1)' }}> {name}</Text>
+                                <Text style={{
+                                    fontFamily: 'Poppins-Medium', fontSize: 12,
+                                    color: '#393939', marginLeft: 5
+                                }}>{designation}</Text>
+                                <Text style={{
+                                    fontFamily: 'Poppins-Regular', fontSize: 13,
+                                    color: '#848484', marginTop: 12, marginLeft: 5
+                                }}>Quantity</Text>
+                                <Text style={{
+                                    fontFamily: 'Poppins-Medium', fontSize: 17,
+                                    color: '#B1292C', marginLeft: 5
+                                }}>{quantity} Tons</Text>
+                            </View>
                         </View>
+                        <View style={[styles.ModalSecondCard, styles.shadowProp]}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Transaction ID</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>A1234455667</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
+                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Unique ID</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>A1234455667</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
+                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Mobile</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>A1234455667</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
+                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Location</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>Bhopal</Text>
+                            </View>
+                        </View>
+                        <View style={styles.modalButtonContainer}>
+                            <TouchableOpacity style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: '#EB1C1C', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
+                                <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24, fontFamily: 'Poppins-Regular' }}>
+                                    Reject
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '100%', backgroundColor: '#18B758', borderRadius: 6, alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
+                                <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24, fontFamily: 'Poppins-Regular' }}>
+                                    Accept
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
                     </View>
-                </Modal>
+                </View>
+            </Modal>
+            {/* Reject alert Box */}
+            <Modal
+               animationIn="fadeIn" // Use slideInUp animation for the modal to slide up
+               animationOut="fadeOut" // Use slideOutDown animation to close the modal
+               backdropTransitionOutTiming={0} // Remove backdrop gradually when closing modal
+               backdropOpacity={0.5} // Adjust the backdrop opacity
+               useNativeDriverForBackdrop 
+                isVisible={alertVisible}
+            // ... other modal props ...
+            >
+                <View style={styles.alertModal}>
+                    <Text style={styles.alertTitle}>Confirm your Action</Text>
+                    <Text style={styles.alertText}>Are you sure you want to Reject this request?</Text>
+                    <View style={styles.alertButtonsContainer}>
+                        <TouchableOpacity style={styles.alertCancelButton} onPress={hideAlert}>
+                            <Text style={styles.alertButtonText}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.alertRejectButton} onPress={handleReject}>
+                            <Text style={styles.alertButton}>Reject</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Accept Button */}
+            <Modal
+               animationIn="fadeIn" // Use slideInUp animation for the modal to slide up
+               animationOut="fadeOut" // Use slideOutDown animation to close the modal
+               backdropTransitionOutTiming={0} // Remove backdrop gradually when closing modal
+               backdropOpacity={0.5} // Adjust the backdrop opacity
+               useNativeDriverForBackdrop 
+                isVisible={alertAcceptVisible}
+            // ... other modal props ...
+            >
+                <View style={styles.alertModal}>
+                    <Text style={styles.alertTitle}>Confirm your Action</Text>
+                    <Text style={styles.alertText}>Are you sure you want to Accept this request?</Text>
+                    <View style={styles.alertButtonsContainer}>
+                        <TouchableOpacity style={styles.alertCancelButton} onPress={hideAlert}>
+                            <Text style={styles.alertButtonText}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.alertRejectButton} onPress={handleReject}>
+                            <Text style={styles.alertButton}>Accept</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
         </View>
     );
 };
@@ -195,11 +272,9 @@ const styles = StyleSheet.create({
         // paddingTop: 24,
         // paddingLeft: 16,
         // paddingRight: 16,
-       // paddingBottom: 16,
+        // paddingBottom: 16,
         // width: 328,
         backgroundColor: '#ffffff',
-        
-        
     },
     container: {
         flexDirection: 'row',
@@ -213,10 +288,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         height: 48,
         backgroundColor: '#ffffff',
-        width:'90%',
-        alignSelf:'center',
-        marginTop:15,
-        marginBottom:20
+        width: '90%',
+        alignSelf: 'center',
+        marginTop: 15,
+        marginBottom: 20
 
     },
     subContainer: {
@@ -245,11 +320,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         borderRadius: 10,
         flexDirection: 'row',
-        marginBottom:17,
-        alignItems:'center',
-        marginLeft:2,
-        alignSelf:'center',
-        
+        marginBottom: 17,
+        alignItems: 'center',
+        marginLeft: 2,
+        alignSelf: 'center',
+
     },
     Modalcard: {
         backgroundColor: '#ffffff', // Customize button style as needed
@@ -263,11 +338,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         // justifyContent: 'flex-start',
         // alignItems:'center',
-        alignItems:'center',
+        alignItems: 'center',
         borderRadius: 10,
         flexDirection: 'row',
         marginTop: 18,
-        alignSelf:'center'
+        alignSelf: 'center'
     },
     ModalSecondCard: {
         backgroundColor: '#ffffff', // Customize button style as needed
@@ -281,8 +356,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 18,
         justifyContent: 'space-between',
-        alignSelf:'center'
-        
+        alignSelf: 'center'
+
     },
     shadowProp: {
         shadowColor: '#171717',
@@ -330,7 +405,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 90,
         borderRadius: 8,
-        marginLeft:5
+        marginLeft: 5
     },
     modalContainer: {
         flex: 1,
@@ -353,15 +428,15 @@ const styles = StyleSheet.create({
     centeredView: {
         marginTop: 22,
         width: '100%',
-        backgroundColor:'white',
-        height:630,
-        borderTopRightRadius:9,
-        borderTopLeftRadius:9
-        
-        
+        backgroundColor: 'white',
+        height: 630,
+        borderTopRightRadius: 9,
+        borderTopLeftRadius: 9
+
+
     },
     modalView: {
-       // marginTop: 180,
+        // marginTop: 180,
         //backgroundColor: 'white',
         //borderRadius: 20,
         padding: 16,
@@ -392,7 +467,7 @@ const styles = StyleSheet.create({
         width: 100,
         height: 109,
         borderRadius: 8,
-        marginLeft:10,
+        marginLeft: 10,
 
     },
     modalButtonContainer: {
@@ -401,6 +476,73 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'absolute',
         bottom: 20,
-        alignSelf:'center'
+        alignSelf: 'center'
+    },
+    alertModal: {
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 20,
+        width: 300,
+        alignSelf: 'center',
+    },
+    alertTitle: {
+        fontFamily: 'Poppins-Medium',
+        fontSize:16,
+        marginBottom: 10,
+        color: '#393939',
+        fontWeight:'500',
+        lineHeight:24
+    },
+    alertText: {
+        fontFamily: 'Poppins-Regular',
+        marginBottom: 12,
+        color: '#848484',
+        fontWeight:'400',
+        fontSize:11.11,
+        lineHeight:16,
+    },
+    alertButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+    },
+    alertCancelButton: {
+        backgroundColor: '#ffffff',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 4,
+        width:126,
+        height:36,
+        margin:12,
+        alignItems:'center',
+        borderColor:'#848484',
+        borderWidth:1
+
+    },
+    alertRejectButton: {
+        backgroundColor: '#B1292C',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 4,
+        width:126,
+        height:36,
+        margin:12,
+        alignItems:'center'
+    },
+    alertButtonText: {
+        fontFamily: 'Poppins',
+        fontWeight: '500',
+        color: '#393939',
+        width:48,
+        height:20,
+        fontSize:13.33
+    },
+    alertButton:{
+        color:'#FFFFFF',
+        fontFamily: 'Poppins',
+        fontWeight: '500',
+        width:48,
+        height:20,
+        fontSize:13.33
     }
+    
 })
