@@ -40,6 +40,8 @@ import ConfirmDetailsScreen from '../Screens/Orders/ConfirmDetailsScreen';
 import DistributorExpandScreen from '../Screens/Orders/DistributorExpandScreen';
 import ConfirmPurchase from '../Screens/Orders/ConfirmPurchase';
 import SuccessScreen from '../Screens/sucess/SucessScreen';
+import AddressList from '../Screens/rewards/Address';
+import ConfirmPage from '../Screens/rewards/confirm';
 
 
 const Tab = createBottomTabNavigator();
@@ -152,16 +154,6 @@ function MyTabs({route}) {
 const NavigationLinks = () => {
   return (
     <NavigationContainer>
-      {/* <Stack.Navigator>
-            <Stack.Screen name="Login" component={LoginScreen} 
-            options={{
-            headerShown: false, // Hide the header for Login screen
-            }}/>
-            <Stack.Screen name="Roles" component={RolesScreen}
-              options={{
-                headerShown: false, // Hide the header for Login screen
-                }}/>
-          </Stack.Navigator> */}
       <Stack.Navigator  initialRouteName="Home Screen"
       
       screenOptions={{
@@ -240,6 +232,29 @@ const NavigationLinks = () => {
         <Stack.Screen name='DistributorExpand' component={DistributorExpandScreen} options={{title:''}}/>
         <Stack.Screen name='ConfirmPurchase' component={ConfirmPurchase} options={{title:''}}/>
         <Stack.Screen name='Success' component={SuccessScreen} options={{headerShown:false}} />
+          <Stack.Screen name='Confirm' component={ConfirmPage} options={{
+          title: '',
+          headerTitleAlign: 'center',
+          headerTitleStyle:{
+            fontSize: 18,
+            fontFamily: 'Poppins-SemiBold',
+            fontWeight:'700'
+          }
+        }}/>
+       <Stack.Screen
+  name="AddressList"
+  component={AddressList}
+  options={{
+ // This line hides the header
+    title: ' ',
+    headerTitleAlign: 'center',
+    headerTitleStyle: {
+      fontSize: 18,
+      fontFamily: 'Poppins-SemiBold',
+      fontWeight: '700',
+    },
+  }}
+/>
       </Stack.Navigator>
     </NavigationContainer>
   );
