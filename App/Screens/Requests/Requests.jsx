@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
-        paddingVertical: 8,
+        // paddingVertical: 8,
         backgroundColor: '#f2f2f2',
         borderColor: '#ccc',
         borderRadius: 4,
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
         width:'90%',
         alignSelf:'center',
         marginTop:15,
-        marginBottom:20
+        marginBottom:15
 
     },
     subContainer: {

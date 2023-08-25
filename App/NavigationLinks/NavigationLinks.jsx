@@ -36,6 +36,10 @@ import PointsInactiveIcon from '../../assets/Icon/PointsInactiveIcon';
 import RewardScreen from '../Screens/rewards/RewardScreen';
 import RewardTabIcon from '../../assets/Icon/RewardTabIcon';
 import RewardInactiveIcon from '../../assets/Icon/RewardInactiveIcon';
+import ConfirmDetailsScreen from '../Screens/Orders/ConfirmDetailsScreen';
+import DistributorExpandScreen from '../Screens/Orders/DistributorExpandScreen';
+import ConfirmPurchase from '../Screens/Orders/ConfirmPurchase';
+import SuccessScreen from '../Screens/sucess/SucessScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -232,6 +236,10 @@ const NavigationLinks = () => {
             fontWeight:'700'
           }
         }}/>
+        <Stack.Screen name='ConfirmDetail' component={ConfirmDetailsScreen} options={{title: ''}}/>
+        <Stack.Screen name='DistributorExpand' component={DistributorExpandScreen} options={{title:''}}/>
+        <Stack.Screen name='ConfirmPurchase' component={ConfirmPurchase} options={{title:''}}/>
+        <Stack.Screen name='Success' component={SuccessScreen} options={{headerShown:false}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
