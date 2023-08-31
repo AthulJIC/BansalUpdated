@@ -1,42 +1,83 @@
-import {View,Text, StyleSheet,Image, TouchableOpacity, Pressable,Alert} from 'react-native'
+import {View,Text, StyleSheet,Image, TouchableOpacity, Pressable,Alert, ScrollView} from 'react-native'
 import LanguageIcon from '../../../assets/Icon/LanguageIcon'
 import ContactIcon from '../../../assets/Icon/ContactIcon'
 import AboutIcon from '../../../assets/Icon/AboutIcon'
 import PrivacyIcon from '../../../assets/Icon/PrivacyIcon'
 import PenIcon from '../../../assets/Icon/PenIcon'
 import RightArrowIcon from '../../../assets/Icon/RightArrowIcon'
+import BookMarkActiveIcon from '../../../assets/Icon/BookmarkActiveIcon'
+import HistoryIcon from '../../../assets/Icon/HistoryIcon'
+import AddressIcon from '../../../assets/Icon/AddressIcon'
+import { useNavigation } from '@react-navigation/native'
 
-const Profile =({navigation})=>{
-    const profileData=[
-    {
-        id:1,
-        title:'Language',
-        image: <LanguageIcon width={20} height={20} color='rgba(177, 41, 44, 1)'/>,
-        arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-        navigation : 'Language'
-    },
-    {
-        id:2,
-        title:'Contact us',
-        image:<ContactIcon/>,
-        arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-        navigation : 'Contact'
-    },
-    {
-        id:3,
-        title:'About us',
-        image:<AboutIcon/>,
-        arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-        navigation : 'About'
-    },
-    {
-        id:4,
-        title:'Privacy Policy',
-        image: <PrivacyIcon/>,
-        arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-        navigation : 'Privacy'
+const Profile =({role})=>{
+    console.log(role);
+    let navigation = useNavigation();
+    let profileData=[
+       
+        {
+            id:4,
+            title:'Language',
+            image: <LanguageIcon width={20} height={20} color='rgba(177, 41, 44, 1)'/>,
+            arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
+            navigation : 'Language'
+        },
+        {
+            id:5,
+            title:'Contact us',
+            image:<ContactIcon/>,
+            arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
+            navigation : 'Contact'
+        },
+        {
+            id:6,
+            title:'About us',
+            image:<AboutIcon/>,
+            arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
+            navigation : 'About'
+        },
+        {
+            id:7,
+            title:'Privacy Policy',
+            image: <PrivacyIcon/>,
+            arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
+            navigation : 'Privacy'
+        }
+    ]
+    if(role === 'Distributor'){
+        profileData =[
+            ...profileData
+        ] ;
     }
-]
+    else{
+        profileData = [
+           
+            {
+                id:1,
+                title:'Favourites',
+                image: <BookMarkActiveIcon width={20} height={20} color='rgba(177, 41, 44, 1)'/>,
+                arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
+                navigation : 'Language'
+            },
+            {
+                id:2,
+                title:'History',
+                image: <HistoryIcon/>,
+                arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
+                navigation : 'Language'
+            },
+            {
+                id:3,
+                title:'Addresses',
+                image: <AddressIcon />,
+                arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
+                navigation : 'AddressList'
+            },
+            ...profileData,
+           
+        ]
+    }
+    
 function loginHandler(){
     // Alert.alert(
     //     'Logout',
@@ -57,7 +98,7 @@ function loginHandler(){
       navigation.navigate('Login')
 }
     return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
         <View style={styles.profileView}>
            <Text style={styles.profileShortName}>AB</Text>
         </View>
@@ -85,7 +126,7 @@ function loginHandler(){
         <Pressable style={styles.logoutButton} onPress={loginHandler}>
             <Text style={styles.logoutText}>Logout</Text>
         </Pressable>
-    </View>
+    </ScrollView>
     )
 }
 
@@ -164,7 +205,8 @@ const styles = StyleSheet.create({
         borderRadius:4,
         alignSelf:'center',
         justifyContent:'center',
-        alignItems:'center'
+        alignItems:'center',
+        marginBottom:20
     },
     logoutText:{
         color: '#FFFFFF',

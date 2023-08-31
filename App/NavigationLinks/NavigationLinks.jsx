@@ -61,6 +61,10 @@ const customSlideFromLeft = {
 function MyTabs({route}) {
   const { role } = route?.params;
   console.log(role)
+
+  function ProfileScreen() {
+    return <Profile role={role} />;
+  }
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -133,7 +137,7 @@ function MyTabs({route}) {
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Requests" component={Requests} />
         <Tab.Screen name="History" component={History} />
-        <Tab.Screen name="Profile" component={Profile} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
         </>
         ): (
           <>
@@ -141,7 +145,7 @@ function MyTabs({route}) {
           <Tab.Screen name='Order' component={OrderScreen}/>
           <Tab.Screen name='Points' component={PointsScreen} />
           <Tab.Screen name='Reward' component={RewardScreen} />
-          <Tab.Screen name="Profile" component={Profile} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
 
           </>
         )
@@ -243,18 +247,17 @@ const NavigationLinks = () => {
           }
         }}/>
        <Stack.Screen
-  name="AddressList"
-  component={AddressList}
-  options={{
- // This line hides the header
-    title: ' ',
-    headerTitleAlign: 'center',
-    headerTitleStyle: {
-      fontSize: 18,
-      fontFamily: 'Poppins-SemiBold',
-      fontWeight: '700',
-    },
-  }}
+            name="AddressList"
+            component={AddressList}
+            options={({ route }) => ({
+              title: route.params?.fromProfileScreen ? 'Addresses' : '',
+              headerTitleAlign: 'center',
+              headerTitleStyle: {
+                fontSize: 18,
+                fontFamily: 'Poppins-SemiBold',
+                fontWeight: '700',
+              },
+            })}
 />
       </Stack.Navigator>
     </NavigationContainer>
