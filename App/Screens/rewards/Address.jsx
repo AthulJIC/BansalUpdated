@@ -60,9 +60,9 @@ const AddressList = ({navigation}) => {
         selectedAddress === item.id && { backgroundColor: '#F0F0F0', borderColor: '#B1292C', borderWidth: 1 },
       ]}
     >
-      <TouchableOpacity onPress={() => { setVisible(true); onEditPress(item); setRemoveButton(true) }} style={styles.modalCard}>
         <Text style={[styles.name, selectedAddress === item.id && { color: '#B1292C' }]}>{item.name}</Text>
-        <EditIcon width={45} height={16} />
+      <TouchableOpacity onPress={() => { setVisible(true); onEditPress(item); setRemoveButton(true) }} style={styles.modalCard}>
+      <EditIcon width={45} height={16} />
       </TouchableOpacity>
       <Text style={styles.address}>{item.address}</Text>
     </TouchableOpacity>
