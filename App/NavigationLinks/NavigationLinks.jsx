@@ -42,7 +42,7 @@ import ConfirmPurchase from '../Screens/Orders/ConfirmPurchase';
 import SuccessScreen from '../Screens/sucess/SucessScreen';
 import AddressList from '../Screens/rewards/Address';
 import ConfirmPage from '../Screens/rewards/confirm';
-
+import Language from '../Language/LanguageSwitch';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -160,6 +160,7 @@ const NavigationLinks = () => {
         ...TransitionPresets.SlideFromRightIOS,
         ...customSlideFromLeft,
       }}>
+         <Stack.Screen name="Profile" component={Profile} options={{ title: '' }} />
         <Stack.Screen name="Login" component={LoginScreen} 
             options={{
             headerShown: false, // Hide the header for Login screen
