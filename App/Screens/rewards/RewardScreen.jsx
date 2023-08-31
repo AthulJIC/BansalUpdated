@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
       marginTop:12
     },
     cardPoints: {
-      fontSize: 13.33,
+      fontSize: 13,
       color: '#B1292C',
       width:75,
       height:16,
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
    buttonText:{
     height:20,
     fontFamily:'Poppins-Medium',
-   fontSize:13.33,
+   fontSize:13,
     color:'#ffffff',
    },
    centeredView: {
@@ -323,13 +323,13 @@ const styles = StyleSheet.create({
     fontFamily:'Poppins-Medium',
     width:328,
     height:24,
-    fontSize:13.33,
+    fontSize:13,
     color:'#B1292C'
   },
   detailsModal:{
     width:328,
     fontFamily:'Poppins-Regular',
-    fontSize:13.33,
+    fontSize:13,
     color:'#848484'
   },
   imageModalView:{

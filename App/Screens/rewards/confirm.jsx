@@ -18,7 +18,7 @@ const ConfirmPage=({route,navigation})=>{
                 <Text style={{ marginLeft: 20, fontFamily: 'Poppins-Medium', fontSize: 16, color: 'rgba(57, 57, 57, 1)' }}>{selectedProduct.name}</Text>
                 <View style={styles.subContainer}>
                     <Text style={{
-                        fontFamily: 'Poppins-Medium', fontWeight: '200', fontSize: 13.33, color: '#B1292C', marginHorizontal: 5
+                        fontFamily: 'Poppins-Medium', fontWeight: '200', fontSize: 13, color: '#B1292C', marginHorizontal: 5
                     }}>{selectedProduct.points} Points</Text>
                     <View style={{width:'85%'}}>
                     <Text style={{
