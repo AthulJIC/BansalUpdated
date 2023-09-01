@@ -42,7 +42,13 @@ import ConfirmPurchase from '../Screens/Orders/ConfirmPurchase';
 import SuccessScreen from '../Screens/sucess/SucessScreen';
 import AddressList from '../Screens/rewards/Address';
 import ConfirmPage from '../Screens/rewards/confirm';
+
+import { useRef } from 'react';
+import FavouritesScreen from '../Screens/Profile/FavouritesScreen';
+
+
 import Language from '../Language/LanguageSwitch';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -156,6 +162,7 @@ function MyTabs({route}) {
 }
 
 const NavigationLinks = () => {
+
   return (
     <NavigationContainer>
       <Stack.Navigator  initialRouteName="Home Screen"
@@ -250,7 +257,7 @@ const NavigationLinks = () => {
             name="AddressList"
             component={AddressList}
             options={({ route }) => ({
-              title: route.params?.fromProfileScreen ? 'Addresses' : '',
+              title: route.params?.fromProfile ? 'Addresses' : '',
               headerTitleAlign: 'center',
               headerTitleStyle: {
                 fontSize: 18,
@@ -259,6 +266,24 @@ const NavigationLinks = () => {
               },
             })}
 />
+<Stack.Screen name='HistoryScreen' component={History} options={{
+          title: 'History',
+          headerTitleAlign: 'center',
+          headerTitleStyle:{
+            fontSize: 18,
+            fontFamily: 'Poppins-SemiBold',
+            fontWeight:'700'
+          }
+        }}/>
+        <Stack.Screen name='FavouritesScreen' component={FavouritesScreen} options={{
+          title: 'Favourites',
+          headerTitleAlign: 'center',
+          headerTitleStyle:{
+            fontSize: 18,
+            fontFamily: 'Poppins-SemiBold',
+            fontWeight:'700'
+          }
+        }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

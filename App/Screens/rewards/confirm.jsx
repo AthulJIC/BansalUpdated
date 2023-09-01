@@ -34,7 +34,9 @@ const ConfirmPage=({route,navigation})=>{
         </View>
          <View style={{flexDirection:'row', justifyContent:'space-between',marginLeft:25}}>
             <Text style={{fontFamily:'Poppins-Medium',color:'#393939',fontSize:16}}>Address</Text>
-            <TouchableOpacity onPress={()=>{navigation.navigate('AddressList')}} style={{flexDirection:'row',marginRight:22,justifyContent:'center',alignItems:'center'}}>
+            <TouchableOpacity onPress={()=>{navigation.navigate('AddressList',{
+                    fromProfile: false,
+                })}} style={{flexDirection:'row',marginRight:22,justifyContent:'center',alignItems:'center'}}>
             <PenIcon width={20} height={20} color={'#2B59C3'}/>
            <Text style={{margin:5}}>Change</Text>
             </TouchableOpacity>

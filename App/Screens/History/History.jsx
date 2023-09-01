@@ -75,7 +75,8 @@ const History = () => {
       width: '99%',
       marginTop: 15,
       justifyContent: 'space-around',
-      alignSelf: 'flex-start', // Add this line to align items at the top
+      alignSelf: 'flex-start',
+      // Add this line to align items at the top
     }}>
         { itemData.item.status === 'ACCEPTED' ? (
           <View style={{backgroundColor: 'rgba(24, 183, 88, 0.2)',
@@ -184,6 +185,7 @@ const styles = StyleSheet.create({
   flatListSection: {
     flex: 1,
     backgroundColor: 'white',
+    marginBottom:20 
   },
   selectedFilter: {
     borderColor: 'rgba(177, 41, 44, 1)',
