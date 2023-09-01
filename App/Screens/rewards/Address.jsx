@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Pressable, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native';
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
 import ArrowIcon from '../../../assets/Icon/Arrow';
 import EditIcon from '../../../assets/Icon/Edit';
 import CheckBox from '@react-native-community/checkbox';
+import { useNavigation,getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 const addresses = [
   {
@@ -28,7 +29,9 @@ const addresses = [
   // Add more addresses as needed
 ];
 
-const AddressList = ({navigation}) => {
+const AddressList = ({navigation,route}) => {
+  const data = route?.params.fromProfile;
+  console.log(data);
   const [addressItem,setadressItem]=useState([])
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isVisible, setVisible] = useState(false)
@@ -53,19 +56,21 @@ const AddressList = ({navigation}) => {
   }
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
+    <Pressable disabled={data}
       onPress={() => {selectAddress(item.id) ;setadressItem(item)}}
       style={[
         styles.addressItem,
-        selectedAddress === item.id && { backgroundColor: '#F0F0F0', borderColor: '#B1292C', borderWidth: 1 },
+        selectedAddress === item.id && { borderColor: '#B1292C', borderWidth: 1 },
       ]}
     >
+      <View style={{flexDirection:'row', justifyContent:'space-between'}}>
         <Text style={[styles.name, selectedAddress === item.id && { color: '#B1292C' }]}>{item.name}</Text>
-      <TouchableOpacity onPress={() => { setVisible(true); onEditPress(item); setRemoveButton(true) }} style={styles.modalCard}>
-      <EditIcon width={45} height={16} />
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => { setVisible(true); onEditPress(item); setRemoveButton(true) }} style={styles.modalCard}>
+        <EditIcon width={45} height={16} />
+        </TouchableOpacity>
+      </View>
       <Text style={styles.address}>{item.address}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (
@@ -80,11 +85,13 @@ const AddressList = ({navigation}) => {
         keyExtractor={(item) => item.id}
       />
       <View style={styles.modalButtonContainer}>
-        <Pressable onPress={()=>{navigation.navigate('Confirm',{addressItem})}} style={{ marginBottom: 10, borderRadius: 5, width: '90%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
-          <Text style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
-            Continue
-          </Text>
-        </Pressable>
+        { !data && 
+          <Pressable onPress={()=>{navigation.navigate('Confirm',{addressItem})}} style={{ marginBottom: 10, borderRadius: 5, width: '90%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
+            <Text style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
+              Continue
+            </Text>
+          </Pressable>
+        }
       </View>
       {/* Modal */}
       <View>

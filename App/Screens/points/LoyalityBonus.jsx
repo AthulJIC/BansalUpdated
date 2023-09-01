@@ -27,20 +27,20 @@ const styles = StyleSheet.create({
       borderRadius:10
     },
     textStyle:{
-        fontStyle:'Poppins-Medium',
+        fontFamily:'Poppins-Medium',
         fontSize:16,
         lineHeight:24,
         color:'#ffffff'
     },
     points:{
-            fontStyle:'Poppins-ExtraBold',
+            fontFamily:'Poppins-ExtraBold',
             fontSize:23.04,
             lineHeight:32,
             color:'#ffffff',
             fontWeight:'600'
     },
     expire:{
-        fontStyle:'Poppins-Bold',
+        fontFamily:'Poppins-Bold',
         fontSize:11.11,
         lineHeight:16,
         color:'#ffffff'

@@ -81,7 +81,9 @@ const RewardScreen =(r)=>{
       redeemedProducts: [...(userDetails?.redeemedProducts || []), itemName],
     };
     updateUserDetails(updatedUserDetails);
-    navigation.navigate(AddressList);
+    navigation.navigate("AddressList",{
+      fromProfile: false,
+  });
     setModalVisible(false)
   }
     const renderCard = ({ item }) => (

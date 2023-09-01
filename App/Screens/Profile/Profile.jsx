@@ -20,28 +20,28 @@ const Profile =({role})=>{
             title:'Language',
             image: <LanguageIcon width={20} height={20} color='rgba(177, 41, 44, 1)'/>,
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-            navigation : 'Language'
+            navigation : () => navigation.navigate('Language')
         },
         {
             id:5,
             title:'Contact us',
             image:<ContactIcon/>,
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-            navigation : 'Contact'
+            navigation : () => navigation.navigate('Contact')
         },
         {
             id:6,
             title:'About us',
             image:<AboutIcon/>,
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-            navigation : 'About'
+            navigation : () => navigation.navigate('About')
         },
         {
             id:7,
             title:'Privacy Policy',
             image: <PrivacyIcon/>,
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-            navigation : 'Privacy'
+            navigation : () => navigation.navigate('Privacy')
         }
     ]
     if(role === 'Distributor'){
@@ -57,21 +57,23 @@ const Profile =({role})=>{
                 title:'Favourites',
                 image: <BookMarkActiveIcon width={20} height={20} color='rgba(177, 41, 44, 1)'/>,
                 arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-                navigation : 'Language'
+                navigation : () => navigation.navigate('FavouritesScreen')
             },
             {
                 id:2,
                 title:'History',
                 image: <HistoryIcon/>,
                 arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-                navigation : 'Language'
+                navigation : () => navigation.navigate('HistoryScreen')
             },
             {
                 id:3,
                 title:'Addresses',
                 image: <AddressIcon />,
                 arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
-                navigation : 'AddressList'
+                navigation : () => navigation.navigate('AddressList',{
+                    fromProfile: true,
+                })
             },
             ...profileData,
            
@@ -112,7 +114,7 @@ function loginHandler(){
         <View style={{marginTop:20}}>
           {profileData.map((data,index) => {
             return(
-                <Pressable key={index} style={styles.listContainer} onPress={() => navigation.navigate(data.navigation) }>
+                <Pressable key={index} style={styles.listContainer} onPress={data.navigation}>
                     <View style={styles.iconContainer}>
                       {data.image}
                     </View>
