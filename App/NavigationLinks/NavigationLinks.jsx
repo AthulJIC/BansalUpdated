@@ -48,6 +48,8 @@ import FavouritesScreen from '../Screens/Profile/FavouritesScreen';
 
 
 import Language from '../Language/LanguageSwitch';
+import IdVerificationScreen from '../Screens/rewards/IdVerificationScreen';
+import IdConfirmationScreen from '../Screens/rewards/IdConfirmationScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -70,6 +72,9 @@ function MyTabs({route}) {
 
   function ProfileScreen() {
     return <Profile role={role} />;
+  }
+  function HomeScreenTab(){
+    return <HomeScreen role={role}/>
   }
   return (
     <Tab.Navigator
@@ -140,14 +145,14 @@ function MyTabs({route}) {
       {
         role === 'Distributor' ? (
         <>
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Home" component={HomeScreenTab} />
         <Tab.Screen name="Requests" component={Requests} />
         <Tab.Screen name="History" component={History} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
         </>
         ): (
           <>
-          <Tab.Screen name="Home" component={HomeScreen}/>
+          <Tab.Screen name="Home" component={HomeScreenTab}/>
           <Tab.Screen name='Order' component={OrderScreen}/>
           <Tab.Screen name='Points' component={PointsScreen} />
           <Tab.Screen name='Reward' component={RewardScreen} />
@@ -165,7 +170,7 @@ const NavigationLinks = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator  initialRouteName="Home Screen"
+      <Stack.Navigator  initialRouteName="Login"
       
       screenOptions={{
         ...TransitionPresets.SlideFromRightIOS,
@@ -284,6 +289,10 @@ const NavigationLinks = () => {
             fontWeight:'700'
           }
         }}/>
+        <Stack.Screen name='IdVerification' component={IdVerificationScreen} options={{
+          title: '',
+        }}></Stack.Screen>
+        <Stack.Screen name='IdConfirmation' component={IdConfirmationScreen} options={{title:''}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

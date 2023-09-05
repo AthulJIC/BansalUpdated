@@ -6,6 +6,7 @@ import BookmarkIcon from '../../../assets/Icon/BookmarkIcon';
 import { Dropdown } from 'react-native-element-dropdown';
 import Modal from 'react-native-modal'
 import ReferLead from '../../Components/ReferLead';
+import BookMarkActiveIcon from '../../../assets/Icon/BookmarkActiveIcon';
 
 
 const data = [
@@ -43,6 +44,7 @@ const OrderScreen =({navigation})=>{
     const [searchText, setSearchText] = useState('');
     const [value, setValue] = useState(place[0]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [bookmarkedItems, setBookmarkedItems] = useState([]);
     const modalItem = ({ item }) => {
         setName(item.name)
         setQuantity(item.requestId)
@@ -53,7 +55,18 @@ const OrderScreen =({navigation})=>{
    function chooseHandler(item){
         navigation.navigate('DistributorExpand',{ selectedItem: item })
    }
-    const requestData = ({ item }) => (
+   function bookmarkHandler(itemId){
+    if (bookmarkedItems.includes(itemId)) {
+        setBookmarkedItems(bookmarkedItems.filter(id => id !== itemId));
+      } else {
+        setBookmarkedItems([...bookmarkedItems, itemId]);
+      }
+   }
+   
+    const requestData = ({ item }) => {
+        const isBookmarked = bookmarkedItems.includes(item.id);
+        return(
+
         <View style={[styles.card, styles.shadowProp]}>
             <Pressable>
                 <Image
@@ -67,8 +80,11 @@ const OrderScreen =({navigation})=>{
             <View style={{width:'60%', height:88}}>
                 <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                    <Text style={{fontFamily: 'Poppins-Medium', fontSize: 13,color:'rgba(177, 41, 44, 1)'}}> {item.requestId}</Text>
-                   <Pressable>
-                        <BookmarkIcon height={16} width={16} color='#393939'/>
+                   <Pressable onPress={() => bookmarkHandler(item.id)}>
+                       {!isBookmarked ?
+                        (<BookmarkIcon height={16} width={16} color='#393939'/>) : 
+                        <BookMarkActiveIcon height={16} width={16} color='rgba(127, 176, 105, 1)'/>
+                       }
                    </Pressable>
 
                 </View>
@@ -78,7 +94,8 @@ const OrderScreen =({navigation})=>{
                 </Pressable>
             </View>
         </View>
-    ); 
+        )
+    }; 
     const closeModal = () => {
         setModalVisible(false);
     };
@@ -87,65 +104,61 @@ const OrderScreen =({navigation})=>{
         navigation.navigate('ConfirmDetail');
       };
     return (
-    <ScrollView style={{flex:1, backgroundColor:'white'}}>
-        <View style={{flexDirection:'row',marginTop:5,justifyContent:'space-between'}}>
-            <Dropdown
-                style={styles.dropdown}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={place}
-                search
-                maxHeight={200}
-                labelField="label"
-                valueField="value"
-                iconColor='rgba(57, 57, 57, 1)'
-                // placeholder="Select item"
-                searchPlaceholder="Search..."
-                value={value}
-                onChange={item => {
-                setValue(item.value);
-                }}
-                containerStyle={styles.dropdownContainer}
-            />
-            <Pressable style={{backgroundColor:'rgba(43, 89, 195, 1)', height:37, width:'30%',borderRadius:5,alignItems:'center',justifyContent:'center',marginRight:15,marginTop:7}}
-                onPress={() =>setModalVisible(true)}>
-                <Text style={{color:'white', fontSize:13, fontFamily:'Poppins-Regular'}}>Refer Leads</Text>
-            </Pressable> 
-        </View>
-        <Animated.View
-            style={[{
-            height: HEADER_HEIGHT,
-            marginTop: scrollY.interpolate({
-                inputRange: [0, HEADER_HEIGHT],
-                outputRange: [0, -HEADER_HEIGHT],
-                extrapolate: 'clamp',
-            }),
-            }, styles.container]}
-        >
-            <TextInput
-                style={styles.input}
-                placeholder="Search..."
-                placeholderTextColor={'rgba(132, 132, 132, 1)'}
-                onChangeText={text => setSearchText(text)}
-                value={searchText}
-            />
-            <TouchableOpacity>
-                <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
-            </TouchableOpacity>
-        </Animated.View>
+    <View style={{flex:1, backgroundColor:'white'}}>
+        
         <FlatList
             data={data}
             renderItem={requestData}
             keyExtractor={(item) => item.name}
+            ListHeaderComponent={
+                <View>
+                    <View style={{flexDirection:'row',marginTop:5,justifyContent:'space-between'}}>
+                        <Dropdown
+                            style={styles.dropdown}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            inputSearchStyle={styles.inputSearchStyle}
+                            iconStyle={styles.iconStyle}
+                            data={place}
+                            search
+                            maxHeight={200}
+                            labelField="label"
+                            valueField="value"
+                            iconColor='rgba(57, 57, 57, 1)'
+                            // placeholder="Select item"
+                            searchPlaceholder="Search..."
+                            value={value}
+                            onChange={item => {
+                            setValue(item.value);
+                            }}
+                            containerStyle={styles.dropdownContainer}
+                        />
+                        <Pressable style={{backgroundColor:'rgba(43, 89, 195, 1)', height:37, width:'30%',borderRadius:5,alignItems:'center',justifyContent:'center',marginRight:15,marginTop:7}}
+                            onPress={() =>setModalVisible(true)}>
+                            <Text style={{color:'white', fontSize:13, fontFamily:'Poppins-Regular'}}>Refer Leads</Text>
+                        </Pressable> 
+                    </View>
+                    <View style={styles.container}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Search..."
+                        placeholderTextColor={'rgba(132, 132, 132, 1)'}
+                        onChangeText={text => setSearchText(text)}
+                        value={searchText}
+                    />
+                    <TouchableOpacity>
+                        <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
+                    </TouchableOpacity>
+                    </View>
+                </View>
+            }
             onScroll={Animated.event(
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                 { useNativeDriver: false }
             )}/>
             <ReferLead isVisible={modalVisible} onClose={closeModal} onRefer={handleRefer}/>
 
-        </ScrollView>
+        </View>
     )
 }
 const styles = StyleSheet.create({
