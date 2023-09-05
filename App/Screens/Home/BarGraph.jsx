@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Picker,Dimensions } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { Dropdown } from 'react-native-element-dropdown';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BarChart } from 'react-native-gifted-charts';
-const BarGraph = () => {
+import { useTranslation } from 'react-i18next';
+const BarGraph = ({role}) => {
+    console.log('roleeee',role)
+
+
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState('Monthly');
+    const [value, setValue] = useState("Monthly");
     const [items, setItems] = useState([
-        { label: 'Weekly', value: 'Weekly' },
+        { label: 'Weekly', value: "Weekly" },
         { label: 'Yearly', value: 'Yearly' },
         { label: 'Monthly', value: 'Monthly'}
     ]);
+    const [activeButton, setActiveButton] = useState('Orders');
     const barData = [
         {value: 1, label: 'Jan'},
         {value: 4, label: 'Feb'},
@@ -25,6 +31,7 @@ const BarGraph = () => {
         {value: 5, label: 'Nov'},
         {value: 0.5, label: 'Dec'},
     ]
+    
     // const [chartParentWidth, setChartParentWidth] = useState(0);
     // const chartConfig = {
     //     backgroundGradientFrom: "#1E2923",
@@ -59,78 +66,81 @@ const BarGraph = () => {
     function onChange(){
 
     }
-
+    const handleButton = (buttonName) => {
+        setActiveButton(buttonName);
+        // Handle button press actions here
+      };
     return (
         <View style={styles.mainView} onPress={handleButtonPress}>
-            <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent:'space-between'}}>
-                <TouchableOpacity style={styles.orderButton}>
-                    <Text style={{fontFamily: 'Poppins', fontWeight: '600', fontSize: 14, color: '#393939'}}>
-                        Orders
+            <View style={{ flexDirection: 'row',alignItems: 'center'}}>
+                <TouchableOpacity
+                    style={[
+                        styles.orderButton,
+                        activeButton === 'Orders' && styles.activeButton,
+                      ]}
+                      onPress={() => handleButton('Orders')}
+                >
+                    <Text
+                    style={[
+                        styles.buttonText,
+                        activeButton === 'Orders' && styles.activeButtonText,]}
+                    >
+                    {t('orders')}
                     </Text>
                 </TouchableOpacity>
-                {/* <DropDownPicker
-                    placeholder="Monthly"
-                    open={open}
-                    value={value}
-                    items={items}
-                    setOpen={setOpen}
-                    setValue={setValue}
-                    setItems={setItems}
-                    style={{
-                        // width:'40%',
-                        // minHeight:30,
-                        // borderColor: 'none',
-                        // borderWidth: 0,
-                        // borderRadius: 4,
-                        // fontFamily: 'Poppins',
-                        // fontWeight: '400',
-                        // fontSize: 11.11,
-                        // color: '#393939',
-                        // position:'absolute',
-                        width: '40%',
-    minHeight: 10,
-    borderColor: 'none',
-    borderWidth: 0,
-    borderRadius: 4,
-    fontFamily: 'Poppins',
-    fontWeight: '400',
-    fontSize: 11.11,
-    color: '#393939',
-    position:'absolute'
-                    }}
-                /> */}
+
+                {role !== 'Distributor' && (
+                    <TouchableOpacity
+                    style={[
+                        styles.orderButton,
+                        activeButton === 'Points' && styles.activeButton,
+                      ]}
+                      onPress={() => handleButton('Points')}
+                    >
+                    <Text
+                        style={[
+                            styles.buttonText,
+                            activeButton === 'Points' && styles.activeButtonText,
+                          ]}
+                    >
+                        Points
+                    </Text>
+                    </TouchableOpacity>
+                )}
                 <View style={{ marginHorizontal: 10,
-                    width: "40%",
+                    width: "34%",
                     marginTop: 10,
-                    borderRadius:4,}}>
-                    <DropDownPicker
-                        style={{minHeight:28,borderColor:'none',borderWidth:0, borderRadius:4}}
-                        open={open}
-                        value={value} 
-                        items={items}
-                        setOpen={setOpen}
-                        setValue={setValue}
-                        setItems={setItems}
-                        onChangeValue={onChange}
+                    borderRadius:6,
+                    backgroundColor:'white',
+                    marginLeft: 'auto'}}>
+                    <Dropdown
+                        style={styles.dropdown}
+                        //placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        //inputSearchStyle={styles.inputSearchStyle}
+                        value={value}
+                        iconStyle={styles.iconStyle}
+                        data={items}
+                        maxHeight={150}
+                        labelField="label"
+                        valueField="value"
+                        iconColor='rgba(57, 57, 57, 1)'
+                        // placeholder="Select item"
+                        //searchPlaceholder="Search..."
+                        // value={value}
+                        
+                        onChange={item => {
+                        setValue(item.value);
+                        }}
+                        //itemContainerStyle={{ height: 0 }} 
+                        itemTextStyle = {{color:'black',fontSize:11,fontFamily:'Poppins-Regular'}}
+                        containerStyle={styles.dropdownContainer}
                     />
                 </View>
-
             </View>
-            <Text style={styles.Text}>Total Orders</Text>
+            <Text style={styles.Text}>{t('totalorders')}</Text>
             <Text style={styles.number} >75</Text>
             <View>
-            {/* <BarChart
-                data={data}
-                width={barWidth}
-                height={240}
-                chartConfig={chartConfig}
-                style={{borderRadius:5,marginTop:27}}
-                yAxisInterval={5} 
-                // verticalLabelRotation={0}
-                // withVerticalLabels={true}
-                // withHorizontalLabels={true}
-                // yAxisInterval={5}
-            /> */}
              <BarChart
                 barWidth={12}
                 width={290}
@@ -183,10 +193,6 @@ const BarGraph = () => {
 const styles = StyleSheet.create({
     mainView: {
         backgroundColor: '#2B59C3',
-        // paddingRight: 20,
-        // paddingTop: 20,
-        // paddingBottom: 24,
-        // paddingLeft: 10,
         margin: 20,
         height: 290,
         width: '100%',
@@ -211,7 +217,7 @@ const styles = StyleSheet.create({
         marginTop:5
     },
     orderButton: {
-        width: '20%',
+        width: '15%',
         height: 28,
         backgroundColor: '#ffffff',
         alignItems: 'center',
@@ -220,7 +226,43 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginTop:10
 
-    }
+    },
+    dropdown: {
+        // margin: 10,
+        height: 30,
+        width:'100%'
+    },
+    placeholderStyle: {
+        fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 13,
+        marginLeft:5,
+        color:'rgba(57, 57, 57, 1)',
+        fontFamily:'Poppins-Regular'
+    },
+    iconStyle: {
+        width: 25,
+        height: 25,
+        marginRight:2,
+    },
+    dropdownContainer:{
+        // marginLeft:15,
+       //height:100
+        borderRadius:6
+    },
+    activeButton: {
+        backgroundColor: 'rgba(255, 255, 255, 0.5)', 
+    },
+    activeButtonText: {
+        color: 'white', // Change this to the desired active text color
+    },
+    buttonText: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 11,
+        color: '#393939',
+      },
+
 });
 
 export default BarGraph;

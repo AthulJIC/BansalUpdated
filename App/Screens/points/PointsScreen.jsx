@@ -5,10 +5,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 function PointsScreen(){
     return(
         <View style={styles.container}>
-            <SafeAreaView>
+            {/* <SafeAreaView> */}
             <LoyalityBonus/>
             <Transactions/>
-            </SafeAreaView>
+            {/* </SafeAreaView> */}
             
         </View>
     )
@@ -17,6 +17,8 @@ export default PointsScreen;
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'white',
+      backgroundColor: '#fff',
+      alignSelf:'center'
+    
     },
 })
