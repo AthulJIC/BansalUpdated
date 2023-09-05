@@ -3,8 +3,12 @@ import { TouchableOpacity, Text, StyleSheet, View, Picker,Dimensions } from 'rea
 import { Dropdown } from 'react-native-element-dropdown';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BarChart } from 'react-native-gifted-charts';
+import { useTranslation } from 'react-i18next';
 const BarGraph = ({role}) => {
     console.log('roleeee',role)
+
+
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState("Monthly");
     const [items, setItems] = useState([
@@ -27,6 +31,7 @@ const BarGraph = ({role}) => {
         {value: 5, label: 'Nov'},
         {value: 0.5, label: 'Dec'},
     ]
+    
     // const [chartParentWidth, setChartParentWidth] = useState(0);
     // const chartConfig = {
     //     backgroundGradientFrom: "#1E2923",
@@ -80,7 +85,7 @@ const BarGraph = ({role}) => {
                         styles.buttonText,
                         activeButton === 'Orders' && styles.activeButtonText,]}
                     >
-                    Orders
+                    {t('orders')}
                     </Text>
                 </TouchableOpacity>
 
@@ -132,23 +137,10 @@ const BarGraph = ({role}) => {
                         containerStyle={styles.dropdownContainer}
                     />
                 </View>
-
             </View>
-            <Text style={styles.Text}>Total Orders</Text>
+            <Text style={styles.Text}>{t('totalorders')}</Text>
             <Text style={styles.number} >75</Text>
             <View>
-            {/* <BarChart
-                data={data}
-                width={barWidth}
-                height={240}
-                chartConfig={chartConfig}
-                style={{borderRadius:5,marginTop:27}}
-                yAxisInterval={5} 
-                // verticalLabelRotation={0}
-                // withVerticalLabels={true}
-                // withHorizontalLabels={true}
-                // yAxisInterval={5}
-            /> */}
              <BarChart
                 barWidth={12}
                 width={290}
@@ -201,10 +193,6 @@ const BarGraph = ({role}) => {
 const styles = StyleSheet.create({
     mainView: {
         backgroundColor: '#2B59C3',
-        // paddingRight: 20,
-        // paddingTop: 20,
-        // paddingBottom: 24,
-        // paddingLeft: 10,
         margin: 20,
         height: 290,
         width: '100%',
