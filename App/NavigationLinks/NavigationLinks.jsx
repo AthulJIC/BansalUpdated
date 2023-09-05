@@ -171,7 +171,7 @@ const NavigationLinks = () => {
         ...TransitionPresets.SlideFromRightIOS,
         ...customSlideFromLeft,
       }}>
-         <Stack.Screen name="Profile" component={Profile} options={{ title: '' }} />
+         {/* <Stack.Screen name="Profile" component={Profile} options={{ title: '' }} /> */}
         <Stack.Screen name="Login" component={LoginScreen} 
             options={{
             headerShown: false, // Hide the header for Login screen
