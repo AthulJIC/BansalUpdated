@@ -1,0 +1,23 @@
+
+{
+    "LogIn":"Log In",
+    "greeting": "Welcome Back",
+    "buttonTextOne": "English",
+    "confirmButton":"Confirm",
+    "choose":"Choose",
+    "search":"Search",
+    "refer":"Refer Leads",
+    "bonus":"Loyality Bonus",
+    "points1":"Points will expire in ",
+    "points2":"Days",
+    "points3":"Pts",
+    "pending":"Pending Requests",
+    "orders":"Orders",
+    "totalorders":"Total Orders",
+    "monthly":"Monthly",
+    "weekly":"Weekly",
+    "yearly":"Yearly",
+    "points":"Points"
+
+  }
+  

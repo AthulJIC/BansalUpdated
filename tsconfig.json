@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx" // or "preserve" if you're not using React
+    // ... other compiler options ...
+    
+  }
+}

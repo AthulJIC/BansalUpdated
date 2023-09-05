@@ -1,4 +1,4 @@
-import {View,Text, Pressable,Animated,TextInput,TouchableOpacity, StyleSheet,FlatList,Image, ScrollView} from 'react-native'
+import { View, Text, Pressable, Animated, TextInput, TouchableOpacity, StyleSheet, FlatList, Image, ScrollView } from 'react-native'
 import DownArrowIcon from '../../../assets/Icon/DownArrowIcon';
 import Icon from 'react-native-vector-icons/Feather';
 import { useState } from 'react';
@@ -6,29 +6,30 @@ import BookmarkIcon from '../../../assets/Icon/BookmarkIcon';
 import { Dropdown } from 'react-native-element-dropdown';
 import Modal from 'react-native-modal'
 import ReferLead from '../../Components/ReferLead';
+import { useTranslation } from 'react-i18next';
 
 
 const data = [
-    { id: 1, name: 'John Nick', requestId: 458930},
-    { id: 2, name: 'Alice Park' , requestId: 458930 },
-    { id: 3, name: 'Bob Marley', requestId: 458930},
-    { id: 4, name: 'Eva Conklin', requestId: 458930},
+    { id: 1, name: 'John Nick', requestId: 458930 },
+    { id: 2, name: 'Alice Park', requestId: 458930 },
+    { id: 3, name: 'Bob Marley', requestId: 458930 },
+    { id: 4, name: 'Eva Conklin', requestId: 458930 },
     { id: 5, name: 'Michael John', requestId: 458930 },
-    { id: 6, name: 'Sophia Crystal', requestId: 458930},
-    { id: 7, name: 'David Warner', requestId: 458930},
+    { id: 6, name: 'Sophia Crystal', requestId: 458930 },
+    { id: 7, name: 'David Warner', requestId: 458930 },
     { id: 8, name: 'Olivia Steve', requestId: 458930 },
-    { id: 9, name: 'William Shakespeare', requestId: 458930},
-    { id: 10, name: 'Emma Watson', requestId: 458930},
-    { id: 11, name: 'Liam Marker', requestId: 458930},
-    { id: 12, name: 'Ava Trevor', requestId: 458930},
-    { id: 13, name: 'Noah William', requestId: 458930},
-    { id: 14, name: 'Isabella Steve', requestId: 458930},
-    { id: 15, name: 'James Bond', requestId: 458930},
-    { id: 16, name: 'Mia Nick', requestId: 458930},
-    { id: 17, name: 'Benjamin Conklin', requestId:458930},
+    { id: 9, name: 'William Shakespeare', requestId: 458930 },
+    { id: 10, name: 'Emma Watson', requestId: 458930 },
+    { id: 11, name: 'Liam Marker', requestId: 458930 },
+    { id: 12, name: 'Ava Trevor', requestId: 458930 },
+    { id: 13, name: 'Noah William', requestId: 458930 },
+    { id: 14, name: 'Isabella Steve', requestId: 458930 },
+    { id: 15, name: 'James Bond', requestId: 458930 },
+    { id: 16, name: 'Mia Nick', requestId: 458930 },
+    { id: 17, name: 'Benjamin Conklin', requestId: 458930 },
     { id: 18, name: 'Luna Marker', requestId: 458930 },
-    { id: 19, name: 'Lucas Cole', requestId: 458930},
-    { id: 20, name: 'Harper Mark', requestId: 458930},
+    { id: 19, name: 'Lucas Cole', requestId: 458930 },
+    { id: 20, name: 'Harper Mark', requestId: 458930 },
 ];
 const place = [
     { label: 'Gwalior, MP', value: '1' },
@@ -38,11 +39,12 @@ const place = [
     { label: 'Gwalior, MP', value: '5' },
     { label: 'Jabalpur, MP', value: '6' },
 
-  ];
-const OrderScreen =({navigation})=>{
+];
+const OrderScreen = ({ navigation }) => {
     const [searchText, setSearchText] = useState('');
     const [value, setValue] = useState(place[0]);
     const [modalVisible, setModalVisible] = useState(false);
+    const { t } = useTranslation();
     const modalItem = ({ item }) => {
         setName(item.name)
         setQuantity(item.requestId)
@@ -50,9 +52,9 @@ const OrderScreen =({navigation})=>{
 
     const HEADER_HEIGHT = 200;
     const scrollY = new Animated.Value(0);
-   function chooseHandler(item){
-        navigation.navigate('DistributorExpand',{ selectedItem: item })
-   }
+    function chooseHandler(item) {
+        navigation.navigate('DistributorExpand', { selectedItem: item })
+    }
     const requestData = ({ item }) => (
         <View style={[styles.card, styles.shadowProp]}>
             <Pressable>
@@ -64,86 +66,86 @@ const OrderScreen =({navigation})=>{
                 />
             </Pressable>
 
-            <View style={{width:'60%', height:88}}>
-                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                   <Text style={{fontFamily: 'Poppins-Medium', fontSize: 13,color:'rgba(177, 41, 44, 1)'}}> {item.requestId}</Text>
-                   <Pressable>
-                        <BookmarkIcon height={16} width={16} color='#393939'/>
-                   </Pressable>
+            <View style={{ width: '60%', height: 88 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: 'rgba(177, 41, 44, 1)' }}> {item.requestId}</Text>
+                    <Pressable>
+                        <BookmarkIcon height={16} width={16} color='#393939' />
+                    </Pressable>
 
                 </View>
-                <Text style={{fontFamily: 'Poppins-Medium', fontSize: 16,color:'rgba(57, 57, 57, 1)'}}> {item.name}</Text>
-                <Pressable style={styles.buttonReject} onPress={() =>chooseHandler(item)}>
-                    <Text style={styles.buttonText}>Choose</Text>
+                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 16, color: 'rgba(57, 57, 57, 1)' }}> {item.name}</Text>
+                <Pressable style={styles.buttonReject} onPress={() => chooseHandler(item)}>
+                    <Text style={styles.buttonText}>{t('choose')}</Text>
                 </Pressable>
             </View>
         </View>
-    ); 
+    );
     const closeModal = () => {
         setModalVisible(false);
     };
     const handleRefer = () => {
         // Perform navigation to another page
         navigation.navigate('ConfirmDetail');
-      };
+    };
     return (
-    <ScrollView style={{flex:1, backgroundColor:'white'}}>
-        <View style={{flexDirection:'row',marginTop:5,justifyContent:'space-between'}}>
-            <Dropdown
-                style={styles.dropdown}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={place}
-                search
-                maxHeight={200}
-                labelField="label"
-                valueField="value"
-                iconColor='rgba(57, 57, 57, 1)'
-                // placeholder="Select item"
-                searchPlaceholder="Search..."
-                value={value}
-                onChange={item => {
-                setValue(item.value);
-                }}
-                containerStyle={styles.dropdownContainer}
-            />
-            <Pressable style={{backgroundColor:'rgba(43, 89, 195, 1)', height:37, width:'30%',borderRadius:5,alignItems:'center',justifyContent:'center',marginRight:15,marginTop:7}}
-                onPress={() =>setModalVisible(true)}>
-                <Text style={{color:'white', fontSize:13, fontFamily:'Poppins-Regular'}}>Refer Leads</Text>
-            </Pressable> 
-        </View>
-        <Animated.View
-            style={[{
-            height: HEADER_HEIGHT,
-            marginTop: scrollY.interpolate({
-                inputRange: [0, HEADER_HEIGHT],
-                outputRange: [0, -HEADER_HEIGHT],
-                extrapolate: 'clamp',
-            }),
-            }, styles.container]}
-        >
-            <TextInput
-                style={styles.input}
-                placeholder="Search..."
-                placeholderTextColor={'rgba(132, 132, 132, 1)'}
-                onChangeText={text => setSearchText(text)}
-                value={searchText}
-            />
-            <TouchableOpacity>
-                <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
-            </TouchableOpacity>
-        </Animated.View>
-        <FlatList
-            data={data}
-            renderItem={requestData}
-            keyExtractor={(item) => item.name}
-            onScroll={Animated.event(
-                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                { useNativeDriver: false }
-            )}/>
-            <ReferLead isVisible={modalVisible} onClose={closeModal} onRefer={handleRefer}/>
+        <ScrollView style={{ flex: 1, backgroundColor: 'white' }}>
+            <View style={{ flexDirection: 'row', marginTop: 5, justifyContent: 'space-between' }}>
+                <Dropdown
+                    style={styles.dropdown}
+                    placeholderStyle={styles.placeholderStyle}
+                    selectedTextStyle={styles.selectedTextStyle}
+                    inputSearchStyle={styles.inputSearchStyle}
+                    iconStyle={styles.iconStyle}
+                    data={place}
+                    search
+                    maxHeight={200}
+                    labelField="label"
+                    valueField="value"
+                    iconColor='rgba(57, 57, 57, 1)'
+                    // placeholder="Select item"
+                    searchPlaceholder="Search..."
+                    value={value}
+                    onChange={item => {
+                        setValue(item.value);
+                    }}
+                    containerStyle={styles.dropdownContainer}
+                />
+                <Pressable style={{ backgroundColor: 'rgba(43, 89, 195, 1)', height: 37, width: '30%', borderRadius: 5, alignItems: 'center', justifyContent: 'center', marginRight: 15, marginTop: 7 }}
+                    onPress={() => setModalVisible(true)}>
+                    <Text style={{ color: 'white', fontSize: 13, fontFamily: 'Poppins-Regular' }}>{t('refer')}</Text>
+                </Pressable>
+            </View>
+            <Animated.View
+                style={[{
+                    height: HEADER_HEIGHT,
+                    marginTop: scrollY.interpolate({
+                        inputRange: [0, HEADER_HEIGHT],
+                        outputRange: [0, -HEADER_HEIGHT],
+                        extrapolate: 'clamp',
+                    }),
+                }, styles.container]}
+            >
+                <TextInput
+                    style={styles.input}
+                    placeholder={t('search') + '....'}
+                    placeholderTextColor={'rgba(132, 132, 132, 1)'}
+                    onChangeText={text => setSearchText(text)}
+                    value={searchText}
+                />
+                <TouchableOpacity>
+                    <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
+                </TouchableOpacity>
+            </Animated.View>
+            <FlatList
+                data={data}
+                renderItem={requestData}
+                keyExtractor={(item) => item.name}
+                onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                    { useNativeDriver: false }
+                )} />
+            <ReferLead isVisible={modalVisible} onClose={closeModal} onRefer={handleRefer} />
 
         </ScrollView>
     )
@@ -154,11 +156,11 @@ const styles = StyleSheet.create({
         // paddingTop: 24,
         // paddingLeft: 16,
         // paddingRight: 16,
-       // paddingBottom: 16,
+        // paddingBottom: 16,
         // width: 328,
         backgroundColor: '#ffffff',
-        
-        
+
+
     },
     container: {
         flexDirection: 'row',
@@ -172,10 +174,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         height: 48,
         backgroundColor: '#ffffff',
-        width:'90%',
-        alignSelf:'center',
-        marginTop:5,
-        marginBottom:20
+        width: '90%',
+        alignSelf: 'center',
+        marginTop: 5,
+        marginBottom: 20
 
     },
     subContainer: {
@@ -192,16 +194,16 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         height: 45,
-        width:'90%',
+        width: '90%',
         color: '#848484',
-        borderColor:'black',
-        borderWidth:0.5,
-        borderRadius:5,
-        alignSelf:'center',
-        marginTop:15,
-        paddingLeft:15,
-        fontFamily:'Poppins-Regular',
-        
+        borderColor: 'black',
+        borderWidth: 0.5,
+        borderRadius: 5,
+        alignSelf: 'center',
+        marginTop: 15,
+        paddingLeft: 15,
+        fontFamily: 'Poppins-Regular',
+
     },
     card: {
         backgroundColor: '#ffffff',
@@ -210,40 +212,40 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderRadius: 10,
         flexDirection: 'row',
-        marginBottom:17,
-        alignItems:'center',
-        alignSelf:'center',
-        justifyContent:'flex-start',
-        
-        
+        marginBottom: 17,
+        alignItems: 'center',
+        alignSelf: 'center',
+        justifyContent: 'flex-start',
+
+
     },
     centeredView: {
         marginTop: 22,
         width: '100%',
-        backgroundColor:'white',
-        height:650,
-        borderTopRightRadius:9,
-        borderTopLeftRadius:9
-        
-        
+        backgroundColor: 'white',
+        height: 650,
+        borderTopRightRadius: 9,
+        borderTopLeftRadius: 9
+
+
     },
     modalView: {
         // marginTop: 180,
-         //backgroundColor: 'white',
-         //borderRadius: 20,
-         padding: 16,
-         width: '100%',
-         height: '100%',
-         shadowColor: '#000',
-         shadowOffset: {
-             width: 0,
-             height: 2,
-         },
-         shadowOpacity: 0.25,
-         shadowRadius: 4,
-         elevation: 5,
-     },
-     Modalcard: {
+        //backgroundColor: 'white',
+        //borderRadius: 20,
+        padding: 16,
+        width: '100%',
+        height: '100%',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    Modalcard: {
         backgroundColor: '#ffffff', // Customize button style as needed
         // padding: 10,
         height: 130,
@@ -255,11 +257,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         // justifyContent: 'flex-start',
         // alignItems:'center',
-        alignItems:'center',
+        alignItems: 'center',
         borderRadius: 10,
         flexDirection: 'row',
         marginTop: 18,
-        alignSelf:'center'
+        alignSelf: 'center'
     },
     shadowProp: {
         shadowColor: '#171717',
@@ -287,34 +289,34 @@ const styles = StyleSheet.create({
         width: 80,
         height: 90,
         borderRadius: 8,
-        marginLeft:10,
-        marginHorizontal:20
+        marginLeft: 10,
+        marginHorizontal: 20
     },
     dropdown: {
         // margin: 10,
         height: 50,
-        width:'50%'
+        width: '50%'
     },
     placeholderStyle: {
         fontSize: 16,
     },
     selectedTextStyle: {
         fontSize: 16,
-        marginLeft:20,
-        color:'rgba(57, 57, 57, 1)',
-        fontFamily:'Poppins-Regular'
+        marginLeft: 20,
+        color: 'rgba(57, 57, 57, 1)',
+        fontFamily: 'Poppins-Regular'
     },
     iconStyle: {
         width: 25,
         height: 25,
-        marginRight:29,
+        marginRight: 29,
     },
     inputSearchStyle: {
         height: 40,
         fontSize: 16,
     },
-    dropdownContainer:{
-        marginLeft:15,
+    dropdownContainer: {
+        marginLeft: 15,
     },
     modalButtonContainer: {
         width: '95%',
@@ -322,7 +324,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'absolute',
         bottom: 20,
-        alignSelf:'center'
-      }
+        alignSelf: 'center'
+    }
 })
 export default OrderScreen

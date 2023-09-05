@@ -1,7 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 const PendingRequest = () => {
+    const { t } = useTranslation();
     const handleButtonPress = () => {
         // Navigate to the specified route when the button is pressed
         navigation.navigate(label);
@@ -9,7 +11,7 @@ const PendingRequest = () => {
 
     return (
         <View style={styles.mainView} onPress={handleButtonPress}>
-            <Text style={styles.Text}>Pending Requests</Text>
+            <Text style={styles.Text}>{t('pending')}</Text>
             <Text style={styles.number} >5</Text>
         </View>
     );
