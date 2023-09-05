@@ -2,26 +2,30 @@ import { useEffect, useState } from "react";
 import { Animated, Button, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { BarChart } from "react-native-gifted-charts";
 import ProgressBar from 'react-native-progress/Bar';
+import { useTranslation } from 'react-i18next';
+import React from "react";
 
 const barData = [
     {value: 1, label: 'Jan'},
    
 ]
-const LoyalityBonus = () => {
+const LoyalityBonus = ():JSX.Element => {
     const [progress] = useState(new Animated.Value(0));
+    const { t } = useTranslation();
     useEffect(() => {
       Animated.timing(progress, {
         toValue: 500,
         duration: 1000,
+        useNativeDriver: false
       }).start();
     }, []);
   
     return (
       <View style={styles.mainContainer}>
-        <Text style={styles.textStyle}>Loyalty Balance</Text>
+        <Text style={styles.textStyle}>{t('bonus')}</Text>
         <View>
-          <Text style={styles.points}>2000 Pts</Text>
-          <Text style={styles.expire}>Pts will expire in 240 days</Text>
+          <Text style={styles.points}>{'2000 ' + t('points3')}</Text>
+          <Text style={styles.expire}>{t('points1') +'  240 ' +t('points2') }</Text>
         </View>
         {/* <View>
           <View style={styles.container}>
@@ -29,8 +33,8 @@ const LoyalityBonus = () => {
           </View>
         </View> */}
          <View style={{justifyContent:'center',marginTop:55}}>
-            <Text style={{marginLeft:245,fontSize:9.26,fontWeight:'400',
-            color:'#FFFFFF',lineHeight:14,fontFamily:'Poppins-Regular'}}>+12000Pts</Text> 
+            <Text style={{marginLeft:220,fontSize:9.26,fontWeight:'400',
+            color:'#FFFFFF',lineHeight:14,fontFamily:'Poppins-Regular'}}>{'+12000 '+ t('points3')}</Text> 
       <ProgressBar progress={0.5} width={300}height={16} color='#F18C13' borderRadius={22} backgroundColor='#ffffff'/>
     </View>
       </View>
@@ -41,14 +45,14 @@ const styles = StyleSheet.create({
     mainContainer: {
       backgroundColor: '#B1292C',
       height:200,
-      width:'328',
-      padding:20,
-      margin:20,
+      width:'90%',
       paddingLeft:20,
-      paddingTopL:20,
+      paddingTop:20,
       paddingRight:24,
       paddingBottom:20,
-      borderRadius:10
+      borderRadius:10,
+      alignSelf:'center', 
+      marginTop:10
     },
     textStyle:{
         fontFamily:'Poppins-Medium',

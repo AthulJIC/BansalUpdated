@@ -7,6 +7,7 @@ export const useAppContext = () => useContext(AppContext);
 export const AppProvider = ({ children }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
+  const [language, setLanguage] = useState(' '); // Default language is English
 
   const updateUserDetails = (userData) => {
     setUserDetails(userData);
@@ -16,6 +17,10 @@ export const AppProvider = ({ children }) => {
     setSelectedProduct(productData);
   };
 
+  const changeLanguage = (newLanguage) => {
+    setLanguage(newLanguage);
+  };
+ console.log('i18',language)
   return (
     <AppContext.Provider
       value={{
@@ -23,6 +28,8 @@ export const AppProvider = ({ children }) => {
         updateSelectedProduct,
         userDetails,
         updateUserDetails,
+        language,
+        changeLanguage,
       }}
     >
       {children}

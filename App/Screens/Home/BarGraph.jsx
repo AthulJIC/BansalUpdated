@@ -3,13 +3,15 @@ import { TouchableOpacity, Text, StyleSheet, View, Picker,Dimensions } from 'rea
 import DropDownPicker from 'react-native-dropdown-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BarChart } from 'react-native-gifted-charts';
+import { useTranslation } from 'react-i18next';
 const BarGraph = () => {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState('Monthly');
     const [items, setItems] = useState([
-        { label: 'Weekly', value: 'Weekly' },
-        { label: 'Yearly', value: 'Yearly' },
-        { label: 'Monthly', value: 'Monthly'}
+        { label:  t('weekly'), value: 'Weekly' },
+        { label: t('yearly'), value: 'Yearly' },
+        { label:  t('monthly'), value: 'Monthly'}
     ]);
     const barData = [
         {value: 1, label: 'Jan'},
@@ -25,6 +27,7 @@ const BarGraph = () => {
         {value: 5, label: 'Nov'},
         {value: 0.5, label: 'Dec'},
     ]
+    
     // const [chartParentWidth, setChartParentWidth] = useState(0);
     // const chartConfig = {
     //     backgroundGradientFrom: "#1E2923",
@@ -65,40 +68,9 @@ const BarGraph = () => {
             <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent:'space-between'}}>
                 <TouchableOpacity style={styles.orderButton}>
                     <Text style={{fontFamily: 'Poppins', fontWeight: '600', fontSize: 14, color: '#393939'}}>
-                        Orders
+                       {t('orders')}
                     </Text>
                 </TouchableOpacity>
-                {/* <DropDownPicker
-                    placeholder="Monthly"
-                    open={open}
-                    value={value}
-                    items={items}
-                    setOpen={setOpen}
-                    setValue={setValue}
-                    setItems={setItems}
-                    style={{
-                        // width:'40%',
-                        // minHeight:30,
-                        // borderColor: 'none',
-                        // borderWidth: 0,
-                        // borderRadius: 4,
-                        // fontFamily: 'Poppins',
-                        // fontWeight: '400',
-                        // fontSize: 11.11,
-                        // color: '#393939',
-                        // position:'absolute',
-                        width: '40%',
-    minHeight: 10,
-    borderColor: 'none',
-    borderWidth: 0,
-    borderRadius: 4,
-    fontFamily: 'Poppins',
-    fontWeight: '400',
-    fontSize: 11.11,
-    color: '#393939',
-    position:'absolute'
-                    }}
-                /> */}
                 <View style={{ marginHorizontal: 10,
                     width: "40%",
                     marginTop: 10,
@@ -114,23 +86,10 @@ const BarGraph = () => {
                         onChangeValue={onChange}
                     />
                 </View>
-
             </View>
-            <Text style={styles.Text}>Total Orders</Text>
+            <Text style={styles.Text}>{t('totalorders')}</Text>
             <Text style={styles.number} >75</Text>
             <View>
-            {/* <BarChart
-                data={data}
-                width={barWidth}
-                height={240}
-                chartConfig={chartConfig}
-                style={{borderRadius:5,marginTop:27}}
-                yAxisInterval={5} 
-                // verticalLabelRotation={0}
-                // withVerticalLabels={true}
-                // withHorizontalLabels={true}
-                // yAxisInterval={5}
-            /> */}
              <BarChart
                 barWidth={12}
                 width={290}
@@ -183,10 +142,6 @@ const BarGraph = () => {
 const styles = StyleSheet.create({
     mainView: {
         backgroundColor: '#2B59C3',
-        // paddingRight: 20,
-        // paddingTop: 20,
-        // paddingBottom: 24,
-        // paddingLeft: 10,
         margin: 20,
         height: 290,
         width: '100%',

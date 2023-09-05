@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import CheckmarkIcon from '../../../assets/Icon/CheckMark';
+import { useAppContext } from '../../context/AppContext';
 
 const Notification = () => {
+     
     const handleButtonPress = () => {
         // Navigate to the specified route when the button is pressed
         navigation.navigate(label);
     };
-
     return (
         <View style={styles.container}>
             <View style={styles.iconContainer}>

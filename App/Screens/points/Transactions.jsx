@@ -83,7 +83,9 @@ const Transactions=()=>{
               <View style={{flexDirection:'row',justifyContent:'flex-start'}}>
               <Text  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Regular'}}>{itemData.item.name}</Text>            
               <Text style={{  fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:5,marginHorizontal:5}}>{'\u2B24'}</Text>
-              <Text style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular'}}>{itemData.item.requestId} Tons</Text>
+              <Text style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular'}}>{`${itemData.item.requestId}  string text`}
+                {/* `${itemData.item.requestId}` Tons */}
+                </Text>
               </View>
               <View style={{flexDirection:'row',flexWrap: 'nowrap'}}>
                 <Text style={{marginHorizontal:3,fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{itemData.item.date}</Text>
