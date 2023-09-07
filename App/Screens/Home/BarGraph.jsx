@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Picker,Dimensions } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { Dropdown } from 'react-native-element-dropdown';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BarChart } from 'react-native-gifted-charts';
 import { useTranslation } from 'react-i18next';
-const BarGraph = () => {
+const BarGraph = ({role}) => {
+    console.log('roleeee',role)
+
+
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState('Monthly');
+    const [value, setValue] = useState("Monthly");
     const [items, setItems] = useState([
-        { label:  t('weekly'), value: 'Weekly' },
-        { label: t('yearly'), value: 'Yearly' },
-        { label:  t('monthly'), value: 'Monthly'}
+        { label: 'Weekly', value: "Weekly" },
+        { label: 'Yearly', value: 'Yearly' },
+        { label: 'Monthly', value: 'Monthly'}
     ]);
+    const [activeButton, setActiveButton] = useState('Orders');
     const barData = [
         {value: 1, label: 'Jan'},
         {value: 4, label: 'Feb'},
@@ -62,28 +66,75 @@ const BarGraph = () => {
     function onChange(){
 
     }
-
+    const handleButton = (buttonName) => {
+        setActiveButton(buttonName);
+        // Handle button press actions here
+      };
     return (
         <View style={styles.mainView} onPress={handleButtonPress}>
-            <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent:'space-between'}}>
-                <TouchableOpacity style={styles.orderButton}>
-                    <Text style={{fontFamily: 'Poppins', fontWeight: '600', fontSize: 14, color: '#393939'}}>
-                       {t('orders')}
+            <View style={{ flexDirection: 'row',alignItems: 'center'}}>
+                <TouchableOpacity
+                    style={[
+                        styles.orderButton,
+                        activeButton === 'Orders' && styles.activeButton,
+                      ]}
+                      onPress={() => handleButton('Orders')}
+                >
+                    <Text
+                    style={[
+                        styles.buttonText,
+                        activeButton === 'Orders' && styles.activeButtonText,]}
+                    >
+                    {t('orders')}
                     </Text>
                 </TouchableOpacity>
+
+                {role !== 'Distributor' && (
+                    <TouchableOpacity
+                    style={[
+                        styles.orderButton,
+                        activeButton === 'Points' && styles.activeButton,
+                      ]}
+                      onPress={() => handleButton('Points')}
+                    >
+                    <Text
+                        style={[
+                            styles.buttonText,
+                            activeButton === 'Points' && styles.activeButtonText,
+                          ]}
+                    >
+                        Points
+                    </Text>
+                    </TouchableOpacity>
+                )}
                 <View style={{ marginHorizontal: 10,
-                    width: "40%",
+                    width: "34%",
                     marginTop: 10,
-                    borderRadius:4,}}>
-                    <DropDownPicker
-                        style={{minHeight:28,borderColor:'none',borderWidth:0, borderRadius:4}}
-                        open={open}
-                        value={value} 
-                        items={items}
-                        setOpen={setOpen}
-                        setValue={setValue}
-                        setItems={setItems}
-                        onChangeValue={onChange}
+                    borderRadius:6,
+                    backgroundColor:'white',
+                    marginLeft: 'auto'}}>
+                    <Dropdown
+                        style={styles.dropdown}
+                        //placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        //inputSearchStyle={styles.inputSearchStyle}
+                        value={value}
+                        iconStyle={styles.iconStyle}
+                        data={items}
+                        maxHeight={150}
+                        labelField="label"
+                        valueField="value"
+                        iconColor='rgba(57, 57, 57, 1)'
+                        // placeholder="Select item"
+                        //searchPlaceholder="Search..."
+                        // value={value}
+                        
+                        onChange={item => {
+                        setValue(item.value);
+                        }}
+                        //itemContainerStyle={{ height: 0 }} 
+                        itemTextStyle = {{color:'black',fontSize:11,fontFamily:'Poppins-Regular'}}
+                        containerStyle={styles.dropdownContainer}
                     />
                 </View>
             </View>
@@ -166,7 +217,7 @@ const styles = StyleSheet.create({
         marginTop:5
     },
     orderButton: {
-        width: '20%',
+        width: '15%',
         height: 28,
         backgroundColor: '#ffffff',
         alignItems: 'center',
@@ -175,7 +226,43 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginTop:10
 
-    }
+    },
+    dropdown: {
+        // margin: 10,
+        height: 30,
+        width:'100%'
+    },
+    placeholderStyle: {
+        fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 13,
+        marginLeft:5,
+        color:'rgba(57, 57, 57, 1)',
+        fontFamily:'Poppins-Regular'
+    },
+    iconStyle: {
+        width: 25,
+        height: 25,
+        marginRight:2,
+    },
+    dropdownContainer:{
+        // marginLeft:15,
+       //height:100
+        borderRadius:6
+    },
+    activeButton: {
+        backgroundColor: 'rgba(255, 255, 255, 0.5)', 
+    },
+    activeButtonText: {
+        color: 'white', // Change this to the desired active text color
+    },
+    buttonText: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 11,
+        color: '#393939',
+      },
+
 });
 
 export default BarGraph;

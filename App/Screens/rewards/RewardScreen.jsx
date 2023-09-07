@@ -5,9 +5,10 @@ import Modal  from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Feather';
 import { ScrollView } from 'react-native-gesture-handler';
 import AddressList from './Address';
-import { useAppContext } from '../../context/AppContext';
 import { useNavigation } from '@react-navigation/native';
+
 import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../../context/AppContext';
 const productsArray = [
     {
       name: "Product A",
@@ -69,6 +70,8 @@ const RewardScreen =(r)=>{
   const [points,setItemPoints]=useState('')
   const [details,setDetails]=useState('')
   const { userDetails, updateUserDetails, updateSelectedProduct } = useAppContext();
+
+ 
   const navigation = useNavigation();
   const { t } = useTranslation();
   const itemModal=(item)=>{
@@ -81,11 +84,9 @@ const RewardScreen =(r)=>{
     const updatedUserDetails = {
       ...userDetails,
       redeemedProducts: [...(userDetails?.redeemedProducts || []), itemName],
-    };
-    updateUserDetails(updatedUserDetails);
-    navigation.navigate("AddressList",{
-      fromProfile: false,
-  });
+      };
+      updateUserDetails(updatedUserDetails);
+      navigation.navigate('IdVerification')
     setModalVisible(false)
   }
     const renderCard = ({ item }) => (

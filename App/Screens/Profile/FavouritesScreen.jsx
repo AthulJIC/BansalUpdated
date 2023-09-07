@@ -2,9 +2,11 @@ import { Text, View ,ScrollView,FlatList,Animated,StyleSheet,Pressable,Image} fr
 import ReferLead from "../rewards/addressForm";
 import { useState } from "react";
 import BookMarkActiveIcon from "../../../assets/Icon/BookmarkActiveIcon";
+import BookmarkIcon from "../../../assets/Icon/BookmarkIcon";
 
 function FavouritesScreen({navigation}){
     const [modalVisible, setModalVisible] = useState(false);
+    const [bookmarkedItems, setBookmarkedItems] = useState([]);
     const data = [
         { id: 1, name: 'John Nick', requestId: 458930},
         { id: 2, name: 'Alice Park' , requestId: 458930 },
@@ -39,32 +41,46 @@ function FavouritesScreen({navigation}){
         // Perform navigation to another page
         navigation.navigate('ConfirmDetail');
       };
-    const requestData = ({ item }) => (
-        <View style={[styles.card, styles.shadowProp]}>
-            <Pressable>
-                <Image
-                    style={styles.tinyLogo}
-                    source={require('../../../assets/Images/Man.jpg')}
-                    resizeMode='cover'
+      function bookmarkHandler(itemId){
+        if (bookmarkedItems.includes(itemId)) {
+            setBookmarkedItems(bookmarkedItems.filter(id => id !== itemId));
+          } else {
+            setBookmarkedItems([...bookmarkedItems, itemId]);
+          }
+       }
+    const requestData = ({ item }) => {
+        const isBookmarked = bookmarkedItems.includes(item.id);
+        return(
 
-                />
-            </Pressable>
+            <View style={[styles.card, styles.shadowProp]}>
+                <Pressable>
+                    <Image
+                        style={styles.tinyLogo}
+                        source={require('../../../assets/Images/Man.jpg')}
+                        resizeMode='cover'
 
-            <View style={{width:'60%', height:88}}>
-                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                   <Text style={{fontFamily: 'Poppins-Medium', fontSize: 13,color:'rgba(177, 41, 44, 1)'}}> {item.requestId}</Text>
-                   <Pressable>
-                        <BookMarkActiveIcon  height={16} width={16} color='rgba(127, 176, 105, 1)'/>
-                   </Pressable>
-
-                </View>
-                <Text style={{fontFamily: 'Poppins-Medium', fontSize: 16,color:'rgba(57, 57, 57, 1)'}}> {item.name}</Text>
-                <Pressable style={styles.buttonReject} onPress={() =>chooseHandler(item)}>
-                    <Text style={styles.buttonText}>Choose</Text>
+                    />
                 </Pressable>
+
+                <View style={{width:'60%', height:88}}>
+                    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                        <Text style={{fontFamily: 'Poppins-Medium', fontSize: 13,color:'rgba(177, 41, 44, 1)'}}> {item.requestId}</Text>
+                        <Pressable onPress={() => bookmarkHandler(item.id)}>
+                        {!isBookmarked ?
+                            (<BookmarkIcon height={16} width={16} color='#393939'/>) : 
+                            <BookMarkActiveIcon height={17} width={17} color='rgba(127, 176, 105, 1)'/>
+                        }                    
+                        </Pressable>
+
+                    </View>
+                    <Text style={{fontFamily: 'Poppins-Medium', fontSize: 16,color:'rgba(57, 57, 57, 1)'}}> {item.name}</Text>
+                    <Pressable style={styles.buttonReject} onPress={() =>chooseHandler(item)}>
+                        <Text style={styles.buttonText}>Choose</Text>
+                    </Pressable>
+                </View>
             </View>
-        </View>
-    ); 
+        )
+    }; 
     return(
         <View style={{flex:1, backgroundColor:'white'}}>
         <FlatList

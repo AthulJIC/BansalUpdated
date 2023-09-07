@@ -44,7 +44,7 @@ const ConfirmPage=({route,navigation})=>{
          </View>
         <View style={[styles.card, styles.shadowProp]}>
           <View style={{ justifyContent: 'center'}}>
-                <Text style={{ marginLeft: 20, fontFamily: 'Poppins-Medium', fontSize: 16, color: '3939' }}>{addressItem.name}</Text>
+                <Text style={{ marginLeft: 20, fontFamily: 'Poppins-Medium', fontSize: 16, color: '#393939' }}>{addressItem.name}</Text>
                 <View style={styles.subContainer}>
                     <View style={{width:'85%'}}>
                     <Text style={{
@@ -59,7 +59,7 @@ const ConfirmPage=({route,navigation})=>{
             </View>
         </View>
         <View style={styles.modalButtonContainer}>
-                <Pressable onPress={()=>{redirect();}} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
+                <Pressable onPress={()=>{navigation.navigate('Success',{title: 'Reward redemption Successful'})}} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                     <Text style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
                        Confirm
                     </Text>
