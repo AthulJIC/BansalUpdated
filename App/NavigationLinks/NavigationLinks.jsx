@@ -47,7 +47,7 @@ import { useRef } from 'react';
 import FavouritesScreen from '../Screens/Profile/FavouritesScreen';
 
 
-import Language from '../Language/LanguageSwitch';
+
 
 
 const Tab = createBottomTabNavigator();

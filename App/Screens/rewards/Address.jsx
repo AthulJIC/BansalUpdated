@@ -6,6 +6,7 @@ import ArrowIcon from '../../../assets/Icon/Arrow';
 import EditIcon from '../../../assets/Icon/Edit';
 import CheckBox from '@react-native-community/checkbox';
 import { useNavigation,getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const addresses = [
   {
@@ -45,6 +46,7 @@ const AddressList = ({navigation,route}) => {
   const [states, setStates] = useState('')
   const [removeButton, setRemoveButton] = useState(false)
   const [rememberSelect, setrememberSelect] = useState(false)
+  const { t } = useTranslation();
   const selectAddress = (addressId) => {
     setSelectedAddress(addressId);
   };
@@ -76,7 +78,7 @@ const AddressList = ({navigation,route}) => {
   return (
     <View style={{ backgroundColor: '#ffffff', height: '100%', borderRadius: 8 }}>
       <TouchableOpacity onPress={() => { setVisible(true); setRemoveButton(false) }} style={styles.addaddressItem}>
-        <Text>Add New Address</Text>
+        <Text>{t('address')}</Text>
         <ArrowIcon width={24} height={24} color="#393939" />
       </TouchableOpacity>
       <FlatList
@@ -88,7 +90,7 @@ const AddressList = ({navigation,route}) => {
         { !data && 
           <Pressable onPress={()=>{navigation.navigate('Confirm',{addressItem})}} style={{ marginBottom: 10, borderRadius: 5, width: '90%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
             <Text style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
-              Continue
+             {t('continueButton')}
             </Text>
           </Pressable>
         }
@@ -115,56 +117,56 @@ const AddressList = ({navigation,route}) => {
                 </TouchableOpacity>
                 <TextInput
                   style={styles.inputContainer}
-                  placeholder="Name"
+                  placeholder={t("name")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setName(text)}
                   value={name}
                 />
                 <TextInput
                   style={styles.inputContainer}
-                  placeholder="Mobile Number"
+                  placeholder={t('mobile')}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setMobileNo(text)}
                   value={mobileNo}
                 />
                 <TextInput
                   style={styles.inputContainer}
-                  placeholder="Flat/House no/Floor/Building"
+                  placeholder={t("house")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setLocation(text)}
                   value={location}
                 />
                 <TextInput
                   style={styles.inputContainer}
-                  placeholder="Area/Street/Sector/Village"
+                  placeholder={t('area')}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setQuantity(text)}
                   value={quantity}
                 />
                 <TextInput
                   style={styles.inputContainer}
-                  placeholder="Landmark"
+                  placeholder={t("landMark")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setLandMark(text)}
                   value={quantity}
                 />
                 <TextInput
                   style={styles.inputContainer}
-                  placeholder="Pin Code"
+                  placeholder={t("pin")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setPinCode(text)}
                   value={pinCode}
                 />
                 <TextInput
                   style={styles.inputContainer}
-                  placeholder="Town/City"
+                  placeholder={t("town")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setTown(text)}
                   value={quantity}
                 />
                 <TextInput
                   style={styles.inputContainer}
-                  placeholder="State"
+                  placeholder={t("state")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setStates(text)}
                   value={quantity}
@@ -177,7 +179,7 @@ const AddressList = ({navigation,route}) => {
                     boxType='square'
                     tintColors={{ true: 'rgba(43, 89, 195, 1)', false: 'gray' }}
                   />
-                  <Text style={styles.label}>Set As Default</Text>
+                  <Text style={styles.label}>{t('default')}</Text>
                 </View>
                 <View style={{marginTop:75}}>
                   {removeButton == true ?

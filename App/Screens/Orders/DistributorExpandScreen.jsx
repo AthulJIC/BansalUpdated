@@ -4,14 +4,16 @@ import Modal from 'react-native-modal'
 import { useState } from "react";
 import Icon from 'react-native-vector-icons/Feather';
 import ProductPopup from "./ProductPopup";
-
+import { useTranslation } from 'react-i18next';
 
 function DistributorExpandScreen({navigation, route}){
+
     const { selectedItem } = route?.params;
     console.log('selected', selectedItem)
     const [name, setName] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const description = 'TMT Sariya are reinforced bars having a tough outer core and a soft inner core used in all types of general and heavy construction including building, infrastructural projects, housing projects, dams, bridges & houses.'
+    const { t } = useTranslation();
     const handleRefer = () => {
         // Perform navigation to another page
         navigation.navigate('ConfirmPurchase',{selectedItem:selectedItem});
@@ -39,7 +41,7 @@ function DistributorExpandScreen({navigation, route}){
                     <Text style={{fontSize:16, color:'rgba(57, 57, 57, 1)', fontFamily:'Poppins-Medium',marginLeft:10,marginTop:7}}>TMT Bars</Text>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: 'rgba(132, 132, 132, 1)', width: '85%',fontSize:11,fontFamily:'Poppins-Regular',marginLeft:10}}>{description}</Text>
                     <Pressable style={styles.buttonReject} onPress={() => setModalVisible(true)}>
-                       <Text style={styles.buttonText}>Choose</Text>
+                       <Text style={styles.buttonText}>{t('choose')}</Text>
                     </Pressable>
                 </View>
             </View>
