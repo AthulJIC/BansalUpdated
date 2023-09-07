@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, View,Pressable,StyleSheet,PermissionsAndroid } from "react-native";
+import { Text, View,Pressable,StyleSheet,PermissionsAndroid,TextInput } from "react-native";
 import {launchCamera} from 'react-native-image-picker'
 import LoadingIndicator from "../../Components/LoadingIndicator";
 import { Dropdown } from 'react-native-element-dropdown';
@@ -13,6 +13,8 @@ function IdVerificationScreen({navigation}){
       { label: 'Aadhar Card', value: "1" },
       { label: 'Pan Card', value: '2' },
   ]);
+  const [name, setName] = useState('');
+  const [mobileNo, setMobileNo] = useState('');
 
     const handleButtonPress = (buttonName) => {
       setActiveButton(buttonName);
@@ -123,6 +125,20 @@ function IdVerificationScreen({navigation}){
                         containerStyle={styles.dropdownContainer}
                     />
                 </View>
+                <TextInput
+                  style={styles.inputContainer}
+                  placeholder="Name On ID"
+                  placeholderTextColor={'rgba(132, 132, 132, 1)'}
+                  onChangeText={text => setName(text)}
+                  value={name}
+                />
+                <TextInput
+                  style={styles.inputContainer}
+                  placeholder="ID Number"
+                  placeholderTextColor={'rgba(132, 132, 132, 1)'}
+                  onChangeText={text => setMobileNo(text)}
+                  value={mobileNo}
+                />
             </View>
             <Pressable style={{width:'95%', backgroundColor:'rgba(177, 41, 44, 1)',height:50,alignItems:'center',justifyContent:'center',alignSelf:'center',bottom:15, borderRadius:5}} onPress={handleCameraLaunch}>
                 <Text style={{color:'rgba(255, 255, 255, 1)',fontSize:16, fontFamily:'Poppins-Medium', }}>Continue</Text>
@@ -179,5 +195,18 @@ dropdownContainer:{
    //height:100
     borderRadius:6
 },
+inputContainer: {
+    height: 45,
+    width: '95%', // Set width to 100% to occupy the whole screen
+    color: 'rgba(57, 57, 57, 1)',
+    borderColor: 'rgba(132, 132, 132, 1)',
+    borderWidth: 1,
+    borderRadius: 5,
+    alignSelf: 'center',
+    marginTop: 20,
+    paddingLeft: 15,
+    fontFamily: 'Poppins-Regular',
+    
+  },
 })
 export default IdVerificationScreen;
