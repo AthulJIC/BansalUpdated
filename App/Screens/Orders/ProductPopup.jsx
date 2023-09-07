@@ -2,10 +2,12 @@ import { useState } from "react";
 import { View,TouchableOpacity, TextInput,Pressable,Text, StyleSheet, KeyboardAvoidingView,ScrollView, Image } from "react-native";
 import  Modal  from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
+import { useTranslation } from 'react-i18next';
 
 function ProductPopup({isVisible, onClose, onRefer})
 {
     const [name, setName] = useState('');
+    const { t } = useTranslation();
     function handleRef(){
         if (onRefer) {
             onRefer();
@@ -40,10 +42,10 @@ function ProductPopup({isVisible, onClose, onRefer})
                         <Text style={{fontSize:16, color:'rgba(57, 57, 57, 1)', fontFamily:'Poppins-Medium',marginLeft:5,marginTop:17}}>TMT Bars</Text>
                         <Text style={{ color: 'rgba(132, 132, 132, 1)',fontSize:13,fontFamily:'Poppins-Regular',marginLeft:5}}>{description}</Text>
                         <View>
-                            <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:16, fontFamily:'Poppins-Medium', marginTop:8}}>Quantity</Text>
+                            <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:16, fontFamily:'Poppins-Medium', marginTop:8}}>{t('quantity')}</Text>
                             <TextInput
                                 style={styles.inputContainer}
-                                placeholder="Required Quantity In Ton"
+                                placeholder={t('Qinput')}
                                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                                 onChangeText={text => setName(text)}
                                 value={name}  
@@ -53,7 +55,7 @@ function ProductPopup({isVisible, onClose, onRefer})
                             <Pressable style={styles.referButton}
                             onPress={handleRef} >
                                 <Text style={styles.referButtonText}>
-                                Purchase Request
+                                {t('purchase')}
                                 </Text>
                             </Pressable>
                         </View>

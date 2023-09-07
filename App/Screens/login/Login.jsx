@@ -1,11 +1,41 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet,ImageBackground,ScrollView,TouchableOpacity, Pressable} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
+import { useTranslation } from 'react-i18next';
+import Config from '../../Config/config';
+import axios from 'axios';
+const apiUrl = `${Config.API_BASE_URL}`
+console.log("apiUrl",apiUrl)
 const LoginPage = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isSelected, setSelection] = useState(false);
   const [rememberSelect,setrememberSelect]=useState(false)
+  const { t } = useTranslation();
+  
+  const LoginAPI=()=>{
+    axios.post(apiUrl + "/api/token/",
+    {
+      email: "john@example.com",
+      password: "john",
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any other headers if required
+        Authorization:`Bearer`
+      },
+    }
+    )
+    .then(response => {
+      // Handle successful response here
+      console.log('Response Data:', response.data);
+    })
+    .catch(error => {
+      // Handle error here
+      console.error('Error:', error);
+    });
+  }
   const handleLogin = () => {
     navigation.navigate('Roles');
     console.log('pressed')
@@ -20,16 +50,16 @@ const LoginPage = ({navigation}) => {
         source={require('../../../assets/Images/Login.gif')} // Replace with your actual GIF path
         style={styles.backgroundImage}>
      <View style={styles.inputContainer}>
-     <Text style={styles.LoginText}>Log In</Text>
+     <Text style={styles.LoginText}>{t('login')}</Text>
       <TextInput
-       placeholder="Unique ID/Login ID"
+       placeholder={t('unique') + " / " + t('login')}
        placeholderTextColor="white" 
        value={username}
        onChangeText={setUsername}
        style={styles.input}
       />
      <TextInput
-        placeholder="Password"
+        placeholder={t('password')}
         value={password}
         onChangeText={setPassword}
         placeholderTextColor="white" 
@@ -44,7 +74,7 @@ const LoginPage = ({navigation}) => {
           boxType='square'
           tintColors={{ true: 'rgba(43, 89, 195, 1)', false: 'gray' }}
         />
-        <Text style={styles.label}>I agree to the <Text style={{textDecorationLine: 'underline',fontFamily:'Poppins-Regular'}}>Terms And Condition</Text></Text>
+        <Text style={styles.label}>{t('agree')} <Text style={{textDecorationLine: 'underline',fontFamily:'Poppins-Regular'}}>{t('terms')}</Text></Text>
       </View>
       <View style={styles.checkboxContainer}>
         <CheckBox
@@ -54,15 +84,15 @@ const LoginPage = ({navigation}) => {
           boxType='square'
           tintColors={{ true: 'rgba(43, 89, 195, 1)', false: 'gray' }}
         />
-        <Text style={styles.label}>Remember me</Text>
+        <Text style={styles.label}>{t('remember')}</Text>
         </View>
         <View style={{marginTop:12,flexDirection:'column', justifyContent:'center'}}>
-      <Pressable style={styles.button} onPress={handleLogin}>
-      <Text  style={styles.buttonText}>Login</Text>
+      <Pressable style={styles.button} onPress={()=>{handleLogin();LoginAPI()}}>
+      <Text  style={styles.buttonText}>{t('loginButton')}</Text>
        </Pressable>
       
        <Pressable style={{ alignItems:'center'}} onPress={() => navigation.navigate('ForgetPassword')}>
-       <Text style={styles.forgotPassword}>Forgot Password</Text>
+       <Text style={styles.forgotPassword}>{t('forgot')}</Text>
        </Pressable>
        </View>
       </View>
@@ -154,3 +184,4 @@ const styles = StyleSheet.create({
 });
 
 export default LoginPage;
+

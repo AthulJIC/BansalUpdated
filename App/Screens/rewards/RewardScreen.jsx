@@ -6,8 +6,9 @@ import Icon from 'react-native-vector-icons/Feather';
 import { ScrollView } from 'react-native-gesture-handler';
 import AddressList from './Address';
 import { useNavigation } from '@react-navigation/native';
-import { useAppContext } from '../../context/AppContext';
 
+import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../../context/AppContext';
 const productsArray = [
     {
       name: "Product A",
@@ -72,6 +73,7 @@ const RewardScreen =(r)=>{
 
  
   const navigation = useNavigation();
+  const { t } = useTranslation();
   const itemModal=(item)=>{
     updateSelectedProduct(item);
   setItemName(item.name)
@@ -98,11 +100,11 @@ const RewardScreen =(r)=>{
       </View>
       <View style={{alignItems:'flex-start'}}>
           <Text style={styles.cardName}>{item.name}</Text>
-          <Text style={styles.cardPoints}>{item.points} Points</Text>
+          <Text style={styles.cardPoints}>{item.points}  {t('points1')}</Text>
           <Text style={styles.cardDetails}>{item.details}</Text>
       </View>
           <TouchableOpacity onPress={() =>{ setModalVisible(true);itemModal(item)}} style={styles.button}>
-        <Text style={styles.buttonText}>Redeem Now</Text>
+        <Text style={styles.buttonText}>{t('redeem')}</Text>
       </TouchableOpacity>
         </View>
    
@@ -166,7 +168,7 @@ const RewardScreen =(r)=>{
       <View style={styles.modalButtonContainer}>
                 <Pressable onPress={()=>{redirect();}} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                     <Text style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
-                        Redeem Now
+                      {t('redeem')}
                     </Text>
                 </Pressable>
             </View> 
@@ -226,10 +228,11 @@ const styles = StyleSheet.create({
       fontSize: 13,
       color: '#B1292C',
       width:75,
-      height:16,
+      height:18,
       fontFamily:'Poppins-Medium',
       fontWeight:'500',
-      lineHeight:16
+      lineHeight:20,
+      flexDirection:'row'
 
     },
     cardDetails: {
