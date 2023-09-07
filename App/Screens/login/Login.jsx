@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet,ImageBackground,ScrollView,TouchableOpacity, Pressable} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { useTranslation } from 'react-i18next';
+import {LoginApi}  from '../../service/login/loginservice';
 import Config from '../../Config/config';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const apiUrl = `${Config.API_BASE_URL}`
 console.log("apiUrl",apiUrl)
 const LoginPage = ({navigation}) => {
@@ -14,29 +16,47 @@ const LoginPage = ({navigation}) => {
   const { t } = useTranslation();
   
   const LoginAPI=()=>{
-    axios.post(apiUrl + "/api/token/",
-    {
+    // axios.post(apiUrl + "/api/token/",
+    // {
+    //   email: "john@example.com",
+    //   password: "john",
+    // },
+    // {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     // Add any other headers if required
+    //     Authorization:`Bearer`
+    //   },
+    // }
+    // )
+    // .then(response => {
+    //   // Handle successful response here
+    //   console.log('Response Data:', response.data);
+    // })
+    // .catch(error => {
+    //   // Handle error here
+    //   console.error('Error:', error);
+    // });
+    const data ={
       email: "john@example.com",
-      password: "john",
-    },
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        // Add any other headers if required
-        Authorization:`Bearer`
-      },
+      password: "john"
     }
-    )
-    .then(response => {
-      // Handle successful response here
-      console.log('Response Data:', response.data);
+    LoginApi.userLogin(data).then((res) => {
+      console.log('resss', res.data)
+      if(res.status === 200){
+        AsyncStorage.setItem('access_token', res.data.access);
+        AsyncStorage.setItem('refresh_token', res.data.refresh);
+        AsyncStorage.setItem('mobile_no', res.data.mobile);
+        AsyncStorage.setItem('role', res.data.role);
+        AsyncStorage.setItem('username', res.data.username);
+        navigation.navigate('Home screen')
+        
+      }
+
     })
-    .catch(error => {
-      // Handle error here
-      console.error('Error:', error);
-    });
   }
   const handleLogin = () => {
+    
     navigation.navigate('Roles');
     console.log('pressed')
   };
@@ -87,7 +107,7 @@ const LoginPage = ({navigation}) => {
         <Text style={styles.label}>{t('remember')}</Text>
         </View>
         <View style={{marginTop:12,flexDirection:'column', justifyContent:'center'}}>
-      <Pressable style={styles.button} onPress={()=>{handleLogin();LoginAPI()}}>
+      <Pressable style={styles.button} onPress={LoginAPI}>
       <Text  style={styles.buttonText}>{t('loginButton')}</Text>
        </Pressable>
       

@@ -47,11 +47,13 @@ import { useRef } from 'react';
 import FavouritesScreen from '../Screens/Profile/FavouritesScreen';
 import IdVerificationScreen from '../Screens/rewards/IdVerificationScreen';
 import IdConfirmationScreen from '../Screens/rewards/IdConfirmationScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
 const customSlideFromLeft = {
   cardStyleInterpolator: ({ current, next, layouts }) => {
     const translateX = current.progress.interpolate({
@@ -64,9 +66,9 @@ const customSlideFromLeft = {
   },
 };
 
-function MyTabs({route}) {
-  const { role } = route?.params;
-  console.log(role)
+function MyTabs() {
+  const role  = AsyncStorage.getItem('role');
+  console.log('role', role)
 
   function ProfileScreen() {
     return <Profile role={role} />;
