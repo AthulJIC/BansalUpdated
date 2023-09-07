@@ -47,7 +47,6 @@ import { useRef } from 'react';
 import FavouritesScreen from '../Screens/Profile/FavouritesScreen';
 
 
-import Language from '../Language/LanguageSwitch';
 import IdVerificationScreen from '../Screens/rewards/IdVerificationScreen';
 import IdConfirmationScreen from '../Screens/rewards/IdConfirmationScreen';
 
