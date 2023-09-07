@@ -141,7 +141,7 @@ function HeaderComponent() {
           </Pressable>
           <View style={styles.modalButtonContainer}>
             <Pressable style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
-              <Text onPress={confirmLanguage} style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
+              <Text onPress={()=>{confirmLanguage();setModalVisible(false)}} style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
                 {t('confirmButton')}
               </Text>
             </Pressable>
