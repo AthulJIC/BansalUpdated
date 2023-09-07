@@ -6,7 +6,7 @@ import AlertMsg from "../utils/alertMsg";
 
 const AxiosInstance = axios.create({
     baseURL : ApiUrl,
-    timeout: 1000 * 30,
+    //timeout: 1000 * 30,
     maxContentLength: Infinity,
     maxBodyLength: Infinity,
 });
