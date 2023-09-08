@@ -3,17 +3,14 @@ import { View, Text, StyleSheet, ScrollView,Image  } from 'react-native';
 import PendingRequest from './PendingRequest';
 import BarGraph from './BarGraph';
 import HeaderComponent from '../../Components/Header';
-import ImageComponent from './Ads';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-const HomeScreen = ({role}) => {
-    console.log(role)
+const HomeScreen = () => {
     return (
         <ScrollView>
             <View style={styles.scrollViewContent}>
             <HeaderComponent />
-            <PendingRequest role={role}/>
-            <BarGraph role={role}/>
+            <PendingRequest />
+            <BarGraph/>
            
             <Image
         style={styles.ImageContainer}

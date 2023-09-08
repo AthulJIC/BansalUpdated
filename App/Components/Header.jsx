@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View, Image, Animated, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Modal from 'react-native-modal';
@@ -9,6 +9,8 @@ import Notification from "../Screens/Home/Notification";
 import { useTranslation } from 'react-i18next';
 import i18n from "../Languages/i18";
 import { useAppContext } from "../context/AppContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 function HeaderComponent() {
   const [modalVisible, setModalVisible] = useState(false)
   const [notificationMessage, setNotificationMessage] = useState('');
@@ -19,6 +21,21 @@ function HeaderComponent() {
   const [activeButton, setActiveButton] = useState('English');
   const [newLanguage, setnewLanguage] = useState('')
   const { language, changeLanguage } = useAppContext();
+  const[username, setUsername] = useState('') ;
+  useEffect(() => {
+    const getValueFromStorage = async () => {
+      try {
+        const value = await AsyncStorage.getItem('username'); 
+        console.log('role2344355', username)
+        if (value !== null) {
+          setUsername(value);
+        }
+      } catch (error) {
+        console.error('Error fetching data from AsyncStorage:', error);
+      }
+    };
+    getValueFromStorage();
+  }, []);
   const handleButtonPress = (buttonName) => {
     setActiveButton(buttonName);
   };
@@ -39,7 +56,6 @@ function HeaderComponent() {
   const navigation = useNavigation();
   const { t, i18n } = useTranslation();
 
-  console.log("newLanguage", newLanguage)
   const handleLanguageChange = (newLanguage) => {
     changeLanguage(newLanguage);
   };
@@ -63,19 +79,22 @@ function HeaderComponent() {
   const handleCloseNotification = () => {
     setNotificationVisible(false);
   };
+  
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-      <View style={styles.titleContainer}>
-        <Text style={{ fontFamily: 'Poppins-Regular', color: '#848484', fontSize: 13 }}>{t('greeting')}</Text>
-        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#393939', fontSize: 17 }}>Abhiram Ahuja</Text>
-      </View>
-      <View style={{ flexDirection: 'row', marginLeft: 90 }}>
-        <TouchableOpacity style={styles.iconContainer} onPress={() => setModalVisible(true)}>
-          <LanguageIcon width={24} height={24} color='#F18C13' />
-        </TouchableOpacity >
-        <TouchableOpacity onPress={handleNotificationClick} style={styles.iconContainer} >
-          <BellIcon width={24} height={24} />
-        </TouchableOpacity>
+    <View>
+      <View style={{ flexDirection: 'row', alignItems:'center', margin:10,width:'100%', justifyContent:'space-between' }}>
+        <View>
+          <Text style={{ fontFamily: 'Poppins-Regular', color: '#848484', fontSize: 13 }}>{t('greeting')}</Text>
+          <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#393939', fontSize: 17 }}>{username}</Text>
+        </View>
+        <View style={{ flexDirection: 'row', marginLeft:'auto'}}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => setModalVisible(true)}>
+            <LanguageIcon width={24} height={24} color='#F18C13' />
+          </TouchableOpacity >
+          <TouchableOpacity onPress={handleNotificationClick} style={styles.iconContainer} >
+            <BellIcon width={24} height={24} />
+          </TouchableOpacity>
+        </View>
       </View>
       {/* Modal */}
       {/* <View style={styles.centeredView}>
@@ -154,11 +173,12 @@ function HeaderComponent() {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    marginTop: 20,
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingLeft: 8,
-    marginBottom: 8,
+    // marginTop: 20,
+    // flex: 1 
+    // justifyContent: 'space-between',
+    // alignItems: 'flex-start',
+    // paddingLeft: 8,
+    // marginBottom: 8,
   },
   iconContainer: {
     backgroundColor: 'rgba(241, 140, 19, 0.2)',

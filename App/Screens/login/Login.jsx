@@ -1,65 +1,70 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet,ImageBackground,ScrollView,TouchableOpacity, Pressable} from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet,ImageBackground,ScrollView,TouchableOpacity, Pressable, Keyboard} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { useTranslation } from 'react-i18next';
 import {LoginApi}  from '../../service/login/loginservice';
-import Config from '../../Config/config';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const apiUrl = `${Config.API_BASE_URL}`
-console.log("apiUrl",apiUrl)
+import ErrorIcon from '../../../assets/Icon/ErrorIcon';
+
 const LoginPage = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [nameError, setNameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [isSelected, setSelection] = useState(false);
-  const [rememberSelect,setrememberSelect]=useState(false)
+  const [rememberSelect,setrememberSelect]=useState(false);
+  const [checkboxError, setCheckBoxError] = useState(false);
   const { t } = useTranslation();
   
   const LoginAPI=()=>{
-    // axios.post(apiUrl + "/api/token/",
-    // {
-    //   email: "john@example.com",
-    //   password: "john",
-    // },
-    // {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     // Add any other headers if required
-    //     Authorization:`Bearer`
-    //   },
-    // }
-    // )
-    // .then(response => {
-    //   // Handle successful response here
-    //   console.log('Response Data:', response.data);
-    // })
-    // .catch(error => {
-    //   // Handle error here
-    //   console.error('Error:', error);
-    // });
-    const data ={
-      email: "john@example.com",
-      password: "john"
+    Keyboard.dismiss();
+    let isValid= true;
+    if(!username){
+      setNameError(true)
+      isValid = false
     }
-    LoginApi.userLogin(data).then((res) => {
-      console.log('resss', res.data)
-      if(res.status === 200){
-        AsyncStorage.setItem('access_token', res.data.access);
-        AsyncStorage.setItem('refresh_token', res.data.refresh);
-        AsyncStorage.setItem('mobile_no', res.data.mobile);
-        AsyncStorage.setItem('role', res.data.role);
-        AsyncStorage.setItem('username', res.data.username);
-        navigation.navigate('Home screen')
-        
+    if(!password){
+      setPasswordError(true);
+      isValid = false
+    }
+    if(!isSelected){
+      setCheckBoxError(true);
+      isValid = false;
+    }
+    if(isValid){
+      getUserHandler();
+      const data ={
+        email: username,
+        password: password
       }
-
-    })
-  }
-  const handleLogin = () => {
+      LoginApi.userLogin(data).then(async(res) => {
+        console.log('resss', res.data)
+        if(res.status === 200){
+          await AsyncStorage.setItem('access_token', res.data.access);
+          await AsyncStorage.setItem('refresh_token', res.data.refresh);
+          await AsyncStorage.setItem('mobile_no', res.data.mobile);
+          await AsyncStorage.setItem('role', res.data.role);
+          await AsyncStorage.setItem('username', res.data.username);
+          navigation.navigate('Home screen')
+          
+        }
+  
+      })
+    }
     
-    navigation.navigate('Roles');
-    console.log('pressed')
-  };
+  }
+  async function getUserHandler() {
+    if (!rememberSelect) {
+       setUsername('');
+       setPassword('');
+    }
+    else {
+        await AsyncStorage.setItem('username_input', username);
+        await AsyncStorage.setItem('password_input', password)
+    }
+    getOtp()
+    
+}
 
   const handleForgotPassword = () => {
     // Implement your forgot password logic here
@@ -77,7 +82,16 @@ const LoginPage = ({navigation}) => {
        value={username}
        onChangeText={setUsername}
        style={styles.input}
+       onPressIn={() => setNameError(false)}
       />
+      {
+        nameError && (
+          <View style={{flexDirection:'row',marginLeft:15}}>
+            <ErrorIcon/>
+            <Text style={{color:'red',marginLeft:5}}>This field is required</Text>
+          </View>
+        )
+      }
      <TextInput
         placeholder={t('password')}
         value={password}
@@ -85,14 +99,23 @@ const LoginPage = ({navigation}) => {
         placeholderTextColor="white" 
         secureTextEntry
         style={styles.input}
+        onPressIn={() => setPasswordError(false)}
       />
+      {
+        passwordError && (
+          <View style={{flexDirection:'row',marginLeft:15}}>
+            <ErrorIcon/>
+            <Text style={{color:'red',marginLeft:5}}>This field is required</Text>
+          </View>
+        )
+      }
        <View style={styles.checkboxContainer}>
         <CheckBox
           value={isSelected}
           onValueChange={setSelection}
           style={styles.checkbox}
           boxType='square'
-          tintColors={{ true: 'rgba(43, 89, 195, 1)', false: 'gray' }}
+          tintColors={{ true: 'rgba(43, 89, 195, 1)', false: !checkboxError ? 'gray' :  'red'}}
         />
         <Text style={styles.label}>{t('agree')} <Text style={{textDecorationLine: 'underline',fontFamily:'Poppins-Regular'}}>{t('terms')}</Text></Text>
       </View>

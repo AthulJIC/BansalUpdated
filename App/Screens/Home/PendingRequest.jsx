@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
+import * as Progress from 'react-native-progress';
 import { useTranslation } from 'react-i18next';
+import { HomeApi } from '../../service/home/homeservice';
 
 const PendingRequest = ({role}) => {
     const [progress, setProgress] = useState(0);
@@ -12,19 +14,18 @@ const PendingRequest = ({role}) => {
         // Navigate to the specified route when the button is pressed
         navigation.navigate(label);
     };
-    // useEffect(() => {
-    //     // const interval = setInterval(() => {
-    //       setProgress((prevProgress) => {
-    //         // Update progress value here
-    //         const newProgress = prevProgress + 5; // For example, increase by 5% on each update
-    //         if (newProgress >= 100) {
-    //           //clearInterval(interval);
-    //           return 100; // Ensure it doesn't go above 100%
-    //         }
-    //         return newProgress;
-    //       });
-    //     // }, 1000); // Update progress every second (adjust as needed)
-    //   }, []);
+    useEffect(() => {
+        getLoyaltyPoints();
+      }, []);
+    function getLoyaltyPoints(){
+        HomeApi.getPoints().then((res) => {
+            console.log(res.data);
+            if(res.status === 200){
+                console.log('success')
+                setProgress(res.data.total_points)
+            }
+        })
+    }
     return (
         <View style={[styles.mainView,{height: role === "Distributor" ? 108 : 124}]} onPress={handleButtonPress}>
             {role === 'Distributor' ? 
@@ -37,11 +38,11 @@ const PendingRequest = ({role}) => {
                 <View style={{flexDirection:'row'}}>
                     <View>
                         <Text style={styles.Text}>Loyalty Balance</Text>
-                        <Text style={styles.number} >2000 Pts</Text>
+                        <Text style={styles.number} >{progress} Pts</Text>
                         <Text style={styles.rewardText}>500 Pts till your next reward</Text>
                     </View>
                     <View style={{marginHorizontal: 25}}>
-                        <ProgressCircle
+                        {/* <ProgressCircle
                             percent={30}
                             radius={50}
                             borderWidth={10}
@@ -49,7 +50,12 @@ const PendingRequest = ({role}) => {
                             shadowColor="rgba(255, 255, 255, 0.1)"
                             bgColor="rgba(177, 41, 44, 1)"
                         >
-                        </ProgressCircle>
+                        </ProgressCircle> */}
+                        <Progress.Circle
+                        size={50}
+                        progress={progress}
+                        thickness={50}
+                        color='rgba(255, 255, 255, 1)'></Progress.Circle>
                     </View>
                 </View>
             )

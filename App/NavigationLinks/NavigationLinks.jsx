@@ -43,13 +43,11 @@ import SuccessScreen from '../Screens/sucess/SucessScreen';
 import AddressList from '../Screens/rewards/Address';
 import ConfirmPage from '../Screens/rewards/confirm';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import FavouritesScreen from '../Screens/Profile/FavouritesScreen';
 import IdVerificationScreen from '../Screens/rewards/IdVerificationScreen';
 import IdConfirmationScreen from '../Screens/rewards/IdConfirmationScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -67,14 +65,25 @@ const customSlideFromLeft = {
 };
 
 function MyTabs() {
-  const role  = AsyncStorage.getItem('role');
-  console.log('role', role)
+  let role;
+  useEffect(() => {
+    const getValueFromStorage = async () => {
+      try {
+        role = await AsyncStorage.getItem('role'); 
+        console.log('role2344355', role)
+      } catch (error) {
+        console.error('Error fetching data from AsyncStorage:', error);
+      }
+    };
+    getValueFromStorage();
+  }, []);
+  
 
   function ProfileScreen() {
-    return <Profile role={role} />;
+    return <Profile />;
   }
   function HomeScreenTab(){
-    return <HomeScreen role={role}/>
+    return <HomeScreen />
   }
   return (
     <Tab.Navigator
