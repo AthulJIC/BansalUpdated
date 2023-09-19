@@ -11,7 +11,7 @@ import LoginScreen from '../Screens/login/Login';
 import HomeScreen from '../Screens/Home/Home';
 import OrderScreen from '../Screens/Orders/OrderScreen';
 import Requests from '../Screens/Requests/Requests';
-import History from '../Screens/History/History';
+import DistributorHistory from '../Screens/History/DistributorHistory';
 import Profile from '../Screens/Profile/Profile';
 import Notification from '../Screens/Home/Notification';
 import LanguageScreen from '../Screens/Profile/LanguageScreen';
@@ -43,11 +43,12 @@ import SuccessScreen from '../Screens/sucess/SucessScreen';
 import AddressList from '../Screens/rewards/Address';
 import ConfirmPage from '../Screens/rewards/confirm';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import FavouritesScreen from '../Screens/Profile/FavouritesScreen';
 import IdVerificationScreen from '../Screens/rewards/IdVerificationScreen';
 import IdConfirmationScreen from '../Screens/rewards/IdConfirmationScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import HistoryScreen from '../Screens/History/HistoryScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -65,12 +66,13 @@ const customSlideFromLeft = {
 };
 
 function MyTabs() {
-  let role;
+  const [role, setRole] = useState('')
   useEffect(() => {
     const getValueFromStorage = async () => {
       try {
-        role = await AsyncStorage.getItem('role'); 
+        const user = await AsyncStorage.getItem('role'); 
         console.log('role2344355', role)
+        setRole(user)
       } catch (error) {
         console.error('Error fetching data from AsyncStorage:', error);
       }
@@ -112,7 +114,7 @@ function MyTabs() {
             <RequestTabIcon color='white' width={27} height={27}/>
           );
         }
-        else if (route.name === 'History') {
+        else if (route.name === 'DistributorHistory') {
           iconComponent = focused ? (
            <HistoryTabIcon height={29} width={29} color="#B1292C" />
           ) : (
@@ -156,7 +158,7 @@ function MyTabs() {
         <>
         <Tab.Screen name="Home" component={HomeScreenTab} />
         <Tab.Screen name="Requests" component={Requests} />
-        <Tab.Screen name="History" component={History} />
+        <Tab.Screen name="DistributorHistory" component={DistributorHistory} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
         </>
         ): (
@@ -280,7 +282,7 @@ const NavigationLinks = () => {
               },
             })}
 />
-<Stack.Screen name='HistoryScreen' component={History} options={{
+<Stack.Screen name='HistoryScreen' component={HistoryScreen} options={{
           title: 'History',
           headerTitleAlign: 'center',
           headerTitleStyle:{

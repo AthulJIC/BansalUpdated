@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, FlatList, Pressable, Animated, Alert } from 'react-native'
+import { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, FlatList, Pressable, Animated, Alert, ActivityIndicator,KeyboardAvoidingView } from 'react-native'
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Feather';
 import CustomAlert from '../../Components/alertBox';
+import { RequestApi } from '../../service/request/requestservice';
+import EmptyComponent from '../../Components/EmptyComponent';
 
 const data = [
     { img: '', name: 'John', designation: 'Contractor', quantity: 10 },
@@ -34,7 +36,14 @@ const Requests = () => {
     const [quantity, setQuantity] = useState('')
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertAcceptVisible,setAlertAcceptVisible] =useState(false)
-    const showAlert = () => {
+    const [requestList, setRequestList] = useState([]);
+    const [requestId, setRequestId] = useState('');
+    const [distributorItem, setDistributorItem] = useState({})
+    const [isLoading, setIsLoading] = useState(true);
+
+    const showAlert = (item) => {
+        console.log('itemmmmm===',item)
+        setRequestId(item)
         setAlertVisible(true);
     };
     const showAcceptAlert=()=>{
@@ -44,68 +53,123 @@ const Requests = () => {
         setAlertVisible(false);
         setAlertAcceptVisible(false)
     };
-
+    useEffect(() => {
+       getRequestList();
+       setTimeout(() => {
+        setIsLoading(false);
+    }, 2000);
+    }, []);
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+                <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+            </View>
+        );
+    }
+    function getRequestList(){
+        RequestApi.getRequest().then((res) => {
+            console.log('resss', res.data);
+            if(res.status === 200){
+                setRequestList(res.data.results)
+            }
+        })
+    }
     const handleAccept = () => {
         // Handle accept button press
         hideAlert();
         // Additional logic as needed
     };
 
-    const handleReject = () => {
+    const handleReject = (status) => {
+        console.log('requestId',requestId)
+        console.log('status', status)
+        if(status === 'Reject'){
+            RequestApi.rejectRequest(requestId).then((res) => {
+                console.log('resss', res.data)
+                if(res.status === 200){
+                    hideAlert();
+                    getRequestList();
+                }
+            })
+        }
+        else{
+            RequestApi.acceptRequest(requestId).then((res) => {
+                console.log('resss', res.data)
+                if(res.status === 200){
+                    hideAlert();
+                    getRequestList();
+                }
+            })
+        }
         // Handle reject button press
-        hideAlert();
+       // hideAlert();
         // Additional logic as needed
     };
-    const modalItem = ({ item }) => {
-        setName(item.name)
-        setDesignation(item.designation)
-        setQuantity(item.quantity)
+    const modalItem = ( item ) => {
+        console.log('distributor----', item)
+        setDistributorItem(item)
+        // setName(item.name)
+        // setDesignation(item.designation)
+        // setQuantity(item.quantity)
     }
+    function searchHandler(text){
+        setSearchText(text)
+        RequestApi.searchRequest(text).then((res) => {
+            console.log('resss--',res.data)
+            if(res.status === 200){
+                setRequestList(res.data.results)
+            }
+        })
+    }
+    console.log('distributor', distributorItem.name)
     const HEADER_HEIGHT = 200; // Define the height of your header
     const scrollY = new Animated.Value(0);
-    const requestData = ({ item }) => (
-        <View style={[styles.card, styles.shadowProp]}>
-            <Pressable onPress={() => {
-                setModalVisible(!modalVisible);
-                modalItem({ item })
-            }} style={{ borderRadius: 8 }}>
+    const requestData = ( itemData ) => {
+        return(
+            <View style={[styles.card, styles.shadowProp]}>
+                <Pressable onPress={() => {
+                    setModalVisible(!modalVisible);
+                    modalItem( itemData.item )
+                }} style={{ borderRadius: 8 , backgroundColor:'rgba(182, 182, 182, 1)',justifyContent:'center', alignItems:'center',height:85, width:'25%'}}>
 
-                <Image
-                    style={styles.tinyLogo}
-                    source={require('../../../assets/Images/Man.jpg')}
-                    resizeMode='cover'
+                    {/* <Image
+                        style={styles.tinyLogo}
+                        source={require('../../../assets/Images/Man.jpg')}
+                        resizeMode='cover'
 
-                />
-            </Pressable>
+                    /> */}
+                    <Text style={{textAlign:'center',color:'rgba(57, 57, 57, 1)',fontSize:27,fontFamily:'Poppins-Medium',}}>{itemData.item.name.slice(0, 2).toUpperCase()}</Text>
+                </Pressable>
 
-            <View style={{ justifyContent: 'center' }}>
-                <Text style={{ marginLeft: 14, fontFamily: 'Poppins-Medium', fontSize: 16, color: 'rgba(57, 57, 57, 1)' }}> {item.name}</Text>
-                <View style={styles.subContainer}>
-                    <Text style={{
-                        fontFamily: 'Poppins-Medium', fontWeight: '200', fontSize: 13.33, color: '#B1292C', marginHorizontal: 5
-                    }}>{item.quantity} tons</Text>
-                    <Text style={{ fontWeight: '500', fontSize: 6, color: 'rgba(57, 57, 57, 1)', marginTop: 5 }}>{'\u2B24'}</Text>
-                    <Text style={{
-                        fontFamily: 'Poppins-Medium', fontWeight: '500', fontSize: 13, color: '#393939', marginLeft: 5, marginBottom: 4
-                    }}>{item.designation}</Text>
+                <View style={{ justifyContent: 'center' }}>
+                    <Text style={{ marginLeft: 14, fontFamily: 'Poppins-Medium', fontSize: 16, color: 'rgba(57, 57, 57, 1)' }}> {itemData.item.name}</Text>
+                    <View style={styles.subContainer}>
+                        <Text style={{
+                            fontFamily: 'Poppins-Medium', fontWeight: '200', fontSize: 13.33, color: '#B1292C', marginHorizontal: 5
+                        }}>{itemData.item.quantity}</Text>
+                        <Text style={{ fontWeight: '500', fontSize: 6, color: 'rgba(57, 57, 57, 1)', marginTop: 5 }}>{'\u2B24'}</Text>
+                        <Text style={{
+                            fontFamily: 'Poppins-Medium', fontWeight: '500', fontSize: 13, color: '#393939', marginLeft: 5, marginBottom: 4
+                        }}>{itemData.item.role}</Text>
 
+                    </View>
+                    <View style={styles.buttonsContainer}>
+                        <Pressable onPress={()=>showAlert(itemData.item.id)} style={styles.buttonReject}>
+                            <Text style={styles.buttonText}>Reject</Text>
+                        </Pressable>
+                        <Pressable onPress={showAcceptAlert} style={styles.buttonAccept}>
+                            <Text style={styles.buttonText}>Accept</Text>
+                        </Pressable>
+                    </View>
                 </View>
-                <View style={styles.buttonsContainer}>
-                    <Pressable onPress={showAlert} style={styles.buttonReject}>
-                        <Text style={styles.buttonText}>Reject</Text>
-                    </Pressable>
-                    <Pressable onPress={showAcceptAlert} style={styles.buttonAccept}>
-                        <Text style={styles.buttonText}>Accept</Text>
-                    </Pressable>
-                </View>
-            </View>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
 
+                </View> */}
             </View>
-        </View>
-    );
+        )
+    };
     return (
-        <View style={styles.mainContainer}>
+        <KeyboardAvoidingView style={styles.mainContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <Animated.View
                 style={[{
                     height: HEADER_HEIGHT,
@@ -120,22 +184,26 @@ const Requests = () => {
                     style={styles.input}
                     placeholder="Search..."
                     placeholderTextColor={'rgba(132, 132, 132, 1)'}
-                    onChangeText={text => setSearchText(text)}
+                    onChangeText={text => searchHandler(text)}
                     value={searchText}
                 />
-                <TouchableOpacity>
+                <TouchableOpacity onPress={searchHandler}>
                     <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
                 </TouchableOpacity>
             </Animated.View>
-            <FlatList
-                data={data}
-                renderItem={requestData}
-                keyExtractor={(item) => item.name}
-                onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                    { useNativeDriver: false }
-                )}
-            />
+            { requestList.length !== 0 ? (
+
+                <FlatList
+                    data={requestList}
+                    renderItem={requestData}
+                    keyExtractor={(item) => item.id.toString()}
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                        { useNativeDriver: false }
+                    )}
+                   // keyboardShouldPersistTaps="handled" 
+                />
+            ): <EmptyComponent/>}
 
             {/* Modal */}
             <Modal
@@ -161,15 +229,19 @@ const Requests = () => {
 
                             <Image
                                 style={styles.modalImage}
-                                source={require('../../../assets/Images/Man.jpg')}
+                                source={require('../../../assets/Images/ProductImage.png')}
                                 resizeMode='cover'
                             />
+                            {/* <View style={ {borderRadius: 8 , backgroundColor:'rgba(182, 182, 182, 1)',justifyContent:'center', alignItems:'center',height:85, width:'25%'}}>
+                                <Text style={{textAlign:'center',color:'rgba(57, 57, 57, 1)',fontSize:27,fontFamily:'Poppins-Medium',}}>{distributorItem.name?.slice(0, 2).toUpperCase() || ''}</Text>
+                            </View> */}
+
                             <View style={{ justifyContent: 'center', marginLeft: 15, height: 100, width: '35%' }}>
-                                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 17, color: 'rgba(57, 57, 57, 1)' }}> {name}</Text>
+                                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 17, color: 'rgba(57, 57, 57, 1)' }}> {distributorItem.name}</Text>
                                 <Text style={{
                                     fontFamily: 'Poppins-Medium', fontSize: 12,
                                     color: '#393939', marginLeft: 5
-                                }}>{designation}</Text>
+                                }}>{distributorItem.role}</Text>
                                 <Text style={{
                                     fontFamily: 'Poppins-Regular', fontSize: 13,
                                     color: '#848484', marginTop: 12, marginLeft: 5
@@ -177,13 +249,13 @@ const Requests = () => {
                                 <Text style={{
                                     fontFamily: 'Poppins-Medium', fontSize: 17,
                                     color: '#B1292C', marginLeft: 5
-                                }}>{quantity} Tons</Text>
+                                }}>{distributorItem.quantity}</Text>
                             </View>
                         </View>
                         <View style={[styles.ModalSecondCard, styles.shadowProp]}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Transaction ID</Text>
-                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>A1234455667</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>{distributorItem.transaction_id}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
                                 <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Unique ID</Text>
@@ -191,20 +263,20 @@ const Requests = () => {
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
                                 <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Mobile</Text>
-                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>A1234455667</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>{distributorItem.mobile}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
                                 <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Location</Text>
-                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>Bhopal</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>{distributorItem.location}</Text>
                             </View>
                         </View>
                         <View style={styles.modalButtonContainer}>
-                            <TouchableOpacity style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: '#EB1C1C', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
+                            <TouchableOpacity onPress={() => handleReject('Reject')} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: '#EB1C1C', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                                 <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24, fontFamily: 'Poppins-Regular' }}>
                                     Reject
                                 </Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ width: '100%', backgroundColor: '#18B758', borderRadius: 6, alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
+                            <TouchableOpacity onPress={() => handleReject('Accept')} style={{ width: '100%', backgroundColor: '#18B758', borderRadius: 6, alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                                 <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24, fontFamily: 'Poppins-Regular' }}>
                                     Accept
                                 </Text>
@@ -231,7 +303,7 @@ const Requests = () => {
                         <TouchableOpacity style={styles.alertCancelButton} onPress={hideAlert}>
                             <Text style={styles.alertButtonText}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.alertRejectButton} onPress={handleReject}>
+                        <TouchableOpacity style={styles.alertRejectButton} onPress={() => handleReject('Reject')}>
                             <Text style={styles.alertButton}>Reject</Text>
                         </TouchableOpacity>
                     </View>
@@ -255,14 +327,14 @@ const Requests = () => {
                         <TouchableOpacity style={styles.alertCancelButton} onPress={hideAlert}>
                             <Text style={styles.alertButtonText}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.alertRejectButton} onPress={handleReject}>
+                        <TouchableOpacity style={styles.alertRejectButton} onPress={() =>handleReject('Accept')}>
                             <Text style={styles.alertButton}>Accept</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
 
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 export default Requests
@@ -409,7 +481,11 @@ const styles = StyleSheet.create({
         width: 80,
         height: 90,
         borderRadius: 8,
-        marginLeft: 5
+        marginLeft: 5,
+        textAlign:'center',
+        color:'rgba(57, 57, 57, 1)',
+        fontSize:33,
+        fontFamily:'Poppins-Medium',
     },
     modalContainer: {
         flex: 1,

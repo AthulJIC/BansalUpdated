@@ -1,77 +1,332 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Picker,Dimensions } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { ScrollView } from 'react-native-gesture-handler';
 import { BarChart } from 'react-native-gifted-charts';
 import { useTranslation } from 'react-i18next';
-const BarGraph = ({role}) => {
-    console.log('roleeee',role)
+import { HomeApi } from '../../service/home/homeservice';
+import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const BarGraph = () => {
+    //console.log('roleeee',role)
 
 
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState("Monthly");
+    const [barWeekData, setBarWeekData] = useState([]);
+    const [barValue,setBarValue]=useState()
+    const [barMonth,setBarMonth]=useState('')
+    const[barQuarter, setBarQuarter] = useState('')
+    const [barSpacing, setBarSpacing] = useState(11);
+    const [barWidth, setBarWidth] = useState(12);
+    const [totalOrders, setTotalOrders] = useState(10);
+    const [total, setTotal] = useState('');
+    const [role, setRole] = useState('')
     const [items, setItems] = useState([
         { label: 'Weekly', value: "Weekly" },
-        { label: 'Yearly', value: 'Yearly' },
-        { label: 'Monthly', value: 'Monthly'}
-    ]);
-    const [activeButton, setActiveButton] = useState('Orders');
-    const barData = [
-        {value: 1, label: 'Jan'},
-        {value: 4, label: 'Feb'},
-        {value: 9, label: 'Mar'},
-        {value: 3, label: 'Apr'},
-        {value: 6, label: 'May'},
-        {value: 10, label: 'Jun'},
-        {value: 8, label: 'Jul'},
-        {value: 4.5, label: 'Aug'},
-        {value: 7, label: 'Sep'},
-        {value: 2.5, label: 'Oct'},
-        {value: 5, label: 'Nov'},
-        {value: 0.5, label: 'Dec'},
-    ]
-    
-    // const [chartParentWidth, setChartParentWidth] = useState(0);
-    // const chartConfig = {
-    //     backgroundGradientFrom: "#1E2923",
-    //     backgroundGradientFromOpacity: 0,
-    //     backgroundGradientTo: "#08130D",
-    //     backgroundGradientToOpacity: 0,
-    //     color: (opacity = 5) => `rgba(255, 255, 255, ${opacity})`,
-    //     strokeWidth: 3, // optional, default 3
-    //     barPercentage: 0.35,
-    //     useShadowColorFromDataset: false, // optional,
-    //     decimalPlaces: 0
+        { label: 'Monthly', value: 'Monthly'},
+        { label: 'Quarterly', value: 'Quarterly' },
         
-    // };
-    // const data = {
-    //     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",'Jul','Aug','Sept','Oct','Nov','Dec'],
-    //     datasets: [
-    //         {
-    //             data: [0,10]
-
-    //         }
-    //     ],
-    //     barColors: ['rgba(255,255,255,0)']
-    // };
-    // width='25%'
-    // const screenWidth = Dimensions.get("window").width;
-    const barWidth =Dimensions.get("window").width - 50;
-    const handleButtonPress = () => {
-        // Navigate to the specified route when the button is pressed
-        navigation.navigate(label);
+    ]);
+    console.log('total', total)
+    console.log('barValue',barValue,barMonth)
+    const [activeButton, setActiveButton] = useState('Orders');
+    let barData;
+    const destinationOrderValue = 200;
+    const destinationPointsValue = 12000;
+    const referenceLine1Position = totalOrders * 0.3; 
+    const referenceLine2Position = totalOrders * 0.65;
+    const referenceLine3Position = totalOrders;
+    useEffect(() => {
+        updateTotalOrders();
+        
+      }, [totalOrders]);
+    const updateTotalOrders = () => {
+       
+        // setTotalOrders(roundedValue)
+        // if (activeButton === 'Orders') {
+        //     if (totalOrders < destinationOrderValue) {
+        //         // setTotalOrders((prevTotalOrders) => prevTotalOrders * 2);
+        //         setTotalOrders(totalOrders * 2)
+        //     }
+        // } else if (activeButton === 'Points') {
+        //     if (totalOrders < destinationPointsValue) {
+        //         setTotalOrders((prevTotalOrders) => prevTotalOrders * 2);
+        //     }
+        // }
+        // if(totalOrders<100 && totalOrders>40)
+        // {
+        //     setTotalOrders(80)
+        // }
+        // else if (activeButton === 'Points'){
+        //     setTotalOrders((prevTotalOrders) => prevTotalOrders * 2);
+        // }
+        // if(activeButton === 'Orders'){
+        //     if (barValue > 10) {
+        //         const nextMultipleOfTen = Math.ceil(totalOrders / 10) * 10;
+        //         setTotalOrders(nextMultipleOfTen);
+        //     }
+        // }
+        // else
+        //     if(barValue > 750){
+        //         const nextMultipleOfTen = Math.ceil(totalOrders / 10) * 10;
+        //         setTotalOrders(nextMultipleOfTen);
+        //     }
+        // }
     };
+    // const monthNames = [
+    //     'Jan',
+    //     'Feb',
+    //     'Mar',
+    //     'Apr',
+    //     'May',
+    //     'Jun',
+    //     'Jul',
+    //     'Aug',
+    //     'Sep',
+    //     'Oct',
+    //     'Nov',
+    //     'Dec',
+    //   ];
+     
+
+    //   if(value === 'Monthly'){
+    //     orderData = barData.map((dataPoint) => ({
+    //         value: dataPoint.value,
+    //         label: monthNames[dataPoint.month - 1], 
+    //     }));
+    //   }
+    //   else if(value === 'Quarterly'){
+    //      orderData = barData.map((dataPoint) => ({
+    //         value: dataPoint.count,
+    //         label : dataPoint.quarter
+    //      }))
+    //   }
+    function barHandler(item){
+        setValue(item.value);
+            if(item.value === 'Monthly'){
+                setBarSpacing(11);
+                setBarWidth(12)
+                getMonthlyOrders();
+            }
+            else if(item.value === 'Quarterly'){
+                setBarSpacing(20)
+                setBarWidth(55)
+                getQuarterlyOrders();
+            }
+            else{
+                setBarSpacing(25)
+                setBarWidth(19)
+                getWeeklyOrders();
+            }
+    }
+        if(value === 'Monthly'){
+    
+            barData = [
+                {value: barMonth===1?barValue:'0', label: 'Jan'},
+                {value: barMonth===2?barValue:'0', label: 'Feb'},
+                {value: barMonth===3?barValue:'0', label: 'Mar'},
+                {value: barMonth===4?barValue:'0', label: 'Apr'},
+                {value: barMonth===5?barValue:'0', label: 'May'},
+                {value: barMonth===6?barValue:'0', label: 'Jun'},
+                {value: barMonth===7?barValue:'0', label: 'Jul'},
+                {value: barMonth===8?barValue:'0', label: 'Aug'},
+                {value: barMonth===9?barValue:'0', label: 'Sep'},
+                {value: barMonth===10?barValue:'0', label: 'Oct'},
+                {value: barMonth===11?barValue:'0', label: 'Nov'},
+                {value: barMonth===12?barValue:'0', label: 'Dec'},
+            ]
+        }
+        else if(value === 'Quarterly'){
+    
+            barData = [
+                {
+                    value : barQuarter === 1 ? barValue : '0', label: 'Qtr 1'
+                },
+                {
+                    value : barQuarter === 2 ? barValue : '0', label: 'Qtr 2'
+                },
+                {
+                    value : barQuarter === 3 ? barValue : '0', label: 'Qtr 3'
+                }, {
+                    value : barQuarter === 4 ? barValue : '0', label: 'Qtr 4'
+                },
+            ] 
+        }
+        else if(value === 'Weekly'){
+            barData = barWeekData.map((dataPoint) => ({
+                value : activeButton === 'Orders' ? dataPoint.order_count : dataPoint.points,
+                label : moment(dataPoint.date).format('ddd').toLocaleString('en-US')
+            }))
+        }
+    //const barWidth =Dimensions.get("window").width - 50;
+    // const handleButtonPress = () => {
+    //     navigation.navigate(label);
+    // };
 
     function onChange(){
 
     }
+    useEffect(() => {
+        const getValueFromStorage = async () => {
+            try {
+              const user = await AsyncStorage.getItem('role'); 
+              console.log('role2344355', role)
+              setRole(user)
+            } catch (error) {
+              console.error('Error fetching data from AsyncStorage:', error);
+            }
+          };
+          
+        getValueFromStorage();
+        getMonthlyOrders();
+        
+        
+      }, [activeButton]);
+  
+    function getMonthlyOrders(){
+        if(role !== 'Distributor'){
+            if(activeButton === 'Orders'){
+                HomeApi.getMonthlyOrder().then((res) => {
+                    console.log(res.data);
+                    if(res.status === 200){
+                        console.log('success')
+                        setBarValue(res.data.order_counts_by_month[0].count)
+                        setBarMonth(res.data.order_counts_by_month[0].month)
+                        setTotalOrders(res.data.total_order_count_current_year)
+                        setTotal(res.data.total_order_count_current_year)
+                    }
+                })
+            }
+            else{
+                HomeApi.getMonthlyPoints().then((res) => {
+                    console.log(res.data);
+                    if(res.status === 200){
+                        console.log('success')
+                        setBarValue(res.data.monthly_points_data[0].total_points)
+                        setBarMonth(res.data.monthly_points_data[0].month)
+                        setTotalOrders(res.data.total_points_current_year)
+                        setTotal(res.data.total_points_current_year)
+                    }
+                })
+            }
+        }
+        else{
+            HomeApi.getDistributorMonthlyOrder().then((res) => {
+                console.log(res.data);
+                if(res.status === 200){
+                    console.log('success')
+                    setBarValue(res.data.order_counts_by_month[0].count)
+                    setBarMonth(res.data.order_counts_by_month[0].month)
+                    setTotalOrders(res.data.total_order_count_current_year)
+                    setTotal(res.data.total_order_count_current_year)
+                }
+            })
+        }
+        
+    }
+    function getQuarterlyOrders(){
+        if(role !== 'Distributor'){
+            if(activeButton === 'Orders'){
+                HomeApi.getQuarterlyOrder().then((res) => {
+                    console.log(res.data);
+                    if(res.status ===200){
+                        console.log('success');
+                        setBarValue(res.data.order_counts_by_quarter[0].count)
+                        setBarQuarter(res.data.order_counts_by_quarter[0].quarter)
+                        setTotalOrders(res.data.total_order_count_current_year)
+                        setTotal(res.data.total_order_count_current_yearer)
+                    }
+                })
+            }
+            else{
+                HomeApi.getQuarterlyPoints().then((res) => {
+                    console.log(res.data);
+                    if(res.status ===200){
+                        console.log('success');
+                        setBarValue(res.data.quarterly_points_data[0].total_points)
+                        setBarQuarter(res.data.quarterly_points_data[0].quarter)
+                        setTotalOrders(res.data.total_points_current_year)
+                        setTotal(res.data.total_points_current_year)
+                    }
+                })
+            }
+        }
+        else{
+            HomeApi.getDistributorQuarterlyOrder().then((res) => {
+                console.log(res.data);
+                if(res.status ===200){
+                    console.log('success');
+                    setBarValue(res.data.order_counts_by_quarter[0].count)
+                    setBarQuarter(res.data.order_counts_by_quarter[0].quarter)
+                    setTotalOrders(res.data.total_order_count_current_year)
+                    setTotal(res.data.total_order_count_current_year)
+                }
+            })
+        }
+    }
+    function getWeeklyOrders(){
+        if( role !== 'Distributor'){
+            if(activeButton === 'Orders' ){
+                HomeApi.getWeeklyOrder().then((res) => {
+                    console.log('weekly',res.data);
+                    if(res.status === 200){
+                        setBarWeekData(res.data.daily_order_counts);
+                        setTotalOrders(res.data.total_order_count_current_week)
+                        setTotal(res.data.total_order_count_current_week)
+                    }
+                })
+            }
+            else {
+                HomeApi.getWeeklyPoints().then((res) => {
+                    console.log('weekly',res.data);
+                    if(res.status === 200){
+                        setBarWeekData(res.data.daily_points);
+                        setTotalOrders(res.data.total_points)
+                        setTotal(res.data.total_points)
+                    }
+                })
+            }
+        }
+        else{
+            HomeApi.getDistributorWeeklyOrder().then((res) => {
+                console.log('weekly',res.data);
+                if(res.status === 200){
+                    setBarWeekData(res.data.daily_order_counts);
+                    setTotalOrders(res.data.total_order_count_current_week)
+                    setTotal(res.data.total_order_count_current_week)
+                }
+            })
+        }
+    }
+    
+
+    console.log('bardata', barWeekData)
+    // const cvdata = cvpnodetails.map((item) => ({
+    //     label: item.cvno.toString(),
+    //     value: item.visitid.toString(),
+    // }));
     const handleButton = (buttonName) => {
         setActiveButton(buttonName);
-        // Handle button press actions here
+        setValue('Monthly')
+        setBarSpacing(11);
+        setBarWidth(12)
+        setBarWeekData([])
+
+        // setBarMonth('');
+        // setBarValue(0);
+        // setBarQuarter('')
+        if(buttonName === 'Orders'){
+            setTotalOrders(10);
+            
+        }
+        else{
+            setTotalOrders(750);
+            
+        }
       };
     return (
-        <View style={styles.mainView} onPress={handleButtonPress}>
+        <View style={styles.mainView}>
             <View style={{ flexDirection: 'row',alignItems: 'center'}}>
                 <TouchableOpacity
                     style={[
@@ -129,55 +384,65 @@ const BarGraph = ({role}) => {
                         //searchPlaceholder="Search..."
                         // value={value}
                         
-                        onChange={item => {
-                        setValue(item.value);
-                        }}
+                        onChange={(item) => 
+                            barHandler(item)
+                        
+                        }
                         //itemContainerStyle={{ height: 0 }} 
                         itemTextStyle = {{color:'black',fontSize:11,fontFamily:'Poppins-Regular'}}
                         containerStyle={styles.dropdownContainer}
                     />
                 </View>
             </View>
-            <Text style={styles.Text}>{t('totalorders')}</Text>
-            <Text style={styles.number} >75</Text>
+            <Text style={styles.Text}>
+                {/* {t('totalorders')} */}
+                Total {activeButton}
+                </Text>
+            <Text style={styles.number} >{total}</Text>
+            { total === 0 ?
+                    <View>
+                        <Text>--</Text>
+                        <Text>Complete your first order to view insights</Text>
+                    </View>
+                    :
             <View>
              <BarChart
-                barWidth={12}
-                width={290}
+                barWidth={barWidth}
+                width={300}
                 height={100}
                 noOfSections={1}
-                barBorderRadius={2}
+                barBorderRadius={2} 
                 frontColor="rgba(255,255,255,0.7)"
                 data={barData}
-                spacing={12}
-                maxValue={10}
+                spacing={barSpacing}
+                maxValue={totalOrders}
                 initialSpacing={0}
                 dashGap={2}
                 labelWidth={40}
-                xAxisLabelTextStyle={{color: 'white', textAlign:'center',marginRight:19, fontSize:10}}
+                xAxisLabelTextStyle={{color: 'white', textAlign:'center',marginRight:value === 'Quarterly' ? 0 :19, fontSize:10}}
                 yAxisTextStyle={{color:'white',fontSize:10}}
-                yAxisLabelTexts={[0, 10]}
-                xAxisLength={290}
+                yAxisLabelTexts={[0, totalOrders]}
+                xAxisLength={315}
                 yAxisThickness={0}
                 xAxisColor={'rgba(255,255,255,0.3)'}
                 dashWidth={5}
                 hideRules
                 showReferenceLine1
-                referenceLine1Position={3}
+                referenceLine1Position={referenceLine1Position}
                 referenceLine1Config={{
                 color: 'rgba(255,255,255,0.3)',
                 dashWidth: 2,
                 dashGap: 3,
                 }}
                 showReferenceLine2
-                referenceLine2Position={6.5}
+                referenceLine2Position={referenceLine2Position}
                 referenceLine2Config={{
                 color: 'rgba(255,255,255,0.3)',
                 dashWidth: 2,
                 dashGap: 3,
                 }}
                 showReferenceLine3
-                referenceLine3Position={10}
+                referenceLine3Position={referenceLine3Position}
                 referenceLine3Config={{
                 color: 'rgba(255,255,255,0.3)',
                 dashWidth: 2,
@@ -185,7 +450,10 @@ const BarGraph = ({role}) => {
                 }}
                 
                 />
+               
             </View>
+                    
+            }
 
         </View>
     );
@@ -219,7 +487,7 @@ const styles = StyleSheet.create({
     orderButton: {
         width: '15%',
         height: 28,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
         alignItems: 'center',
         justifyContent:'center',
         marginLeft:10,
@@ -252,15 +520,15 @@ const styles = StyleSheet.create({
         borderRadius:6
     },
     activeButton: {
-        backgroundColor: 'rgba(255, 255, 255, 0.5)', 
+        backgroundColor: 'rgba(255, 255, 255, 1)', 
     },
     activeButtonText: {
-        color: 'white', // Change this to the desired active text color
+        color: 'black', // Change this to the desired active text color
     },
     buttonText: {
         fontFamily: 'Poppins-Regular',
         fontSize: 11,
-        color: '#393939',
+        color: 'white',
       },
 
 });

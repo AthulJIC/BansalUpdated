@@ -3,13 +3,12 @@ import { Animated, Button, StyleSheet, Text, TouchableOpacity, View } from "reac
 import { BarChart } from "react-native-gifted-charts";
 import ProgressBar from 'react-native-progress/Bar';
 import { useTranslation } from 'react-i18next';
-import React from "react";
 
 const barData = [
     {value: 1, label: 'Jan'},
    
 ]
-const LoyalityBonus = ():JSX.Element => {
+const LoyalityBonus = () => {
     const [progress] = useState(new Animated.Value(0));
     const { t } = useTranslation();
     useEffect(() => {
@@ -18,8 +17,9 @@ const LoyalityBonus = ():JSX.Element => {
         duration: 1000,
         useNativeDriver: false
       }).start();
+    
     }, []);
-  
+ 
     return (
       <View style={styles.mainContainer}>
         <Text style={styles.textStyle}>{t('bonus')}</Text>

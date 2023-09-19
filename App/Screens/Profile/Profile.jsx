@@ -9,8 +9,14 @@ import BookMarkActiveIcon from '../../../assets/Icon/BookmarkActiveIcon'
 import HistoryIcon from '../../../assets/Icon/HistoryIcon'
 import AddressIcon from '../../../assets/Icon/AddressIcon'
 import { useNavigation } from '@react-navigation/native'
-
-const Profile =({role})=>{
+import { useEffect, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { ProfileApi } from '../../service/profile/profileservice'
+const Profile =()=>{
+    const [role, setRole] = useState();
+    const [name, setName] = useState();
+    const [emailid, setEmailId] = useState();
+    const [ refreshToken, setRefreshToken] = useState()
     console.log(role);
     let navigation = useNavigation();
     let profileData=[
@@ -79,7 +85,24 @@ const Profile =({role})=>{
            
         ]
     }
-    
+    useEffect(() => {
+        const getValueFromStorage = async () => {
+          try {
+            const user = await AsyncStorage.getItem('role'); 
+            const userName = await AsyncStorage.getItem('username');
+            const userEmail = await AsyncStorage.getItem('email')
+            const refresh = await AsyncStorage.getItem('refresh_token')
+            console.log('role2344355', role)
+            setRole(user)
+            setName(userName)
+            setEmailId(userEmail)
+            setRefreshToken(refresh)
+          } catch (error) {
+            console.error('Error fetching data from AsyncStorage:', error);
+          }
+        };
+        getValueFromStorage();
+      }, []);
 function loginHandler(){
     // Alert.alert(
     //     'Logout',
@@ -97,20 +120,29 @@ function loginHandler(){
     //     ],
     //     { cancelable: false }
     //   );
-      navigation.navigate('Login')
+    const data = {
+        refresh : refreshToken
+    }
+    ProfileApi.logout(data).then((res) => {
+        console.log('resss', res.data);
+        if(res.status === 200){
+            navigation.navigate('Login')
+        }
+    })
+    
 }
     return (
     <ScrollView style={styles.container}>
         <View style={styles.profileView}>
-           <Text style={styles.profileShortName}>AB</Text>
+           <Text style={styles.profileShortName}>{name?.slice(0, 2).toUpperCase() || ''}</Text>
         </View>
             <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center',marginTop:10}}>
-                <Text style={styles.profileName}>Abhiram Ahuja</Text>
-                <Pressable onPress={() => navigation.navigate('ProfileEdit')}>
+                <Text style={styles.profileName}>{name}</Text>
+                <Pressable onPress={() => navigation.navigate('ProfileEdit',{name:name})}>
                     <PenIcon height={18} width={18} color='rgb(0,0,0)'></PenIcon>
                 </Pressable>
             </View>
-        <Text style={styles.emailid}>abahuja@gmail.com</Text>
+        <Text style={styles.emailid}>{emailid}</Text>
         <View style={{marginTop:20}}>
           {profileData.map((data,index) => {
             return(
@@ -139,7 +171,7 @@ const styles = StyleSheet.create({
     },
     profileView:{
         width: '25%',
-        height: 87,
+        height: 93,
         borderRadius: 50, 
         backgroundColor:'#B6B6B6',
         alignSelf:'center',
@@ -166,7 +198,8 @@ const styles = StyleSheet.create({
     emailid:{
         fontSize:12,
         fontFamily : 'Poppins-Regular',
-        textAlign:'center'
+        textAlign:'center',
+        color:'rgba(132, 132, 132, 1)'
     },
     listContainer:{
         width:'90%',

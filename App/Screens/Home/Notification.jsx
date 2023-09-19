@@ -1,26 +1,75 @@
-import React, { useContext } from 'react';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { TouchableOpacity, Text, StyleSheet, View, Image, ActivityIndicator } from 'react-native';
 import CheckmarkIcon from '../../../assets/Icon/CheckMark';
 import { useAppContext } from '../../context/AppContext';
+import { HomeApi } from '../../service/home/homeservice';
+import moment from 'moment';
 
 const Notification = () => {
-     
-    const handleButtonPress = () => {
-        // Navigate to the specified route when the button is pressed
-        navigation.navigate(label);
-    };
+     const [data, setData] = useState([]);
+     const [isLoading, setIsLoading] = useState(true);
+    // const handleButtonPress = () => {
+    //     // Navigate to the specified route when the button is pressed
+    //     navigation.navigate(label);
+    // };
+    useEffect(() => {
+        getNotificationHandler();
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 3000);
+    }, []);
+    function getNotificationHandler(){
+        HomeApi.getNotification().then((res) => {
+            console.log(res.data);
+            if(res.status === 200){
+               setData(res.data.results)
+            }
+        })
+    }
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+                <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+            </View>
+        );
+    }
     return (
-        <View style={styles.container}>
-            <View style={styles.iconContainer}>
-                <CheckmarkIcon />
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+         { data.length !== 0 ? (
+            data.map((item, index) => {
+                const dateTime = moment(item.created_at);
+                const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
+                const time = dateTime.format('hh:mm A').toLocaleString('en-US');
+                return (
+                    <View key={index} style={styles.container}>
+                        <View style={styles.iconContainer}>
+                            <CheckmarkIcon />
+                        </View>
+                        <View style={styles.contentContainer}>
+                            <Text style={styles.textItem}>{item.message}</Text>
+                            <Text style={styles.dateText}>{date}.{time}</Text>
+                        </View>
+                    </View>
+                );
+            })
+        ) : (
+            <View style={{ alignSelf: 'center', backgroundColor: 'white', top: 150 }}>
+                <Image
+                    source={require('../../../assets/Images/NotificationImage.png')}
+                    style={{ height: '50%', height: 150 }}
+                    resizeMode='center'
+                ></Image>
+                <View style={{ marginTop: 20 }}>
+                    <Text style={{ color: 'rgba(57, 57, 57, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', textAlign: 'center' }}>
+                        No New Notifications
+                    </Text>
+                    <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 13, fontFamily: 'Poppins-Regular', textAlign: 'center' }}>
+                        You have no new notifications right now.
+                    </Text>
+                </View>
             </View>
-            <View style={styles.contentContainer}>
-                <Text style={styles.textItem}>
-                    500 Pts have been added from your purchase request.
-                </Text>
-                <Text style={styles.dateText}>05 Aug 2023 . 6:00pm</Text>
-            </View>
-        </View>
+        )}
+    </View>
     );
 };
 
@@ -50,21 +99,23 @@ const styles = StyleSheet.create({
         marginLeft: 16
     },
     textItem: {
-        color: '#393939',
+        color: 'rgba(57, 57, 57, 1)',
         fontWeight: '500',
-        fontFamily: 'Poppins',
+        fontFamily: 'Poppins-Medium',
         fontSize: 13.33,
         lineHeight: 20,
     },
     dateText: {
-        color: '#9A9A9A',
+        color: 'rgba(132, 132, 132, 1)',
         textAlign: 'left',
+        fontSize:11,
+        fontFamily:'Poppins-Regular'
     },
     iconContainer: {
-        backgroundColor: 'rgba(24, 183, 88, 0.5)',
-        width: 32,
-        height: 45,
-        borderRadius: 20,
+        backgroundColor: 'rgba(24, 183, 88, 0.2)',
+        width: 50,
+        height: 50,
+        borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 8,

@@ -33,23 +33,7 @@ const LoginPage = ({navigation}) => {
     }
     if(isValid){
       getUserHandler();
-      const data ={
-        email: username,
-        password: password
-      }
-      LoginApi.userLogin(data).then(async(res) => {
-        console.log('resss', res.data)
-        if(res.status === 200){
-          await AsyncStorage.setItem('access_token', res.data.access);
-          await AsyncStorage.setItem('refresh_token', res.data.refresh);
-          await AsyncStorage.setItem('mobile_no', res.data.mobile);
-          await AsyncStorage.setItem('role', res.data.role);
-          await AsyncStorage.setItem('username', res.data.username);
-          navigation.navigate('Home screen')
-          
-        }
-  
-      })
+      
     }
     
   }
@@ -62,10 +46,29 @@ const LoginPage = ({navigation}) => {
         await AsyncStorage.setItem('username_input', username);
         await AsyncStorage.setItem('password_input', password)
     }
-    getOtp()
+    loginHandler()
     
 }
+function loginHandler(){
+  const data ={
+    email: username,
+    password: password
+  }
+  LoginApi.userLogin(data).then(async(res) => {
+    console.log('resss', res.data)
+    if(res.status === 200){
+      await AsyncStorage.setItem('access_token', res.data.access);
+      await AsyncStorage.setItem('refresh_token', res.data.refresh);
+      await AsyncStorage.setItem('mobile_no', res.data.mobile);
+      await AsyncStorage.setItem('role', res.data.role);
+      await AsyncStorage.setItem('username', res.data.username);
+      await AsyncStorage.setItem('email', res.data.email)
+      navigation.navigate('Home screen')
+      
+    }
 
+  })
+}
   const handleForgotPassword = () => {
     // Implement your forgot password logic here
   };
@@ -134,7 +137,7 @@ const LoginPage = ({navigation}) => {
       <Text  style={styles.buttonText}>{t('loginButton')}</Text>
        </Pressable>
       
-       <Pressable style={{ alignItems:'center'}} onPress={() => navigation.navigate('ForgetPassword')}>
+       <Pressable style={{ alignItems:'center'}} onPress={() => navigation.navigate('ForgetPassword',{text : 'Reset Password'})}>
        <Text style={styles.forgotPassword}>{t('forgot')}</Text>
        </Pressable>
        </View>
