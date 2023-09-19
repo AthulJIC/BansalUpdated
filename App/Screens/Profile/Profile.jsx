@@ -12,39 +12,42 @@ import { useNavigation } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ProfileApi } from '../../service/profile/profileservice'
+import { useTranslation } from 'react-i18next';
+
 const Profile =()=>{
     const [role, setRole] = useState();
     const [name, setName] = useState();
     const [emailid, setEmailId] = useState();
     const [ refreshToken, setRefreshToken] = useState()
+    const { t } = useTranslation();
     console.log(role);
     let navigation = useNavigation();
     let profileData=[
        
         {
             id:4,
-            title:'Language',
+            title:t('languages'),
             image: <LanguageIcon width={20} height={20} color='rgba(177, 41, 44, 1)'/>,
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
             navigation : () => navigation.navigate('Language')
         },
         {
             id:5,
-            title:'Contact us',
+            title:t('contact us'),
             image:<ContactIcon/>,
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
             navigation : () => navigation.navigate('Contact')
         },
         {
             id:6,
-            title:'About us',
+            title:t('about us'),
             image:<AboutIcon/>,
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
             navigation : () => navigation.navigate('About')
         },
         {
             id:7,
-            title:'Privacy Policy',
+            title:t('privacy policy'),
             image: <PrivacyIcon/>,
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
             navigation : () => navigation.navigate('Privacy')
@@ -60,21 +63,21 @@ const Profile =()=>{
            
             {
                 id:1,
-                title:'Favourites',
+                title:t('favourites'),
                 image: <BookMarkActiveIcon width={20} height={20} color='rgba(177, 41, 44, 1)'/>,
                 arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
                 navigation : () => navigation.navigate('FavouritesScreen')
             },
             {
                 id:2,
-                title:'History',
+                title:t('history'),
                 image: <HistoryIcon/>,
                 arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
                 navigation : () => navigation.navigate('HistoryScreen')
             },
             {
                 id:3,
-                title:'Addresses',
+                title:t('addresses'),
                 image: <AddressIcon />,
                 arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
                 navigation : () => navigation.navigate('AddressList',{
@@ -158,7 +161,7 @@ function loginHandler(){
           })}
         </View>
         <Pressable style={styles.logoutButton} onPress={loginHandler}>
-            <Text style={styles.logoutText}>Logout</Text>
+            <Text style={styles.logoutText}>{t("logout")}</Text>
         </Pressable>
     </ScrollView>
     )

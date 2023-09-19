@@ -1,21 +1,23 @@
 import { Text, View ,Pressable, StyleSheet} from "react-native";
 import RightArrowIcon from "../../../assets/Icon/RightArrowIcon";
+import { useTranslation } from 'react-i18next';
 
 const ContactScreen = () => {
+    const { t } = useTranslation();
     const contactData=[
         {
             id:1,
-            title:'Email',
+            title:t('email'),
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
         },
         {
             id:2,
-            title:'WhatsApp',
+            title:t('whatsapp'),
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
         },
         {
             id:3,
-            title:'Call',
+            title:t('call'),
             arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
         },
 

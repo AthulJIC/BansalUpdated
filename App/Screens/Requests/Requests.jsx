@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import CustomAlert from '../../Components/alertBox';
 import { RequestApi } from '../../service/request/requestservice';
 import EmptyComponent from '../../Components/EmptyComponent';
+import { useTranslation } from 'react-i18next';
 
 const data = [
     { img: '', name: 'John', designation: 'Contractor', quantity: 10 },
@@ -40,7 +41,9 @@ const Requests = () => {
     const [requestId, setRequestId] = useState('');
     const [distributorItem, setDistributorItem] = useState({})
     const [isLoading, setIsLoading] = useState(true);
+    const { t } = useTranslation();
 
+    const searchPlaceholder = t('search');
     const showAlert = (item) => {
         console.log('itemmmmm===',item)
         setRequestId(item)
@@ -155,10 +158,10 @@ const Requests = () => {
                     </View>
                     <View style={styles.buttonsContainer}>
                         <Pressable onPress={()=>showAlert(itemData.item.id)} style={styles.buttonReject}>
-                            <Text style={styles.buttonText}>Reject</Text>
+                            <Text style={styles.buttonText}>{t("reject")}</Text>
                         </Pressable>
                         <Pressable onPress={showAcceptAlert} style={styles.buttonAccept}>
-                            <Text style={styles.buttonText}>Accept</Text>
+                            <Text style={styles.buttonText}>{t("accept")}</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -182,7 +185,7 @@ const Requests = () => {
             >
                 <TextInput
                     style={styles.input}
-                    placeholder="Search..."
+                    placeholder={searchPlaceholder}
                     placeholderTextColor={'rgba(132, 132, 132, 1)'}
                     onChangeText={text => searchHandler(text)}
                     value={searchText}
@@ -245,7 +248,7 @@ const Requests = () => {
                                 <Text style={{
                                     fontFamily: 'Poppins-Regular', fontSize: 13,
                                     color: '#848484', marginTop: 12, marginLeft: 5
-                                }}>Quantity</Text>
+                                }}>{t('quantity')}</Text>
                                 <Text style={{
                                     fontFamily: 'Poppins-Medium', fontSize: 17,
                                     color: '#B1292C', marginLeft: 5
@@ -254,31 +257,31 @@ const Requests = () => {
                         </View>
                         <View style={[styles.ModalSecondCard, styles.shadowProp]}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Transaction ID</Text>
+                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>{t('transaction')}</Text>
                                 <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>{distributorItem.transaction_id}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
-                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Unique ID</Text>
+                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>{t('unique')}</Text>
                                 <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>A1234455667</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
-                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Mobile</Text>
+                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>{t('mobile')}</Text>
                                 <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>{distributorItem.mobile}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
-                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>Location</Text>
+                                <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>{t('Location')}</Text>
                                 <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>{distributorItem.location}</Text>
                             </View>
                         </View>
                         <View style={styles.modalButtonContainer}>
                             <TouchableOpacity onPress={() => handleReject('Reject')} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: '#EB1C1C', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                                 <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24, fontFamily: 'Poppins-Regular' }}>
-                                    Reject
+                                {t("reject")}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => handleReject('Accept')} style={{ width: '100%', backgroundColor: '#18B758', borderRadius: 6, alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                                 <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24, fontFamily: 'Poppins-Regular' }}>
-                                    Accept
+                                {t("accept")}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -297,14 +300,14 @@ const Requests = () => {
             // ... other modal props ...
             >
                 <View style={styles.alertModal}>
-                    <Text style={styles.alertTitle}>Confirm your Action</Text>
-                    <Text style={styles.alertText}>Are you sure you want to Reject this request?</Text>
+                    <Text style={styles.alertTitle}>{t('confirmationTitle')}</Text>
+                    <Text style={styles.alertText}>{t('confirmation')}</Text>
                     <View style={styles.alertButtonsContainer}>
                         <TouchableOpacity style={styles.alertCancelButton} onPress={hideAlert}>
-                            <Text style={styles.alertButtonText}>Cancel</Text>
+                            <Text style={styles.alertButtonText}>{t("cancel")}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.alertRejectButton} onPress={() => handleReject('Reject')}>
-                            <Text style={styles.alertButton}>Reject</Text>
+                            <Text style={styles.alertButton}>{t("reject")}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -325,10 +328,10 @@ const Requests = () => {
                     <Text style={styles.alertText}>Are you sure you want to Accept this request?</Text>
                     <View style={styles.alertButtonsContainer}>
                         <TouchableOpacity style={styles.alertCancelButton} onPress={hideAlert}>
-                            <Text style={styles.alertButtonText}>Cancel</Text>
+                            <Text style={styles.alertButtonText}>{t("cancel")}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.alertRejectButton} onPress={() =>handleReject('Accept')}>
-                            <Text style={styles.alertButton}>Accept</Text>
+                            <Text style={styles.alertButton}>{t("accept")}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -6,13 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { HomeApi } from '../../service/home/homeservice';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const BarGraph = () => {
     //console.log('roleeee',role)
 
 
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("Monthly");
+    const [value, setValue] = useState('Monthly');
     const [barWeekData, setBarWeekData] = useState([]);
     const [barValue,setBarValue]=useState()
     const [barMonth,setBarMonth]=useState('')
@@ -23,9 +24,9 @@ const BarGraph = () => {
     const [total, setTotal] = useState('');
     const [role, setRole] = useState('')
     const [items, setItems] = useState([
-        { label: 'Weekly', value: "Weekly" },
-        { label: 'Monthly', value: 'Monthly'},
-        { label: 'Quarterly', value: 'Quarterly' },
+        { label:'Weekly', value: 'Weekly' },
+        { label:'Monthly', value: 'Monthly'},
+        { label:'Quarterly', value: 'Quarterly'},
         
     ]);
     console.log('total', total)
@@ -358,7 +359,7 @@ const BarGraph = () => {
                             activeButton === 'Points' && styles.activeButtonText,
                           ]}
                     >
-                        Points
+                        {t('points')}
                     </Text>
                     </TouchableOpacity>
                 )}
@@ -396,8 +397,8 @@ const BarGraph = () => {
             </View>
             <Text style={styles.Text}>
                 {/* {t('totalorders')} */}
-                Total {activeButton}
-                </Text>
+                {t('total')} { activeButton === 'Orders' ? t('orders') : t('points')}
+            </Text>
             <Text style={styles.number} >{total}</Text>
             { total === 0 ?
                     <View>

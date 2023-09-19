@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     bottom: 20,
-    alignSelf: 'center'
+    alignSelf: 'center',
   }
 });
 

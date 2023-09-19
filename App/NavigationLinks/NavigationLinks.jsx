@@ -49,6 +49,7 @@ import IdVerificationScreen from '../Screens/rewards/IdVerificationScreen';
 import IdConfirmationScreen from '../Screens/rewards/IdConfirmationScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HistoryScreen from '../Screens/History/HistoryScreen';
+import { useTranslation } from 'react-i18next';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -67,6 +68,7 @@ const customSlideFromLeft = {
 
 function MyTabs() {
   const [role, setRole] = useState('')
+  const { t } = useTranslation();
   useEffect(() => {
     const getValueFromStorage = async () => {
       try {
@@ -156,28 +158,47 @@ function MyTabs() {
       {
         role === 'Distributor' ? (
         <>
-        <Tab.Screen name="Home" component={HomeScreenTab} />
-        <Tab.Screen name="Requests" component={Requests} />
-        <Tab.Screen name="DistributorHistory" component={DistributorHistory} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="Home" component={HomeScreenTab} options={{
+          tabBarLabel: t('home'),
+        }}/>
+        <Tab.Screen name="Requests" component={Requests} options={{
+          tabBarLabel: t('requests'),
+        }}/>
+        <Tab.Screen name="DistributorHistory" component={DistributorHistory} options={{
+          tabBarLabel: t('history'),
+        }}/>
+        <Tab.Screen name="Profile" component={ProfileScreen} 
+        options={{
+          tabBarLabel: t('profile'),
+        }}/>
         </>
         ): (
           <>
-          <Tab.Screen name="Home" component={HomeScreenTab}/>
-          <Tab.Screen name='Order' component={OrderScreen}/>
-          <Tab.Screen name='Points' component={PointsScreen} />
-          <Tab.Screen name='Reward' component={RewardScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
+          <Tab.Screen name="Home" component={HomeScreenTab} options={{
+          tabBarLabel: t('home'),
+        }}/>
+          <Tab.Screen name='Order' component={OrderScreen} options={{
+          tabBarLabel: t('orders'),
+        }}/>
+          <Tab.Screen name='Points' component={PointsScreen} options={{
+          tabBarLabel: t('points'),
+        }}/>
+          <Tab.Screen name='Reward' component={RewardScreen} options={{
+          tabBarLabel: t('rewards'),
+        }}/>
+          <Tab.Screen name="Profile" component={ProfileScreen} options={{
+          tabBarLabel: t('profile'),
+        }}/>
 
           </>
         )
       }
-      
     </Tab.Navigator>
   );
 }
 
 const NavigationLinks = () => {
+  const { t } = useTranslation();
 
   return (
     <NavigationContainer>
@@ -201,7 +222,7 @@ const NavigationLinks = () => {
             headerShown: false
           }} />
           <Stack.Screen name="Notification" component={Notification} options={{
-          title: 'Notifications',
+          title: t('notifications'),
           headerTitleAlign: 'center',
           headerTitleStyle:{
             fontSize: 18,
@@ -211,7 +232,7 @@ const NavigationLinks = () => {
         }} />
           <Stack.Screen name='Language' component={LanguageScreen} 
           options={{
-          title: 'Languages',
+          title: t('languages'),
           headerTitleAlign: 'center',
           headerTitleStyle:{
             fontSize: 18,
@@ -220,7 +241,7 @@ const NavigationLinks = () => {
           }
         }}/>
           <Stack.Screen name='Contact' component={ContactScreen} options={{
-          title: 'Contact Us',
+          title: t('contact us'),
           headerTitleAlign: 'center',
           headerTitleStyle:{
             fontSize: 18,
@@ -230,7 +251,7 @@ const NavigationLinks = () => {
           
         }}/>
           <Stack.Screen name='About' component={AboutScreen} options={{
-          title: 'About Us',
+          title: t('about us'),
           headerTitleAlign: 'center',
           headerTitleStyle:{
             fontSize: 18,
@@ -239,7 +260,7 @@ const NavigationLinks = () => {
           }
         }}/>
           <Stack.Screen name='Privacy' component={PrivacyScreen} options={{
-          title: 'Privacy Policy',
+          title: t('privacy policy'),
           headerTitleAlign: 'center',
           headerTitleStyle:{
             fontSize: 18,
