@@ -77,11 +77,11 @@ const Requests = () => {
             }
         })
     }
-    const handleAccept = () => {
-        // Handle accept button press
-        hideAlert();
-        // Additional logic as needed
-    };
+    // const handleAccept = () => {
+    //     // Handle accept button press
+    //     hideAlert();
+    //     // Additional logic as needed
+    // };
 
     const handleReject = (status) => {
         // console.log('requestId',requestId)
@@ -133,7 +133,7 @@ const Requests = () => {
                 <Pressable onPress={() => {
                     setModalVisible(!modalVisible);
                     modalItem( itemData.item )
-                }} style={{ borderRadius: 8 , backgroundColor:'rgba(182, 182, 182, 1)',justifyContent:'center', alignItems:'center',height:85, width:'25%'}}>
+                }} style={{ borderRadius: 8 , backgroundColor:'rgba(182, 182, 182, 1)',justifyContent:'center', alignItems:'center',height:90, width:'25%'}}>
 
                     {/* <Image
                         style={styles.tinyLogo}
@@ -389,11 +389,11 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: '#ffffff',
         // padding: 10,
-        height: 109,
+        height: 110,
         width: '90%',
         // paddingRight: 12,
         // paddingTop: 8,
-        // paddingLeft: 8,
+         paddingLeft: 3,
         // paddingBottom: 18,
         borderRadius: 5,
         justifyContent: 'space-evenly',
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
         height: 132,
         width: '100%',
         paddingRight: 12,
-        paddingTop: 18,
+        paddingTop: 12,
         paddingBottom: 28,
         borderRadius: 5,
         borderRadius: 10,
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
         width: 103,
         height: 36,
         borderRadius: 4,
-        padding: 12,
+        // padding: 12,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -467,18 +467,15 @@ const styles = StyleSheet.create({
         width: 103,
         height: 36,
         borderRadius: 4,
-        padding: 12,
+        // padding: 12,
         alignItems: 'center',
         justifyContent: 'center',
         marginLeft: 12
     },
     buttonText: {
-        width: 45,
-        height: 20,
-        fontFamily: 'Poppins',
-        fontWeight: '500',
-        lineHeight: 20,
+        fontFamily: 'Poppins-Regular',
         color: '#FFFFFF',
+        fontSize: 13
     },
     tinyLogo: {
         width: 80,

@@ -198,26 +198,60 @@ function MyTabs() {
 
 const NavigationLinks = () => {
   const { t } = useTranslation();
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        const userToken = await AsyncStorage.getItem('isLoggedIn');
+         console.log('access_token:', userToken);
+         if(userToken === "true")
+         setIsLoggedIn(true)
+        else setIsLoggedIn(false)
+        // const authenticated = !!userToken;
+        // console.log('Is user authenticated?', authenticated);
+        // setIsLoggedIn(authenticated);
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+      }
+    };
+  
+    checkAuthentication();
+  }, []);
+  console.log('Rendering component:', isLoggedIn ? 'Login' : 'Home screen');
+
+  // if (isLoggedIn === null) {
+  //   // Loading state or some initial screen
+  //   return null;
+  // }
   return (
     <NavigationContainer>
-      <Stack.Navigator  initialRouteName="Login"
-      
+       
+      <Stack.Navigator  
+      initialRouteName={isLoggedIn === false ? 'Login':'Home screen'}
       screenOptions={{
         ...TransitionPresets.SlideFromRightIOS,
         ...customSlideFromLeft,
       }}>
-
+        
+        {/* {isLoggedIn ? (
+          <Stack.Screen name="Home screen" component={MyTabs} options={{
+            headerShown: false
+          }}/>
+        ) : (
+          <Stack.Screen name="Login" component={LoginScreen} options={{
+            headerShown: false, 
+        }}/>
+        )} */}
+      
         <Stack.Screen name="Login" component={LoginScreen} 
             options={{
             headerShown: false, // Hide the header for Login screen
         }}/>
-        <Stack.Screen name="Roles" component={RolesScreen}
-              options={{
-                headerShown: false, // Hide the header for Login screen
-        }}/>
         <Stack.Screen  name='ForgetPassword' component={ForgetPasswordScreen} options={{title: ''}}/>
-        <Stack.Screen name="Home screen" component={MyTabs} options={{
+       
+       <Stack.Screen name="Home screen" component={MyTabs} options={{
             headerShown: false
           }} />
           <Stack.Screen name="Notification" component={Notification} options={{
@@ -324,9 +358,10 @@ const NavigationLinks = () => {
           title: '',
         }}></Stack.Screen>
         <Stack.Screen name='IdConfirmation' component={IdConfirmationScreen} options={{title:''}}/>
-      </Stack.Navigator>
+     
+      </Stack.Navigator> 
     </NavigationContainer>
-  );
+  )
 };
 
 export default NavigationLinks;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'; // Don't forget to import React
-import { View, Text, StyleSheet, ScrollView,Image  } from 'react-native';
+import { View, Text, StyleSheet, ScrollView,Image,BackHandler  } from 'react-native';
 import PendingRequest from './PendingRequest';
 import BarGraph from './BarGraph';
 import HeaderComponent from '../../Components/Header';
@@ -8,8 +8,18 @@ import { HomeApi } from '../../service/home/homeservice';
 const HomeScreen = () => {
     const [adImages, setAdImages] = useState([]);
     // console.log('image', adImages)
+    const backAction = () => {
+        BackHandler.exitApp(); // This will close the app
+        return true; // Prevent default back button behavior (navigation)
+      };
+      
     useEffect(() => {
        getAdImages();
+       BackHandler.addEventListener('hardwareBackPress', backAction);
+
+       return () => {
+       BackHandler.removeEventListener('hardwareBackPress', backAction);
+    };
         
       }, []);
       function getAdImages(){

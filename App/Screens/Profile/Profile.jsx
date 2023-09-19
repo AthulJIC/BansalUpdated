@@ -124,9 +124,10 @@ function loginHandler(){
     const data = {
         refresh : refreshToken
     }
-    ProfileApi.logout(data).then((res) => {
+    ProfileApi.logout(data).then(async(res) => {
         // console.log('resss', res.data);
         if(res.status === 200){
+            await AsyncStorage.setItem('isLoggedIn', "false");
             navigation.navigate('Login')
         }
     })

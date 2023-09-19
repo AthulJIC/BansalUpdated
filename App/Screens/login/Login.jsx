@@ -43,8 +43,7 @@ const LoginPage = ({navigation}) => {
        setPassword('');
     }
     else {
-        await AsyncStorage.setItem('username_input', username);
-        await AsyncStorage.setItem('password_input', password)
+      await AsyncStorage.setItem('isLoggedIn', "true");
     }
     loginHandler()
     
@@ -63,15 +62,16 @@ function loginHandler(){
       await AsyncStorage.setItem('role', res.data.role);
       await AsyncStorage.setItem('username', res.data.username);
       await AsyncStorage.setItem('email', res.data.email)
+     
       navigation.navigate('Home screen')
       
     }
 
   })
 }
-  const handleForgotPassword = () => {
-    // Implement your forgot password logic here
-  };
+  // const handleForgotPassword = () => {
+  //   // Implement your forgot password logic here
+  // };
 
   return (
         <ImageBackground
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   position: 'absolute',
   bottom: 0,
   alignSelf:'center',
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  backgroundColor: 'rgba(0, 0, 0, 0.8)',
 },
   input: {
     width: '93%',
