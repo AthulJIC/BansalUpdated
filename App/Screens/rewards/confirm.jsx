@@ -2,20 +2,42 @@ import {Image, Pressable, StyleSheet, Text, TouchableOpacity, View} from 'react-
 import { useAppContext } from '../../context/AppContext'
 import ChangeAddress from '../../../assets/Icon/changeIcon';
 import PenIcon from '../../../assets/Icon/PenIcon';
+import { confirmService } from '../../service/RewardsService/ConfirmService';
+import ErorrPopUp from './erorrRedeem';
+import { useState } from 'react';
 const ConfirmPage=({route,navigation})=>{
     const { selectedProduct } = useAppContext();
+    const [visible,setVisible]=useState(false)
     const {addressItem}=route.params
+    console.log("selectedProduct",selectedProduct)
+    const confirmHandler=(id)=>{
+        console.log('id',id)
+        // setVisible(true)
+        confirmService(id).then((res) => {
+            // if(res.status === 200){
+            //     console.log('success',)
+            //     setOrdersList(res.data.results)
+            // }
+            console.log('confirm Response:', res.data.erorr);
+          })
+    }
+   const uiParams={
+        Product:"Product",
+        Name:"Name",
+        Mobile:"Mobile",
+        Address:"Address"
+    }
     return (
         <View style={{backgroundColor:'#ffffff',height:'100%'}}>
         <View style={[styles.card, styles.shadowProp]}>
            <Image
                     style={styles.tinyLogo}
-                    source={require('../../../assets/Images/Man.jpg')}
+                    source={{uri:selectedProduct.item_image}}
                     resizeMode='cover'
 
                 />
           <View style={{ justifyContent: 'center'}}>
-                <Text style={{ marginLeft: 20, fontFamily: 'Poppins-Medium', fontSize: 16, color: 'rgba(57, 57, 57, 1)' }}>{selectedProduct.name}</Text>
+                <Text style={{ marginLeft: 20, fontFamily: 'Poppins-Medium', fontSize: 16, color: 'rgba(57, 57, 57, 1)' }}>{selectedProduct.title}</Text>
                 <View style={styles.subContainer}>
                     <Text style={{
                         fontFamily: 'Poppins-Medium', fontWeight: '200', fontSize: 13, color: '#B1292C', marginHorizontal: 5
@@ -23,7 +45,7 @@ const ConfirmPage=({route,navigation})=>{
                     <View style={{width:'85%'}}>
                     <Text style={{
                         fontFamily: 'Poppins-Medium', fontWeight: '500', fontSize: 13, color: '#393939', marginLeft: 5, marginBottom: 4
-                    }}>{selectedProduct.details}</Text>
+                    }}>{selectedProduct.description}</Text>
                     </View>
                 </View>
              
@@ -42,43 +64,44 @@ const ConfirmPage=({route,navigation})=>{
             </TouchableOpacity>
            
          </View>
-        <View style={[styles.card, styles.shadowProp]}>
+        <View style={[styles.addressCard, styles.shadowProp]}>
           <View style={{ justifyContent: 'center'}}>
                 <Text style={{ marginLeft: 20, fontFamily: 'Poppins-Medium', fontSize: 16, color: '#393939' }}>{addressItem.name}</Text>
                 <View style={styles.subContainer}>
                     <View style={{width:'85%'}}>
                     <Text style={{
                         fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 13, color: '#848484', marginLeft: 5, marginBottom: 4
-                    }}>{addressItem.address}</Text>
+                    }}>{addressItem.address_1},{addressItem.address_2},{addressItem.land_mark},
+                    {addressItem.city},{addressItem.state}</Text>
                     </View>
                 </View>
-             
+                <Text style={{
+                        fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 13, color: '#848484', marginLeft: 20, marginBottom: 4
+                    }}>{addressItem.mobile}</Text>
             </View>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-
-            </View>
+           
+           
         </View>
         <View style={styles.modalButtonContainer}>
-                <Pressable onPress={()=>{navigation.navigate('Success',{title: 'Reward redemption Successful'})}} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
+                <Pressable onPress={()=>{confirmHandler(selectedProduct.id)
+                    navigation.navigate('Success',{title: 'Reward redemption Successful',content:'The product will be delivered to the shared address.',addressItem,selectedProduct,uiParams})}} 
+                    style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                     <Text style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
                        Confirm
                     </Text>
                 </Pressable>
             </View> 
+            <ErorrPopUp isVisible={visible}/>
         </View>
+       
     )
 }
 export default ConfirmPage
 const styles = StyleSheet.create({
     card: {
         backgroundColor: '#ffffff',
-        // padding: 10,
         height: 132,
         width: '90%',
-        // paddingRight: 12,
-        // paddingTop: 8,
-        // paddingLeft: 8,
-        // paddingBottom: 18,
         borderRadius: 5,
         justifyContent: 'space-evenly',
         borderRadius: 10,
@@ -88,7 +111,23 @@ const styles = StyleSheet.create({
         marginLeft: 2,
         alignSelf: 'center',
         marginTop:12,
-        backgroundColor:'#ffffff'
+        backgroundColor:'#ffffff',
+    },
+    addressCard:{
+        backgroundColor: '#ffffff',
+        // padding: 10,
+        height: 132,
+        width: '90%',
+        borderRadius: 5,
+        justifyContent: 'center',
+        borderRadius: 10,
+        flexDirection: 'column',
+        marginBottom: 17,
+        marginLeft: 2,
+        alignSelf: 'center',
+        marginTop:12,
+        backgroundColor:'#ffffff',
+        alignItems:'flex-start'
     },
     shadowProp: {
         shadowColor: '#171717',
@@ -104,7 +143,6 @@ const styles = StyleSheet.create({
         marginLeft: 40
     },
     subContainer: {
-    
         marginLeft: 17,
         alignItems: 'flex-start',
 

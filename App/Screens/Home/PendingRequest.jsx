@@ -7,7 +7,7 @@ import { HomeApi } from '../../service/home/homeservice';
 
 const PendingRequest = ({role}) => {
     const [progress, setProgress] = useState(0);
-    console.log('role', role)
+    // console.log('role', role)
 
     const { t } = useTranslation();
     const handleButtonPress = () => {
@@ -19,7 +19,7 @@ const PendingRequest = ({role}) => {
       }, []);
     function getLoyaltyPoints(){
         HomeApi.getPoints().then((res) => {
-            console.log(res.data);
+            // console.log(res.data);
             if(res.status === 200){
                 console.log('success')
                 setProgress(res.data.total_points)

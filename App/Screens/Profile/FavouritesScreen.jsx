@@ -1,55 +1,65 @@
 import { Text, View ,ScrollView,FlatList,Animated,StyleSheet,Pressable,Image} from "react-native";
 import ReferLead from "../rewards/addressForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BookMarkActiveIcon from "../../../assets/Icon/BookmarkActiveIcon";
 import BookmarkIcon from "../../../assets/Icon/BookmarkIcon";
+import { BookMarkListService } from "../../service/Orders/BookMarkService";
+import { BookMarkDeleteService } from "../../service/Orders/BookMarkService";
 
 function FavouritesScreen({navigation}){
     const [modalVisible, setModalVisible] = useState(false);
     const [bookmarkedItems, setBookmarkedItems] = useState([]);
-    const data = [
-        { id: 1, name: 'John Nick', requestId: 458930},
-        { id: 2, name: 'Alice Park' , requestId: 458930 },
-        { id: 3, name: 'Bob Marley', requestId: 458930},
-        { id: 4, name: 'Eva Conklin', requestId: 458930},
-        { id: 5, name: 'Michael John', requestId: 458930 },
-        { id: 6, name: 'Sophia Crystal', requestId: 458930},
-        { id: 7, name: 'David Warner', requestId: 458930},
-        { id: 8, name: 'Olivia Steve', requestId: 458930 },
-        { id: 9, name: 'William Shakespeare', requestId: 458930},
-        { id: 10, name: 'Emma Watson', requestId: 458930},
-        { id: 11, name: 'Liam Marker', requestId: 458930},
-        { id: 12, name: 'Ava Trevor', requestId: 458930},
-        { id: 13, name: 'Noah William', requestId: 458930},
-        { id: 14, name: 'Isabella Steve', requestId: 458930},
-        { id: 15, name: 'James Bond', requestId: 458930},
-        { id: 16, name: 'Mia Nick', requestId: 458930},
-        { id: 17, name: 'Benjamin Conklin', requestId:458930},
-        { id: 18, name: 'Luna Marker', requestId: 458930 },
-        { id: 19, name: 'Lucas Cole', requestId: 458930},
-        { id: 20, name: 'Harper Mark', requestId: 458930},
-    ];
+    const [bookMarkListValue,setBookMarkListValue]=useState([])
+    const [Bookmarked,setIsBookMarked]=useState(false)
+    const [selectedIndices, setSelectedIndices] = useState([]);
+    const initialSelectedState = bookMarkListValue.reduce((acc, item, index) => {
+        acc[item.id] = index < 2;
+        return acc;
+      }, {});
     const HEADER_HEIGHT = 200;
     const scrollY = new Animated.Value(0);
+    useEffect(() => {
+        BookMarkList()
+    }, [])
     const closeModal = () => {
         setModalVisible(false);
     };
+    const BookMarkList = () => {
+        BookMarkListService().then((res) => {
+            setBookMarkListValue(res.data.results)
+            setSelectedIndices(bookMarkListValue.map((item, index) => index))
+        })
+    }
     function chooseHandler(item){
         navigation.navigate('DistributorExpand',{ selectedItem: item })
    }
     const handleRefer = () => {
-        // Perform navigation to another page
         navigation.navigate('ConfirmDetail');
       };
-      function bookmarkHandler(itemId){
-        if (bookmarkedItems.includes(itemId)) {
-            setBookmarkedItems(bookmarkedItems.filter(id => id !== itemId));
-          } else {
-            setBookmarkedItems([...bookmarkedItems, itemId]);
-          }
-       }
-    const requestData = ({ item }) => {
-        const isBookmarked = bookmarkedItems.includes(item.id);
+      const bookmarkHandler = (itemId,id) => {
+    
+        // setSelectedItems((prevState) => ({
+        //   ...prevState,
+        //   [itemId]: !prevState[itemId],
+        // }));
+        // setIsBookMarked((prevIsBookMarked) => !prevIsBookMarked);
+        const updatedIndices = [...selectedIndices];
+        if (updatedIndices.includes(itemId)) {
+          const itemIndex = updatedIndices.indexOf(itemId);
+          updatedIndices.splice(itemIndex, 1);
+          BookMarkDeleteService(id).then((res) => {
+            console.log('Book Mark Delete Response:', res);
+            BookMarkList()
+        })
+        } else {
+          updatedIndices.push(itemId);
+        }
+        setSelectedIndices(updatedIndices);
+      };
+    const requestData = (item,index ) => {
+        // console.log("log",item)
+        // const isBookmarked = selectedItems[item.user_id]
+         isSelected = selectedIndices.includes(index);
         return(
 
             <View style={[styles.card, styles.shadowProp]}>
@@ -58,22 +68,20 @@ function FavouritesScreen({navigation}){
                         style={styles.tinyLogo}
                         source={require('../../../assets/Images/Man.jpg')}
                         resizeMode='cover'
-
                     />
                 </Pressable>
 
                 <View style={{width:'60%', height:88}}>
                     <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                        <Text style={{fontFamily: 'Poppins-Medium', fontSize: 13,color:'rgba(177, 41, 44, 1)'}}> {item.requestId}</Text>
-                        <Pressable onPress={() => bookmarkHandler(item.id)}>
-                        {!isBookmarked ?
+                        <Text style={{fontFamily: 'Poppins-Medium', fontSize: 13,color:'rgba(177, 41, 44, 1)'}}> {item?.user_id}</Text>
+                        <Pressable onPress={() => bookmarkHandler(index,item.id)}>
+                        {!isSelected ?
                             (<BookmarkIcon height={16} width={16} color='#393939'/>) : 
                             <BookMarkActiveIcon height={17} width={17} color='rgba(127, 176, 105, 1)'/>
                         }                    
                         </Pressable>
-
                     </View>
-                    <Text style={{fontFamily: 'Poppins-Medium', fontSize: 16,color:'rgba(57, 57, 57, 1)'}}> {item.name}</Text>
+                    <Text style={{fontFamily: 'Poppins-Medium', fontSize: 16,color:'rgba(57, 57, 57, 1)'}}> {item?.name}</Text>
                     <Pressable style={styles.buttonReject} onPress={() =>chooseHandler(item)}>
                         <Text style={styles.buttonText}>Choose</Text>
                     </Pressable>
@@ -84,9 +92,9 @@ function FavouritesScreen({navigation}){
     return(
         <View style={{flex:1, backgroundColor:'white'}}>
         <FlatList
-            data={data}
-            renderItem={requestData}
-            keyExtractor={(item) => item.name}
+          data={bookMarkListValue.map((item, index) => ({ ...item, index }))}
+          renderItem={({ item, index }) => requestData(item, index)}
+            keyExtractor={(item,index) => index.toString()}
             onScroll={Animated.event(
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                 { useNativeDriver: false }

@@ -1,17 +1,47 @@
 import { StyleSheet, Text, View ,Image,TouchableOpacity, Pressable} from "react-native";
 import PenIcon from "../../../assets/Icon/PenIcon";
 import StarIcon from "../../../assets/Icon/StarIcon";
+import ProductPopup from "./ProductPopup";
+import { useState } from "react";
+import { ConfirmPurchaseService } from "../../service/Orders/ConfirmPurchaseService";
+import { useTranslation } from 'react-i18next';
 StarIcon
 
 function ConfirmPurchase({route,navigation}){
     const item = route?.params;
-    console.log(item.selectedItem.name)
-    function successHandler(){
-        navigation.navigate('Success',{
-            title : 'Purchase Request Successful',
-            content: 'Pts would be credited once the request has been confirmed by the distributor.'
-        })
+    const [modalVisible,setModalVisible]=useState(false)
+    const [ton,setTons]=useState(item.quantity)
+    const [quantity, setQuantity] = useState(0)
+    const { t } = useTranslation();
+  
+   const uiParams={
+    Product:t('quantity'),
+    Name:t('unique'),
+    Mobile:t('Mnumber'),
+    Address:t('Location'),
     }
+   function successHandler(){
+    ConfirmPurchaseService(ton,item.selectedItem.id).then((res) => {
+        console.log('Received data:', res.role);
+        navigation.navigate('Success',{
+            title : t('title'),
+            content: t('content'),
+            addressItem:item,
+            selectedProduct:null,
+            uiParams,
+            page:'orders',
+            ton,
+            // roles:res.roles
+      })
+    })
+}
+    const ProductVisible=()=>{
+        setModalVisible(true)
+        
+    }
+    const updateTon = (newTon) => {
+        setTons(newTon);
+      };
     return(
         <View style={{flex:1, backgroundColor:'white'}}>
             <View style={[styles.Modalcard, styles.shadowProp]}>
@@ -29,13 +59,13 @@ function ConfirmPurchase({route,navigation}){
                     <Text style={{
                         fontFamily: 'Poppins-Regular',fontSize: 13,
                         color: '#848484',marginTop:12
-                    }}>Quantity</Text>
+                    }}>{t('quantity')}</Text>
                     <View style={{flexDirection:'row',marginTop:8}}>
                         <Text style={{
                             fontFamily: 'Poppins-Medium', fontSize: 17,
                             color: '#B1292C'
-                        }}>65 Ton</Text>
-                        <Pressable style={{marginTop:3,marginLeft:6}}>
+                        }}>{ton} {t('Ton')}</Text>
+                        <Pressable onPress={() => {setModalVisible(true)}}  style={{marginTop:3,marginLeft:6}}>
                           <PenIcon width={17} height={17} color='rgba(57, 57, 57, 1)'/>
                         </Pressable>
                     </View>
@@ -47,49 +77,44 @@ function ConfirmPurchase({route,navigation}){
                     <Text style={{color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>A1234455667</Text>
                 </View> */}
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5}}>
-                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>Unique ID</Text>
-                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>A1234455667</Text>
+                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>{t('unique')}</Text>
+                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>{item.selectedItem.user_id}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5 }}>
-                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>Mobile</Text>
-                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>A1234455667</Text>
+                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>{t('Mnumber')}</Text>
+                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>{item.selectedItem.mobile}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5}}>
-                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>Location</Text>
-                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,textAlign:'right', width:'37%'}}>Bhopal, Madhya Pradesh</Text>
+                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>{t('Location')}</Text>
+                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,textAlign:'right', width:'37%'}}>{item.selectedItem.district_name},{item.selectedItem.state_name}</Text>
                 </View>
             </View>
             <View style={{backgroundColor:'rgba(4, 4, 4, 1)', width:'90%',height:92,padding:12,borderRadius:4,marginTop:20,alignSelf:'center'}}>
                 <View style={{flexDirection:'row'}}>
                     <StarIcon/>
-                    <Text style={{color:'rgba(241, 140, 19, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>500 Pts</Text>
-                    <Text style={{color:'rgba(255, 255, 255, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>on confirmation</Text>
+                    <Text style={{color:'rgba(241, 140, 19, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>{t('500 Pts')}</Text>
+                    <Text style={{color:'rgba(255, 255, 255, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>{t('on confirmation')}</Text>
                 </View>
-                <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:11, fontFamily:'Poppins-Regular',marginTop:5}}>You can earn 500 Pts from this referral. Redeem this points on the rewards section for exciting gifts.</Text>
+                <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:11, fontFamily:'Poppins-Regular',marginTop:5}}>{t('lines')}</Text>
             </View>
             <View style={styles.modalButtonContainer}>
                 <Pressable style={{ width: '90%', backgroundColor: 'rgba(177, 41, 44, 1)', borderRadius: 6, alignItems: 'center', height: 48, radius: 4, padding: 12 }} onPress={successHandler}>
                     <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24,fontFamily:'Poppins-Regular' }}>
-                    Confirm Purchase Request
+                  {t('confirm')}
                     </Text>
                 </Pressable>
             </View>
+            <ProductPopup  onUpdateQuantity={updateTon}  isVisible={modalVisible} onClose={()=> setModalVisible(false)} quantity={item.quantity} onEdit={true} />
         </View>
     )
 }
 const styles = StyleSheet.create({
     Modalcard: {
-        backgroundColor: '#ffffff', // Customize button style as needed
+        backgroundColor: '#ffffff', 
         // padding: 10,
         height: 130,
         width: '90%',
-        // paddingRight: 12,
-        // paddingTop: 8,
-        // paddingLeft: 8,
-        // paddingBottom: 18,
         borderRadius: 5,
-        // justifyContent: 'flex-start',
-        // alignItems:'center',
         alignItems:'center',
         borderRadius: 10,
         flexDirection: 'row',

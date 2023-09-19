@@ -20,13 +20,13 @@ function HeaderComponent() {
   const [isHindiButtonRed, setIsHindiButtonRed] = useState(false);
   const [activeButton, setActiveButton] = useState('English');
   const [newLanguage, setnewLanguage] = useState('')
-  const { language, changeLanguage } = useAppContext();
+  const { changeLanguage } = useAppContext();
   const[username, setUsername] = useState('') ;
   useEffect(() => {
     const getValueFromStorage = async () => {
       try {
         const value = await AsyncStorage.getItem('username'); 
-        console.log('role2344355', username)
+        // console.log('role2344355', username)
         if (value !== null) {
           setUsername(value);
         }

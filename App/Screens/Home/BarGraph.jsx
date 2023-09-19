@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { BarChart } from 'react-native-gifted-charts';
 import { useTranslation } from 'react-i18next';
 const BarGraph = ({role}) => {
-    console.log('roleeee',role)
+    // console.log('roleeee',role)
 
 
     const { t } = useTranslation();
@@ -31,6 +31,7 @@ const BarGraph = ({role}) => {
         {value: 5, label: 'Nov'},
         {value: 0.5, label: 'Dec'},
     ]
+    
     
     // const [chartParentWidth, setChartParentWidth] = useState(0);
     // const chartConfig = {

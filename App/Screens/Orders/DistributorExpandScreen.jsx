@@ -9,19 +9,21 @@ import { useTranslation } from 'react-i18next';
 function DistributorExpandScreen({navigation, route}){
 
     const { selectedItem } = route?.params;
-    console.log('selected', selectedItem)
     const [name, setName] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
-    const description = 'TMT Sariya are reinforced bars having a tough outer core and a soft inner core used in all types of general and heavy construction including building, infrastructural projects, housing projects, dams, bridges & houses.'
+    
     const { t } = useTranslation();
-    const handleRefer = () => {
-        // Perform navigation to another page
-        navigation.navigate('ConfirmPurchase',{selectedItem:selectedItem});
+    const description = t('description')
+    const handleRefer = (quantity) => {
+        navigation.navigate('ConfirmPurchase',{
+             selectedItem:selectedItem,
+             quantity:quantity});
       };
+      console.log("selectedItem",selectedItem)
     return(
         <View style={{flex:1,backgroundColor:'white'}}>
             <View style={{backgroundColor:'rgba(182, 182, 182, 1)',height:112, width:'95%',borderRadius:8,alignSelf:'center',alignItems:'center',justifyContent:'center'}}>
-                <Text style={{fontSize:30,fontFamily:'Poppins-SemiBold',color:'rgba(57, 57, 57, 1)'}}>SH</Text>
+                <Text style={{fontSize:30,fontFamily:'Poppins-SemiBold',color:'rgba(57, 57, 57, 1)'}}>{selectedItem?.name?.slice(0, 2).toUpperCase()}</Text>
             </View>
             <View>
                 <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:20}}>
@@ -31,9 +33,9 @@ function DistributorExpandScreen({navigation, route}){
                     </Pressable>
                 </View>
                 <Text style={{color:'rgba(57, 57, 57, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Medium'}}>{selectedItem.name}</Text>
-                <Text style={{color:'rgba(132, 132, 132, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Regular'}}>Bhopal, Madhya Pradesh</Text>
+                <Text style={{color:'rgba(132, 132, 132, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Regular'}}>{selectedItem.district_name}, {selectedItem.state_name}</Text>
                 <View style={{ width:'95%',borderBottomColor:'black', borderBottomWidth:1,alignSelf:'center',marginTop:10}}></View>
-                <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:16,fontFamily:'Poppins-Medium',marginLeft:15,marginTop:10}}>Products</Text>
+                <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:16,fontFamily:'Poppins-Medium',marginLeft:15,marginTop:10}}>{t('Products')}</Text>
             </View>
             <View style={{backgroundColor:'white', width:'37%', height:235,elevation:8,borderRadius:8, marginLeft:10,marginTop:10}}>
                 <Image source={require('../../../assets/Images/ProductImage.png')} style={{width:120, height:120,marginTop:7,borderRadius:8,alignSelf:'center'}}></Image>
