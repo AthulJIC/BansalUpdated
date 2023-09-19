@@ -104,12 +104,20 @@ function FavouritesScreen({navigation}){
     return(
     <View style={{flex:1, backgroundColor:'white'}}>
         {bookMarkListValue.length===0?
-        <View style={{alignSelf:'center',marginTop:200}}>
-        <Image
-         source={require('../../../assets/Images/favouritesEmpty.png')}
-         style={{ width: 200, height: 200,justifyContent:'center',alignItems:'center' }}
-         />
-         </View>
+       <View style={{ alignSelf: 'center', backgroundColor: 'white', top: 150 }}>
+       <Image
+           source={require('../../../assets/Images/favouritesEmpty.png')}
+           style={{ height: 150,alignSelf:'center' }}
+       />
+       <View style={{ marginTop: 20 }}>
+           <Text style={{ color: 'rgba(57, 57, 57, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', textAlign: 'center' }}>
+           No Favourites
+           </Text>
+           <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 13, fontFamily: 'Poppins-Regular', textAlign: 'center' }}>
+           Start adding Distributors to your favourites list.
+           </Text>
+       </View>
+   </View>
          :
         <FlatList
           data={bookMarkListValue.map((item, index) => ({ ...item, index }))}

@@ -70,18 +70,22 @@ const HistoryScreen = () => {
     let statusText = itemData.item.status;
     let pointsText = ''; 
     let displayText = '';
+    let textColor;
 
   if (itemData.item.status === 'Pending') {
     statusText = 'Processing'; 
     pointsText = '500 Pts'; 
     displayText = itemData.item.quantity;
+    textColor = "rgba(31, 134, 255, 1)";
   }
   else if (itemData.item.status === 'Accepted') {
     pointsText = '+500 Pts'; 
     displayText = itemData.item.transaction_id
+    textColor = "rgba(24, 183, 88, 1)";
   }
   else{
     displayText = itemData.item.transaction_id
+    textColor = "rgba(235, 28, 28, 1)";
   }
     return(
 
@@ -155,7 +159,7 @@ const HistoryScreen = () => {
           </View>
         </View>
         <View style={{marginLeft:'auto', marginRight:10}}>
-            <Text style={{textAlign:'right', marginRight:5, color : itemData.item.status === 'Pending' ? 'rgba(31, 134, 255, 1)' : itemData.item.status === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)'}}>{pointsText}</Text>
+            <Text style={{textAlign:'right', marginRight:5, color : textColor}}>{pointsText}</Text>
           <Text style={{color : 'rgba(57, 57, 57, 1)', fontSize:11,fontFamily:'Poppins-Medium',marginRight:5}}>{statusText.toLocaleUpperCase()}</Text>
         </View>
      </View>

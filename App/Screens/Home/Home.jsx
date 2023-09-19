@@ -11,7 +11,7 @@ const HomeScreen = () => {
     const backAction = () => {
         BackHandler.exitApp(); // This will close the app
         return true; // Prevent default back button behavior (navigation)
-      };
+    };
       
     useEffect(() => {
        getAdImages();

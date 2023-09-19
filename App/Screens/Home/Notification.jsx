@@ -56,7 +56,7 @@ const Notification = () => {
             <View style={{ alignSelf: 'center', backgroundColor: 'white', top: 150 }}>
                 <Image
                     source={require('../../../assets/Images/NotificationImage.png')}
-                    style={{ height: '50%', height: 150 }}
+                    style={{ width: '50%', height: 150 }}
                     resizeMode='center'
                 ></Image>
                 <View style={{ marginTop: 20 }}>
