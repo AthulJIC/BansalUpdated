@@ -1,40 +1,36 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, View, Image, ActivityIndicator } from 'react-native';
+import React, {  useEffect, useState } from 'react';
+import {  Text, StyleSheet, View, Image, ActivityIndicator } from 'react-native';
 import CheckmarkIcon from '../../../assets/Icon/CheckMark';
-import { useAppContext } from '../../context/AppContext';
 import { HomeApi } from '../../service/home/homeservice';
 import moment from 'moment';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
+import LoadingIndicator from '../../Components/LoadingIndicator';
 
 const Notification = ({navigation}) => {
      const [data, setData] = useState([]);
      const [isLoading, setIsLoading] = useState(true);
-    // const handleButtonPress = () => {
-    //     // Navigate to the specified route when the button is pressed
-    //     navigation.navigate(label);
-    // };
     useBackButtonHandler(navigation, false);
     useEffect(() => {
         getNotificationHandler();
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 3000);
+        // setTimeout(() => {
+        //     setIsLoading(false);
+        // }, 3000);
     }, []);
     function getNotificationHandler(){
         HomeApi.getNotification().then((res) => {
-            // console.log(res.data);
             if(res.status === 200){
+                setIsLoading(false)
                setData(res.data.results)
             }
         })
     }
-    if (isLoading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-                <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-            </View>
-        );
-    }
+    // if (isLoading) {
+    //     return (
+    //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+    //             <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+    //         </View>
+    //     );
+    // }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
          { data.length !== 0 ? (
@@ -71,6 +67,7 @@ const Notification = ({navigation}) => {
                 </View>
             </View>
         )}
+        {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'></LoadingIndicator>}
     </View>
     );
 };

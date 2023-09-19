@@ -46,13 +46,11 @@ const HistoryScreen = ({navigation}) => {
   function getHistoryList(){
     setIsLoading(true);
      HistoryApi.getHistory().then((res) => {
-      //  console.log('resssss', res.data)
        if(res.status === 200){
          setFilteredData(res.data.results)
          setIsLoading(false)
       }
      }).catch((err) => {
-      //console.log(err);
     })
     .finally(() => {
       setIsLoading(false);
@@ -60,20 +58,17 @@ const HistoryScreen = ({navigation}) => {
   }
   const handlePress = (item) => {
     setIsLoading(true)
-    // console.log('itemmmmm===',item)
     setSelectedFilter(item);
     if(item.title === 'All Transactions'){
       getHistoryList();
     }
     else{
       HistoryApi.getHistoryStatus(item.value).then((res) => {
-        // console.log('resssss', res.data)
        if(res.status === 200){
          setFilteredData(res.data.results)
          setIsLoading(false)
       }
       }).catch((err) => {
-        //console.log(err);
       })
       .finally(() => {
         setIsLoading(false);
@@ -81,7 +76,6 @@ const HistoryScreen = ({navigation}) => {
     }
   };
   const requestData = (itemData) => {
-    //console.log(itemData);
     const dateTime = moment(itemData.item.created_at);
     const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
     const time = dateTime.format('hh:mm A').toLocaleString('en-US');
@@ -112,9 +106,7 @@ const HistoryScreen = ({navigation}) => {
       height: 50,
       width: '99%',
       marginTop: 15,
-      //justifyContent: 'space-around',
       alignSelf: 'flex-start',
-      // Add this line to align items at the top
     }}>
         { itemData.item.status === 'Accepted' ? (
           <View style={{backgroundColor: 'rgba(24, 183, 88, 0.2)',
@@ -241,7 +233,7 @@ const styles = StyleSheet.create({
     marginBottom:20
   },
   filterSection: {
-    height: 60, // Adjust as needed
+    height: 60,
     justifyContent: 'center',
     marginBottom: 10,
   },

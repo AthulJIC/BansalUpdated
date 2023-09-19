@@ -1,38 +1,40 @@
 import { Text, View ,ScrollView,FlatList,Animated,StyleSheet,Pressable,Image, ActivityIndicator} from "react-native";
 import ReferLead from "../rewards/addressForm";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import BookMarkActiveIcon from "../../../assets/Icon/BookmarkActiveIcon";
 import BookmarkIcon from "../../../assets/Icon/BookmarkIcon";
-import { BookMarkListService } from "../../service/Orders/BookMarkService";
+import { BookMarkApi, BookMarkListService } from "../../service/Orders/BookMarkService";
 import { BookMarkDeleteService } from "../../service/Orders/BookMarkService";
 import LoadingIndicator from "../../Components/LoadingIndicator";
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
 function FavouritesScreen({navigation}){
     const [modalVisible, setModalVisible] = useState(false);
-    const [bookmarkedItems, setBookmarkedItems] = useState([]);
     const [bookMarkListValue,setBookMarkListValue]=useState([])
-    const [Bookmarked,setIsBookMarked]=useState(false)
     const [selectedIndices, setSelectedIndices] = useState([]);
     const [isLoading,setisLoading]=useState(false);
+    const [IsSelected,setIsSelected]=useState(false)
+    // console.log("bookMarkListValue",bookMarkListValue)
     useBackButtonHandler(navigation, false);
-    const initialSelectedState = bookMarkListValue.reduce((acc, item, index) => {
-        acc[item.id] = index < 2;
-        return acc;
-      }, {});
       let isSelected
-    const HEADER_HEIGHT = 200;
+      console.log("IsSelected",IsSelected)
     const scrollY = new Animated.Value(0);
     useEffect(() => {
         BookMarkList()
+      
     }, [])
+    useEffect(() => {
+        BookMarkList()
+      
+    }, [IsSelected])
     const closeModal = () => {
         setModalVisible(false);
     };
     const BookMarkList = () => {
         setisLoading(true)
-        BookMarkListService().then((res) => {
-            setBookMarkListValue(res.data.results)
+        BookMarkApi.getBookMarkList().then((res) => {
+            console.log("res.data",res.data)
+            setBookMarkListValue(prevState => res.data.results);
             setSelectedIndices(bookMarkListValue.map((item, index) => index))
            setisLoading(false)
         })
@@ -45,19 +47,14 @@ function FavouritesScreen({navigation}){
         navigation.navigate('ConfirmDetail');
       };
       const bookmarkHandler = (itemId,id,isSelected) => {
-     //console.log("isSelected",isSelected)
-        // setSelectedItems((prevState) => ({
-        //   ...prevState,
-        //   [itemId]: !prevState[itemId],
-        // }));
-        // setIsBookMarked((prevIsBookMarked) => !prevIsBookMarked);
+        console.log('item===', itemId,id,isSelected)
         const updatedIndices = [...selectedIndices];
         if (!isSelected) {
-        //   const itemIndex = updatedIndices.indexOf(itemId);
-        //   updatedIndices.splice(itemIndex, 1);
-          BookMarkDeleteService(id).then((res) => {
-            //console.log('Book Mark Delete Response:', res);
-            BookMarkList()
+          BookMarkApi.deleteBookMark(id).then((res) => {
+            console.log('del res',res.status)  
+            const newList = [...bookMarkListValue];
+            newList.splice(itemId,1);
+            setBookMarkListValue(newList);
         })
         } else {
           updatedIndices.push(itemId);
@@ -65,17 +62,16 @@ function FavouritesScreen({navigation}){
         setSelectedIndices(updatedIndices);
       };
     const requestData = (item,index ) => {
-        // console.log("log",item)
-        // const isBookmarked = selectedItems[item.user_id]
-         isSelected = selectedIndices.includes(index);
+        const isSelected = selectedIndices.includes(index);
+        setIsSelected(isSelected)
+        console.log("isSelected requestData",isSelected)
         const isLoadingBookmark = isLoading && isSelected;
-        //console.log("isSelected",isSelected)
-        
+        console.log("item",item)
         return(
 
             <View style={[styles.card, styles.shadowProp]}>
                 <View style={{ borderRadius: 8, backgroundColor: 'rgba(182, 182, 182, 1)', justifyContent: 'center', alignItems: 'center', height: 95, width: '25%', marginLeft: 10, marginRight: 10 }}>
-                    <Text style={{ textAlign: 'center', color: 'rgba(57, 57, 57, 1)', fontSize: 27, fontFamily: 'Poppins-Medium', }}>{item.name.slice(0, 2).toUpperCase()}</Text>
+                    <Text style={{ textAlign: 'center', color: 'rgba(57, 57, 57, 1)', fontSize: 27, fontFamily: 'Poppins-Medium', }}>{item?.name?.slice(0, 2)?.toUpperCase()}</Text>
                 </View>
                 <View style={{width:'60%', height:88}}>
                     <View style={{flexDirection:'row',justifyContent:'space-between'}}>
@@ -84,9 +80,7 @@ function FavouritesScreen({navigation}){
                         <Pressable onPress={() => bookmarkHandler(index,item.id,isSelected)}>
                         {isSelected?
                             (
-                                isLoading? (
-                                    <ActivityIndicator size="small" color="green" />
-                                ) : (
+                                (
                                     <BookmarkIcon height={16} width={16} color='#393939'/>
                                 )
                             ) : 
@@ -102,15 +96,7 @@ function FavouritesScreen({navigation}){
             </View>
         )
     }; 
-   
-    // if (isLoading) {
-    //     return (
-    //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-    //             <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-    //         </View>
-    //     );
-    // } 
-         
+            
     return(
     <View style={{flex:1, backgroundColor:'white'}}>
         {bookMarkListValue.length===0?
@@ -145,14 +131,7 @@ function FavouritesScreen({navigation}){
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        // paddingTop: 24,
-        // paddingLeft: 16,
-        // paddingRight: 16,
-       // paddingBottom: 16,
-        // width: 328,
         backgroundColor: '#ffffff',
-        
-        
     },
     container: {
         flexDirection: 'row',
@@ -222,9 +201,6 @@ const styles = StyleSheet.create({
         
     },
     modalView: {
-        // marginTop: 180,
-         //backgroundColor: 'white',
-         //borderRadius: 20,
          padding: 16,
          width: '100%',
          height: '100%',
@@ -238,17 +214,10 @@ const styles = StyleSheet.create({
          elevation: 5,
      },
      Modalcard: {
-        backgroundColor: '#ffffff', // Customize button style as needed
-        // padding: 10,
+        backgroundColor: '#ffffff',
         height: 130,
         width: '100%',
-        // paddingRight: 12,
-        // paddingTop: 8,
-        // paddingLeft: 8,
-        // paddingBottom: 18,
         borderRadius: 5,
-        // justifyContent: 'flex-start',
-        // alignItems:'center',
         alignItems:'center',
         borderRadius: 10,
         flexDirection: 'row',
@@ -268,10 +237,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 36,
         borderRadius: 4,
-        // padding: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        // marginLeft: 12
     },
     buttonText: {
         fontFamily: 'Poppins-Regular',
@@ -285,7 +252,6 @@ const styles = StyleSheet.create({
         marginHorizontal:20
     },
     dropdown: {
-        // margin: 10,
         height: 50,
         width:'50%'
     },

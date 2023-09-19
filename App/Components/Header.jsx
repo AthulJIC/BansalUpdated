@@ -5,7 +5,6 @@ import Modal from 'react-native-modal';
 import BellIcon from "../../assets/Icon/Bell";
 import LanguageIcon from "../../assets/Icon/LanguageIcon";
 import Icon from 'react-native-vector-icons/Feather';
-import Notification from "../Screens/Home/Notification";
 import { useTranslation } from 'react-i18next';
 import i18n from "../Languages/i18";
 import { useAppContext } from "../context/AppContext";
@@ -16,13 +15,11 @@ function HeaderComponent() {
   const [modalVisible, setModalVisible] = useState(false)
   const { language, changeNewLanguage } = useLanguageContext();
   const [notificationMessage, setNotificationMessage] = useState('');
-  const [sliderAnim] = useState(new Animated.Value(0));
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [activeButton, setActiveButton] = useState('');
   const [newLanguage, setnewLanguage] = useState('')
   const { changeLanguage } = useAppContext();
   const[username, setUsername] = useState('') ;
-  const [lastSelectedLanguage, setLastSelectedLanguage] = useState('');
   
   useFocusEffect(
     useCallback(() => {
@@ -55,9 +52,10 @@ function HeaderComponent() {
     setActiveButton('Hindi')
     setnewLanguage(i18n.language === 'en' ? 'hi' : 'hi')
   };
-  const confirmLanguage = () => {
+  const confirmLanguage = async() => {
     i18n.changeLanguage(newLanguage);
     changeNewLanguage(newLanguage === 'en' ? 'English' : 'Hindi');
+    //await AsyncStorage.setItem('Language', (newLanguage === 'en' ? 'English' : 'Hindi'))
   }
   const handleNotificationClick = () => {
     navigation.navigate('Notification')

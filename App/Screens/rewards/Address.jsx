@@ -11,6 +11,9 @@ import { AddAddressService, deleteAddressService, updateAddressService } from '.
 import { AddressListService } from '../../service/RewardsService/AddressListService';
 import LoadingIndicator from '../../Components/LoadingIndicator';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
+import { Dropdown } from 'react-native-element-dropdown';
+import { RewardsApi } from '../../service/rewards/rewardservice';
+import Icons from 'react-native-vector-icons/MaterialIcons'
 
 const AddressList = ({navigation,route}) => {
   const data = route?.params.fromProfile;
@@ -31,6 +34,7 @@ const AddressList = ({navigation,route}) => {
   const [userId,setUserId]=useState('')
   const [editPress,setEditPress]=useState(false)
   const [textVisible,setTextVisible]=useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   const [nameError, setNameError] = useState('');
   const [mobileNoError, setMobileNoError] = useState('');
@@ -39,14 +43,22 @@ const AddressList = ({navigation,route}) => {
   const [landMarkError, setLandMarkError] = useState('');
   const [townError, setTownError] = useState('');
   const [isLoading,setisLoading]=useState(false)
+  const [value, setValue] = useState('');
   const { t } = useTranslation();
+  const[stateList, setStateList]= useState([]);
   useBackButtonHandler(navigation, false);
   const selectAddress = (addressId) => {
     setSelectedAddress(addressId);
   };
+  let stateData = stateList.map((item) => ({
+    value: item.id,
+    label: item.state_name,
+}));
   useEffect(() => {
-    addressList()
+    addressList();
+    getStateList();
 }, [isVisible]);
+
   const onAddAddress=()=>{
     setName('')
     setMobileNo('')
@@ -97,13 +109,25 @@ const AddressList = ({navigation,route}) => {
   const addressList=()=>{
     setisLoading(true)
     AddressListService().then((res)=>{
-      // console.log("Address List",res.data.results)
       
       setaddresses(res.data.results)
       setisLoading(false)
     })
   }
+  function getStateList(){
+      RewardsApi.getState().then((res) => {
+         //console.log('success');
+         if(res.status === 200){
+           //console.log(res.data)
+           setStateList(res.data.results)
+         }
+      })
+  }
   const confirmHandler=()=>{
+    if (isLoading) {
+      return;
+    }
+    setisLoading(true)
     setNameError('');
     setMobileNoError('');
     setPinCodeError('');
@@ -114,55 +138,92 @@ const AddressList = ({navigation,route}) => {
     if (name.trim() === '') {
       setNameError('Name is required');
       isValid = false;
+      setisLoading(false)
     }
 
     if (mobileNo.trim() === '') {
       setMobileNoError('Mobile number Required');
       isValid = false;
+      setisLoading(false)
     }
     if(mobileNo.length > 0 && mobileNo.length !== 10)
     {
       setMobileNoError('Mobile number Should be 10 digits');
       isValid = false;
+      setisLoading(false)
     }
 
     if (pinCode.trim() === '' || pinCode.length !== 6 || pinCode.length >6 ) {
       setPinCodeError('Pin code should be 6 digits');
       isValid = false;
+      setisLoading(false)
     }
 
-    if (states.trim() === '') {
+    if (!value) {
       setStatesError('State is required');
       isValid = false;
+      setisLoading(false)
     }
 
     if (landMark.trim() === '') {
       setLandMarkError('Landmark is required');
       isValid = false;
+      setisLoading(false)
     }
 
     if (Value.trim() === '') {
       setTownError('Town is required');
       isValid = false;
+      setisLoading(false)
+
     }
     if (isValid) {
-      {editPress ?
-        updateAddressService(params,userId).then((res) => {
-          //  console.log('AddAddressService Received data:', res);
-           setVisible(false)
-        })
-        :
-        AddAddressService(params).then((res) => {
-          // console.log('AddAddressService Received data:', res.data);
-          setVisible(false)
-       })}
-      }
-}
+      // {editPress ?
+      //   updateAddressService(params,userId).then((res) => {
+      //      setVisible(false)
+      //   })
+      //   :
+      // //   AddAddressService(params).then((res) => {
+      // //     setVisible(false)
+      // //  })}
+      // RewardsApi.addAddress(data).then((res) => {
 
+      // })
+      // }
+      addressHandler();
+    }
+}
+function addressHandler(){
+   if(editPress){
+      
+   }
+   else{
+     const data = {
+        mobile: mobileNo,
+        name:name,
+        address_1:location,
+        address_2:area,
+        land_mark:landMark,
+        pincode:pinCode,
+        city:Value,
+        is_default:rememberSelect,
+        state:value?.label
+     }
+     console.log('data====',data)
+     RewardsApi.addAddress(data).then((res) => {
+         console.log('success',res.status);
+         if(res.status === 201){
+          setVisible(false);
+          setisLoading(false)
+         }
+     }).catch((err) => {
+      setisLoading(false);
+     })
+   }
+}
 
 const deleteHandler=()=>{
   deleteAddressService(userId).then((res) => {
-    // console.log('AddAddressService Received data:', res.data);
     setVisible(false)
  })}
 
@@ -187,6 +248,20 @@ const deleteHandler=()=>{
    
     navigation.navigate('Confirm',{addressItem})
   }
+ }
+ function stateHandler(item){
+    console.log(item);
+    setValue(item);
+    setIsOpen(true)
+ }
+ function closeHandler(){
+  setVisible(false)
+  setNameError('');
+  setMobileNoError('');
+  setPinCodeError('');
+  setStatesError('');
+  setLandMarkError('');
+  setTownError('');
  }
  const renderItem = ({ item }) => {
 
@@ -223,14 +298,6 @@ const deleteHandler=()=>{
       </Pressable>
     );
   }
-  // if (isLoading) {
-  //   return (
-  //       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-  //           <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-  //       </View>
-  //   );
-  // }
- 
   return (
     <View style={{ backgroundColor: '#ffffff', height: '100%', borderRadius: 8 }}>
       <TouchableOpacity onPress={() => {onAddAddress(); setVisible(true); setRemoveButton(false) }} style={styles.addaddressItem}>
@@ -240,11 +307,12 @@ const deleteHandler=()=>{
     
 {addresses.length !== 0 ?
       (
-      <View>
+      <View style={{flex:1}}>
       <FlatList
         data={addresses}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 20 }} 
       />
       {textVisible ?
       <Text style={{color:'rgba(177, 41, 44, 1)',fontFamily:"Poppins",fontSize:13.33,textAlign:'center',lineHeight:20}}>
@@ -288,7 +356,7 @@ const deleteHandler=()=>{
             <ScrollView contentContainerStyle={[styles.scrollViewContent]}>
               <View style={styles.centeredView}>
                 <TouchableOpacity
-                  onPress={() => { setVisible(false) }} style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 15 }]}>
+                  onPress={closeHandler} style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 15 }]}>
                   <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
                 </TouchableOpacity>
                 <TextInput
@@ -306,9 +374,9 @@ const deleteHandler=()=>{
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setMobileNo(text)}
                   value={mobileNo}
-                  keyboardType='number-pad'
+                  keyboardType='phone-pad'
                   onFocus={() => handleInputFocus('mobileNo')}
-                  maxLength={15}
+                  maxLength={10}
                 />
                  {mobileNoError ? <Text style={{ color: '#B1292C' }}>{mobileNoError}</Text> : null}
                 <TextInput
@@ -340,8 +408,9 @@ const deleteHandler=()=>{
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setPinCode(text)}
                   value={pinCode}
-                  keyboardType='number-pad'
+                  keyboardType='phone-pad'
                   onFocus={() => handleInputFocus('pinCode')}
+                  maxLength={6}
                 />
                 {pinCodeError ? <Text style={{ color: '#B1292C' }}>{pinCodeError}</Text> : null}
                 <TextInput
@@ -353,14 +422,40 @@ const deleteHandler=()=>{
                   onFocus={() => handleInputFocus('town')}
                 />
                 {townError ? <Text style={{ color: '#B1292C' }}>{townError}</Text> : null}
-                <TextInput
+                {/* <TextInput
                   style={styles.inputContainer}
                   placeholder={t("state")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setStates(text)}
                   value={states}
                   onFocus={() => handleInputFocus('states')}
-                />
+                /> */}
+                <View >
+                  <Dropdown
+                      style={styles.dropdown}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      value={value?.value}
+                      //iconStyle={styles.iconStyle}
+                      data={stateData}
+                      //maxHeight={120}
+                      mode='modal'
+                      labelField="label"
+                      valueField="value"
+                      iconColor='white'   
+                      placeholder='State'   
+                      placeholderStyle={styles.placeholderStyle}                 
+                      onChange={(item) => 
+                          stateHandler(item)
+                      }
+                      itemTextStyle = {{color:'black',fontSize:11,fontFamily:'Poppins-Regular',maxHeight:15}}
+                      containerStyle={styles.dropdownContainer}
+                      renderRightIcon={() => (
+                          <Icons name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={27} color="rgba(57, 57, 57, 0.9)" style={{bottom:1.5}}/>
+                      )}
+                      onFocus={() => setIsOpen(true)}
+                      onBlur={() => setIsOpen(false)} 
+                  />
+                </View>
                 {statesError ? <Text style={{ color: '#B1292C' }}>{statesError}</Text> : null}
                 <View style={styles.checkboxContainer}>
                   <CheckBox
@@ -397,16 +492,15 @@ const deleteHandler=()=>{
 
 const styles = StyleSheet.create({
   addressItem: {
-    marginLeft: 12,
     padding: 16,
-    paddingLeft: 16,
     width: '90%',
     marginTop: 15,
     elevation: 4,
     borderRadius: 8,
     backgroundColor: 'white',
     height: 116,
-    marginBottom: 12
+    alignSelf:'center'
+ 
   },
   addaddressItem: {
     flexDirection: 'row',
@@ -463,8 +557,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     height: 45,
-    width: '100%', // Set width to 100% to occupy the whole screen
-    color: '#848484',
+    width: '100%',
+    color: 'black',
     borderColor: 'black',
     borderWidth: 0.5,
     borderRadius: 5,
@@ -472,6 +566,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingLeft: 15,
     fontFamily: 'Poppins-Regular',
+
   },
   scrollViewContent: {
     flexGrow: 1,
@@ -530,6 +625,34 @@ const styles = StyleSheet.create({
     fontSize: 13
 
   },
+  dropdown: {
+    height: 45,
+    width:'100%',
+    borderColor:'black',
+    borderWidth:0.5,
+    borderRadius:5,
+    marginTop:10
+},
+placeholderStyle: {
+    fontSize: 14,
+    color:'rgba(132, 132, 132, 1)',
+    fontFamily:'Poppins-Regular',
+    marginLeft:15
+},
+selectedTextStyle: {
+    fontSize: 15,
+    marginLeft:15,
+    color:'rgba(57, 57, 57, 1)',
+    fontFamily:'Poppins-Regular'
+},
+iconStyle: {
+    width: 25,
+    height: 25,
+    marginRight:2,
+},
+dropdownContainer:{
+    borderRadius:3,
+},
 });
 
 export default AddressList;

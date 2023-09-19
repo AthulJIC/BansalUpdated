@@ -84,7 +84,7 @@ function ReferLead({ isVisible, onClose, onRefer }) {
 }
 const styles = StyleSheet.create({
     modalContainer: {
-        justifyContent: 'flex-end', // Position modal at the bottom
+        justifyContent: 'flex-end', 
         margin: 0,
     },
     centeredView: {
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         height: 45,
-        width: '100%', // Set width to 100% to occupy the whole screen
+        width: '100%',
         color: '#848484',
         borderColor: 'black',
         borderWidth: 0.5,

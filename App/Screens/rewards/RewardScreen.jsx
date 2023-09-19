@@ -1,26 +1,23 @@
-import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, Pressable, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, Pressable } from 'react-native';
 import CustomIcon from '../../../assets/Icon/startIcon';
 import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Feather';
-import { ScrollView } from 'react-native-gesture-handler';
-import AddressList from './Address';
 import { useNavigation } from '@react-navigation/native';
 
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../context/AppContext';
 import { RewardslistService } from '../../service/RewardsService/RewardsListService';
 import { CommonAPI } from '../../service/common/Dbservice';
-import { confirmService } from '../../service/RewardsService/ConfirmService';
 import ErorrPopUp from './erorrRedeem';
 import LoadingIndicator from '../../Components/LoadingIndicator';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
+import { confirmService } from '../../service/RewardsService/ConfirmService';
+import { RewardsApi } from '../../service/rewards/rewardservice';
 
 const windowWidth = Dimensions.get('window').width;
-const cardWidth = (windowWidth - 32) / 2;
 
 const RewardScreen = (r) => {
-  const [AddressItem, setAddressItem] = useState([])
   const [modalVisible, setModalVisible] = useState(false);
   const [itemName, setItemName] = useState('')
   const [points, setItemPoints] = useState('')
@@ -29,7 +26,6 @@ const RewardScreen = (r) => {
   const [imageDetails,setImageDetails]=useState('')
   const [totalPoints,setTotalPoints]=useState('')
   const [redeemId,setRedeemId]=useState('')
-  const [redeemValue,setRedeemValue]=useState('')
   const [erorrVisible,seterorrVisible]=useState(false)
   const { userDetails, updateUserDetails, updateSelectedProduct, UserPoints } = useAppContext();
   const [isLoading,setIsLoading]=useState(false)
@@ -51,6 +47,7 @@ const RewardScreen = (r) => {
     setRedeemId(item.id)
   }
   const confirmValidator=(item)=>{
+    console.log('item====',item)
     // confirmService(item.id).then((res) => {
     //   if(res.status === 200){
     //       console.log('success',res.data)
@@ -58,9 +55,19 @@ const RewardScreen = (r) => {
     //       seterorrVisible(true)
     //   }
     //   else{
-        setModalVisible(true)
+    //     setModalVisible(true)
     //   }
     // })
+    RewardsApi.getRedeemtion(item?.id).then((res) => {
+      if(res.status === 200){
+          console.log('success',res.data)
+          setRedeemValue(res.data.error)
+          seterorrVisible(true)
+      }
+      else{
+        setModalVisible(true)
+      }
+    })
     
   }
   const RewardsHandler = () => {
@@ -77,7 +84,6 @@ const RewardScreen = (r) => {
     setIsLoading(true)
     CommonAPI.Points().then((res) => {
         if(res.status === 200){
-           // console.log('success')
             setTotalPoints(res.data.total_points)
             setIsLoading(false)
         }
@@ -115,13 +121,6 @@ const RewardScreen = (r) => {
   <ErorrPopUp isVisible={erorrVisible} onClose={() => seterorrVisible(false)}/>
     </View>
   );
-//   if (isLoading) {
-//     return (
-//         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-//             <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-//         </View>
-//     );
-// }
   return (
     <View style={{ flex: 1 ,backgroundColor:'#ffffff'}}>
         <View style={[styles.container, styles.shadowProp]}>
@@ -129,7 +128,7 @@ const RewardScreen = (r) => {
             data={productsArray}
             renderItem={renderCard}
             keyExtractor={(item) => item.name}
-            numColumns={2} // Display two cards in a row
+            numColumns={2}
             contentContainerStyle={styles.flatListContent}
             style={styles.flatListStyle}
             ListHeaderComponent={
@@ -215,7 +214,8 @@ const styles = StyleSheet.create({
   rewardText: {
     fontFamily: 'Poppins-Medium',
     color: '#B1292C',
-    fontSize: 16
+    fontSize: 16,
+    marginLeft:10
   },
   card: {
     backgroundColor: 'rgba(255, 255, 255, 1)',
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     margin: 8,
     elevation: 3,
-    width:'90%',
+    width:'94%',
     height:328,
 
   },

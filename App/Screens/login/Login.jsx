@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet,ImageBackground,ScrollView,TouchableOpacity, Pressable, Keyboard, BackHandler} from 'react-native';
+import React, {  useCallback, useEffect, useState } from 'react';
+import { View, TextInput, Text, StyleSheet,ImageBackground,TouchableOpacity, Pressable, Keyboard, BackHandler,Alert} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { useTranslation } from 'react-i18next';
 import {LoginApi}  from '../../service/login/loginservice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ErrorIcon from '../../../assets/Icon/ErrorIcon';
-import { useFocusEffect, useNavigationState } from '@react-navigation/native';
 import LoadingIndicator from '../../Components/LoadingIndicator';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { handleBackButton } from '../../Components/BackHandlerUtils';
+import NetInfo from '@react-native-community/netinfo';
+import { useFocusEffect } from '@react-navigation/native';
 
 const LoginPage = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -18,14 +18,42 @@ const LoginPage = ({navigation}) => {
   const [isSelected, setSelection] = useState(false);
   const [rememberSelect,setrememberSelect]=useState(false);
   const [checkboxError, setCheckBoxError] = useState(false);
-  //const navIndex = useNavigationState(state => state.index);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation();
+  console.log('checkbox', rememberSelect)
+  useFocusEffect(
+    React.useCallback(() => {
+      const addInputValues = async () => {
+        const savedIsSelected = await AsyncStorage.getItem('isSelected');
+        console.log('savedIsSelected', savedIsSelected)
+        if (savedIsSelected === 'true') {
+          setSelection(true);
+        }
+        else{
+          setSelection(false);
+        }
+        const savedRememberMe = await AsyncStorage.getItem('RememberMe');
+        const savedloginId = await AsyncStorage.getItem('loginId');
+        console.log('savedRememberMe====', savedRememberMe)
+        if(savedRememberMe === 'true'){
+          setrememberSelect(true);
+          setUsername(savedloginId);
+        }
+        else{
+          setrememberSelect(false);
+          setUsername('');
+          setPassword('');
+        }
+      }
+      addInputValues();
+    }, [])
+  );
   useEffect(() => {
     const backAction = async() => {
-      await AsyncStorage.setItem('LastScreen', 'Login')
-      // Exit the app when back button is pressed on the login page
+     // await AsyncStorage.setItem('LastScreen', 'Login');
+      await AsyncStorage.setItem('isSelected', 'false');
+      
       BackHandler.exitApp();
       return true;
     };
@@ -36,6 +64,22 @@ const LoginPage = ({navigation}) => {
     );
 
     return () => backHandler.remove();
+  }, []);
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (!state.isConnected) {
+        // Show an alert if there is no internet connectivity
+        Alert.alert(
+          'No Internet Connection',
+          'Please check your internet connection and try again.',
+          [{ text: 'OK' }]
+        );
+      }
+    });
+
+    return () => {
+      unsubscribe(); // Unsubscribe from the NetInfo event listener when the component unmounts
+    };
   }, []);
   const LoginAPI=()=>{
     Keyboard.dismiss();
@@ -61,103 +105,90 @@ const LoginPage = ({navigation}) => {
   async function getUserHandler() {
     if (rememberSelect) {
       await AsyncStorage.setItem('loginId', username);
-      await AsyncStorage.setItem('password', password);
+      await AsyncStorage.setItem('RememberMe', "true")
     }
     else{
       await AsyncStorage.setItem('loginId', '');
-      await AsyncStorage.setItem('password', '');
+      await AsyncStorage.setItem('RememberMe', "false")
     }
     loginHandler() 
 }
-function loginHandler(){
+async function loginHandler(){
+  
   setIsLoading(true)
-  const data ={
-    email: username,
-    password: password
-  }
-  AddInputValues()
-  LoginApi.userLogin(data).then(async(res) => {
-    // console.log('resss', res.data)
-    if(res.status === 200){
-      await AsyncStorage.setItem('access_token', res.data.access);
-      await AsyncStorage.setItem('refresh_token', res.data.refresh);
-      await AsyncStorage.setItem('mobile_no', res.data.mobile);
-      await AsyncStorage.setItem('role', res.data.role);
-      await AsyncStorage.setItem('username', res.data.username);
-      await AsyncStorage.setItem('email', res.data.email)
-      await AsyncStorage.setItem('isLoggedIn', "true");
-      await AsyncStorage.setItem('isSelected', isSelected.toString());
+  NetInfo.fetch().then(state => {
+    if (state.isConnected) {
+      const data ={
+        email: username,
+        password: password
+      }
+      console.log('data', data)
+      LoginApi.userLogin(data).then(async(res) => {
+       
+        if(res.status === 200){
+          await AsyncStorage.setItem('access_token', res.data.access);
+          await AsyncStorage.setItem('refresh_token', res.data.refresh);
+          await AsyncStorage.setItem('mobile_no', res.data.mobile);
+          await AsyncStorage.setItem('role', res.data.role);
+          await AsyncStorage.setItem('username', res.data.username);
+          await AsyncStorage.setItem('email', res.data.email)
+          await AsyncStorage.setItem('isLoggedIn', "true");
+          await AsyncStorage.setItem('isSelected', isSelected.toString());
+          setIsLoading(false)
+          await navigation.navigate('Homescreen');
+          setNameError(false);
+          setPasswordError(false);
+          setCheckBoxError(false)
+          
+        }
+         
+       
+      }).catch((err) => {
+          setIsLoading(false)
+      })
+    } else {
       setIsLoading(false)
-      navigation.navigate('Home screen')
+      Alert.alert(
+        'No Internet Connection',
+        'Please check your internet connection and try again.',
+        [{ text: 'OK' }]
+      );
     }
-     
-   
-  }).catch((err) => {
-      //console.log(err);
-      setIsLoading(false)
-  })
+  });
+ 
  
 }
 
-// const handleBackPress = useCallback(() => {
-//   if (backPressCount === 0) {
-//     setBackPressCount(prevCount => prevCount + 1);
-//     // setTimeout(() => setBackPressCount(0), 2000);
-//     // ToastAndroid.show(AlertMsg.AppExitToast, ToastAndroid.SHORT);
-//   } else if (backPressCount === 1) {
-//     BackHandler.exitApp();
-//   }
-//   return true;
-// }, [backPressCount]);
-
-// useEffect(() => {
-//   if (Platform.OS === 'android' || navIndex === 1) {
-//     const backListener = BackHandler.addEventListener(
-//       'hardwareBackPress',
-//       handleBackPress,
-//     );
-//     return () => backListener.remove();
-//   }       
-// }, [handleBackPress]);
-useEffect(() => {
- AddInputValues()
-},[])
-async function AddInputValues() {
-  const savedloginId = await AsyncStorage.getItem('loginId');
-  const savedPassword = await AsyncStorage.getItem('password');
-  const savedIsSelected = await AsyncStorage.getItem('isSelected');
-  if (savedIsSelected) setSelection(savedIsSelected === 'true');
-  if ((savedloginId != null && savedloginId != undefined) && (savedPassword != null && savedPassword != undefined)) {
-    setrememberSelect(true);
-    setUsername(savedloginId);
-    setPassword(savedPassword);
-  } else {
-    setrememberSelect(false);
-    setUsername(savedloginId);
-    setPassword(savedPassword);
-  }
-}
-// if (isLoading) {
-//   return (
-//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-//           <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-//       </View>
-//   );
-// }
 const togglePasswordVisibility = () => {
   setShowPassword(!showPassword);
 };
+async function toggleCheckbox () {
+  setSelection(!isSelected);
+  await AsyncStorage.setItem('isSelected', (!isSelected).toString());
+};
+async function rememberCheckbox(){
+   setrememberSelect(!rememberSelect);
+   await AsyncStorage.setItem('RememberMe', (!rememberSelect).toString());
+   const savedRememberMe = await AsyncStorage.getItem('RememberMe');
+   console.log('savedRemember', savedRememberMe)
+}
+async function handlePassword(text){
+   setPassword(text);
+}
+async function handleUsername(text){
+  setUsername(text);
+}
   return (
         <ImageBackground
-        source={require('../../../assets/Images/Login.gif')} // Replace with your actual GIF path
+        source={require('../../../assets/Images/Login.gif')}
         style={styles.backgroundImage}>
      <View style={styles.inputContainer}>
      <Text style={styles.LoginText}>{t('login')}</Text>
       <TextInput
-       placeholder={t('unique') + " / " + t('login')}
+       placeholder={t('unique') + " / " + t('loginId')}
        placeholderTextColor="white" 
        value={username}
-       onChangeText={setUsername}
+       onChangeText={text => {handleUsername(text)}}
        style={styles.input}
        onPressIn={() => setNameError(false)}
       />
@@ -169,20 +200,11 @@ const togglePasswordVisibility = () => {
           </View>
         )
       }
-     {/* <TextInput
-        placeholder={t('password')}
-        value={password}
-        onChangeText={setPassword}
-        placeholderTextColor="white" 
-        secureTextEntry
-        style={styles.input}
-        onPressIn={() => setPasswordError(false)}
-      /> */}
       <View>
       <TextInput
         placeholder={t('password')}
         value={password}
-        onChangeText={setPassword}
+        onChangeText={text => {handlePassword(text)}}
         placeholderTextColor="white"
         secureTextEntry={!showPassword}
         style={styles.input}
@@ -206,7 +228,7 @@ const togglePasswordVisibility = () => {
        <View style={styles.checkboxContainer}>
         <CheckBox
           value={isSelected}
-          onValueChange={setSelection}
+          onValueChange={toggleCheckbox}
           style={styles.checkbox}
           boxType='square'
           tintColors={{ true: 'rgba(43, 89, 195, 1)', false: !checkboxError ? 'gray' :  'red'}}
@@ -216,7 +238,7 @@ const togglePasswordVisibility = () => {
       <View style={styles.checkboxContainer}>
         <CheckBox
           value={rememberSelect}
-          onValueChange={setrememberSelect}
+          onValueChange={rememberCheckbox}
           style={[styles.checkbox]}
           boxType='square'
           tintColors={{ true: 'rgba(43, 89, 195, 1)', false: 'gray' }}
@@ -244,7 +266,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover', // Adjust the resizeMode as needed
+    resizeMode: 'cover', 
     justifyContent: 'center',
     alignItems: 'center',
     height:'100%'

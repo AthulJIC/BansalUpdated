@@ -1,22 +1,13 @@
 import { useEffect, useState } from "react";
-import { Animated, Button, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { BarChart } from "react-native-gifted-charts";
+import { Animated, StyleSheet, Text, View } from "react-native"
 import ProgressBar from 'react-native-progress/Bar';
 import { useTranslation } from 'react-i18next';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CommonAPI } from "../../service/common/Dbservice";
-import { useAppContext } from "../../context/AppContext";
 
-
-// const barData = [
-//     {value: 1, label: 'Jan'},
-   
-// ]
 const LoyalityBonus = () => {
     const [points,setPoints]=useState("")
     const [progress] = useState(new Animated.Value(0));
     const { t } = useTranslation();
-    const { userDetails, updateUserDetails, updateSelectedProduct, UserPoints } = useAppContext();
     let ProgressValue=((points/12000)*100)/100
     useEffect(() => {
           Animated.timing(progress, {
@@ -29,7 +20,6 @@ const LoyalityBonus = () => {
     const getLoyaltyPoints=()=>{
       CommonAPI.Points().then((res) => {
           if(res.status === 200){
-              // console.log('success',res.data)
               setPoints(res.data.total_points)
           }
       })
@@ -41,11 +31,6 @@ const LoyalityBonus = () => {
           <Text style={styles.points}>{points +" "+ t('points3')}</Text>
           <Text style={styles.expire}>{t('points1') +'  240 ' +t('points2') }</Text>
         </View>
-        {/* <View>
-          <View style={styles.container}>
-            <Animated.View style={[styles.bar, { width: interpolatedWidth }]} />
-          </View>
-        </View> */}
          <View style={{justifyContent:'center',marginTop:55}}>
             <Text style={{marginLeft:220,fontSize:9.26,fontWeight:'400',
             color:'#FFFFFF',lineHeight:14,fontFamily:'Poppins-Regular'}}>{'+12000 '+ t('points3')}</Text> 

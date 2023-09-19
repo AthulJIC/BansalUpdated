@@ -8,37 +8,34 @@ import LoadingIndicator from '../../Components/LoadingIndicator';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
 const ProfileEditScreen = ({navigation}) => {
-   // const user = route.params?.name;
     const [userName, setUserName] = useState();
     const [emailid, setEmailId] = useState();
     const [mobile, setMobile] = useState();
     const [userError, setUserError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    //console.log('name===',userName)
     useBackButtonHandler(navigation, false);
     function saveHandler(){
         setIsLoading(true)
         Keyboard.dismiss()
         let isValid = true;
-        if(userName === ''){
+        const regex = /^[a-zA-Z]+$/;
+        if(userName === '' || !regex.test(userName)){
             setUserError(true)
            isValid = false;
+           setIsLoading(false)
         }
         if(isValid){
             const data = {
                 name: userName
             }
            ProfileApi.updateUserName(data).then(async(res) => {
-                //console.log('resss', res.data)
                 if(res.status === 200){
                     await AsyncStorage.setItem('username', res.data.name);
-                   // setUserName(res.data.name)
                    setIsLoading(false)
                    ToastAndroid.show('Name updated successfully', ToastAndroid.SHORT);
                    navigation.navigate('Profile')
                 }
            }).catch((err) => {
-            //console.log(err);
           })
           .finally(() => {
             setIsLoading(false);
@@ -48,12 +45,9 @@ const ProfileEditScreen = ({navigation}) => {
     useEffect(() => {
         const getValueFromStorage = async () => {
           try {
-            //const user = await AsyncStorage.getItem('role'); 
             const name = await AsyncStorage.getItem('username');
             const userEmail = await AsyncStorage.getItem('email')
             const mobileNo = await AsyncStorage.getItem('mobile_no')
-            // console.log('getValueFromStorage', name)
-            //setRole(user)
             setUserName(name)
             setEmailId(userEmail)
             setMobile(mobileNo)
@@ -75,6 +69,7 @@ const ProfileEditScreen = ({navigation}) => {
                 value={userName}
                 onPressIn={() => setUserError(false)}
                 maxLength={20}
+                //keyboardType='ascii-capable'
             />
             {
                 userError && (

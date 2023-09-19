@@ -13,22 +13,29 @@ import {
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
 import { useTranslation } from 'react-i18next';
-import ErrorIcon from "../../../assets/Icon/ErrorIcon";
 
 function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQuantity }) {
-  const [name, setName] = useState('');
+  const [name, setName] = useState();
   const [editQuantity, setEditQuantity] = useState(quantity);
   const [quantityError, setQuantityError] = useState(false);
-   //console.log('quantityError',onEdit,name,editQuantity)
   const { t } = useTranslation();
 
   const handleRef = () => {
-    if ((onEdit && !editQuantity) || (!onEdit && !name)) {
+    console.log('type====', typeof editQuantity, typeof name)
+   
+    if (
+      (onEdit && (parseFloat(editQuantity) < 1 || parseFloat(editQuantity) > 300)) ||
+      (!onEdit && (parseFloat(name) < 1 || parseFloat(name) > 300))
+    ) {
       setQuantityError(true);
       return;
     }
+  
+    const eQuantity = parseFloat(editQuantity) || 0; // Parse editQuantity as float, default to 0 if not valid
+    const nQuantity = parseFloat(name) || 0; // Parse name as float, default to 0 if not valid
+  
+    const updatedQuantity = onEdit ? eQuantity.toString() : nQuantity.toString();
 
-    const updatedQuantity = onEdit ? editQuantity : name;
     
     if (onRefer) {
       onRefer(updatedQuantity);
@@ -83,7 +90,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
             {
               quantityError && (
                 <View style={{ flexDirection: 'row',marginTop:8 }}>
-                  <Text style={{ color: 'red', marginLeft: 5 }}>This field is required</Text>
+                  <Text style={{ color: 'red', marginLeft: 5 }}>Please, enter valid quantity</Text>
                 </View>
               )
             }
@@ -103,7 +110,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
 
 const styles = StyleSheet.create({
   modalContainer: {
-    justifyContent: 'flex-end', // Position modal at the bottom
+    justifyContent: 'flex-end', 
     margin: 0,
   },
   centeredView: {
@@ -123,7 +130,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     height: 45,
-    width: '100%', // Set width to 100% to occupy the whole screen
+    width: '100%',
     color: '#848484',
     borderColor: 'black',
     borderWidth: 0.5,

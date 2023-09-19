@@ -1,12 +1,9 @@
 
 import { NavigationContainer } from '@react-navigation/native';
-import 'react-native-gesture-handler';
 import { createStackNavigator,TransitionPresets } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-//Screens
 import SplashScreen from '../Screens/SplashScreen/SplashScreen';
-import HeaderComponent from '../Components/Header';
 import LoginScreen from '../Screens/login/Login';
 import HomeScreen from '../Screens/Home/Home';
 import OrderScreen from '../Screens/Orders/OrderScreen';
@@ -42,7 +39,7 @@ import SuccessScreen from '../Screens/sucess/SucessScreen';
 import AddressList from '../Screens/rewards/Address';
 import ConfirmPage from '../Screens/rewards/confirm';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import FavouritesScreen from '../Screens/Profile/FavouritesScreen';
 import IdVerificationScreen from '../Screens/rewards/IdVerificationScreen';
 import IdConfirmationScreen from '../Screens/rewards/IdConfirmationScreen';
@@ -75,22 +72,16 @@ function MyTabs() {
         const user = await AsyncStorage.getItem('role'); 
         setRole(user)
       } catch (error) {
-        console.error('Error fetching data from AsyncStorage:', error);
+        //console.error('Error fetching data from AsyncStorage:', error);
       }
     };
     getValueFromStorage();
   }, []);
-  
 
-  // function ProfileScreen() {
-  //   return <Profile />;
-  // }
-  // function HomeScreenTab(){
-  //   return <HomeScreen />
-  // }
   return (
     
     <Tab.Navigator
+      initialRouteName='Home'
       screenOptions={({ route }) => ({
       headerShown: false,
       tabBarActiveTintColor: '#B1292C',
@@ -99,6 +90,7 @@ function MyTabs() {
         display:'flex',
         backgroundColor:'black'
       }],
+      
       tabBarIcon: ({ focused }) => {
         let iconComponent;
 
@@ -160,7 +152,8 @@ function MyTabs() {
         <>
         <Tab.Screen name="Home" component={HomeScreen} options={{
           tabBarLabel: t('home'),
-        }}/>
+        }}
+        initialParams={{ initialRoute: true }}  />
         <Tab.Screen name="Requests" component={Requests} options={{
           tabBarLabel: t('requests'),
         }}/>
@@ -176,7 +169,8 @@ function MyTabs() {
           <>
           <Tab.Screen name="Home" component={HomeScreen} options={{
           tabBarLabel: t('home'),
-        }}/>
+        }}
+        initialParams={{ initialRoute: true }} />
           <Tab.Screen name='Order' component={OrderScreen} options={{
           tabBarLabel: t('orders'),
         }}/>
@@ -205,8 +199,6 @@ const NavigationLinks = () => {
       <LanguageProvider>
       <Stack.Navigator  
        initialRouteName="SplashScreen"
-      
-      
       screenOptions={{
         ...TransitionPresets.SlideFromRightIOS,
         ...customSlideFromLeft,
@@ -218,11 +210,11 @@ const NavigationLinks = () => {
       }}/>
         <Stack.Screen name="Login" component={LoginScreen} 
             options={{
-            headerShown: false, // Hide the header for Login screen
+            headerShown: false,
         }}/>
         <Stack.Screen  name='ForgetPassword' component={ForgetPasswordScreen} options={{title: ''}}/>
        
-       <Stack.Screen name="Home screen" component={MyTabs} options={{
+       <Stack.Screen name="Homescreen" component={MyTabs} options={{
             headerShown: false
           }} />
           <Stack.Screen name="Notification" component={Notification} options={{

@@ -1,8 +1,5 @@
-import { Text, View ,Pressable, Image, StyleSheet,KeyboardAvoidingView,ScrollView,TextInput,TouchableOpacity} from "react-native";
-import BookmarkIcon from "../../../assets/Icon/BookmarkIcon";
-import Modal from 'react-native-modal'
+import { Text, View ,Pressable, Image, StyleSheet} from "react-native";
 import { useState } from "react";
-import Icon from 'react-native-vector-icons/Feather';
 import ProductPopup from "./ProductPopup";
 import { useTranslation } from 'react-i18next';
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
@@ -10,10 +7,9 @@ import useBackButtonHandler from "../../Components/BackHandlerUtils";
 function DistributorExpandScreen({navigation, route}){
 
     const { selectedItem } = route?.params;
-    const [name, setName] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     useBackButtonHandler(navigation, false);
-    
+    console.log('selectedItem====', selectedItem)
     const { t } = useTranslation();
     const description = t('description')
     const handleRefer = (quantity) => {
@@ -24,14 +20,13 @@ function DistributorExpandScreen({navigation, route}){
             });
 
        };
-    //   console.log("selectedItem",selectedItem)
     return(
         <View style={{flex:1,backgroundColor:'white'}}>
             <View style={{backgroundColor:'rgba(182, 182, 182, 1)',height:112, width:'90%',borderRadius:8,alignSelf:'center',alignItems:'center',justifyContent:'center'}}>
                 <Text style={{fontSize:30,fontFamily:'Poppins-SemiBold',color:'rgba(57, 57, 57, 1)'}}>{selectedItem?.name?.slice(0, 2).toUpperCase()}</Text>
             </View>
             <View style={{marginLeft:10,marginTop:7}}>
-              
+                <Text style={{color:'rgba(177, 41, 44, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Medium'}}>{selectedItem.user_id}</Text>
                 <Text style={{color:'rgba(57, 57, 57, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Medium'}}>{selectedItem.name}</Text>
                 <Text style={{color:'rgba(132, 132, 132, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Regular'}}>{selectedItem.district_name}, {selectedItem.state_name}</Text>
                 <View style={{ width:'95%',borderBottomColor:'black', borderBottomWidth:1,alignSelf:'center',marginTop:10}}></View>
@@ -58,19 +53,17 @@ const styles = StyleSheet.create({
         width: '90%',
         height: 36,
         borderRadius: 4,
-        // padding: 12,
         alignItems: 'center',
         justifyContent: 'center',
         marginLeft: 7,
         marginTop:10
-        //alignSelf:'center'
     },
     buttonText: {
         fontFamily: 'Poppins-Regular',
         color: '#FFFFFF',
     },
     modalContainer: {
-        justifyContent: 'flex-end', // Position modal at the bottom
+        justifyContent: 'flex-end', 
         margin: 0,
     },
       centeredView: {
@@ -90,7 +83,7 @@ const styles = StyleSheet.create({
       },
       inputContainer: {
         height: 45,
-        width: '97%', // Set width to 100% to occupy the whole screen
+        width: '97%', 
         color: '#848484',
         borderColor: 'black',
         borderWidth: 0.5,

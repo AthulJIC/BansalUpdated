@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, FlatList, Pressable, Animated, Alert, ActivityIndicator,KeyboardAvoidingView , ToastAndroid} from 'react-native'
+import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, FlatList, Pressable, Animated, Alert, ActivityIndicator,KeyboardAvoidingView , ToastAndroid,RefreshControl} from 'react-native'
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Feather';
-import CustomAlert from '../../Components/alertBox';
 import { RequestApi } from '../../service/request/requestservice';
 import EmptyComponent from '../../Components/EmptyComponent';
 import { useTranslation } from 'react-i18next';
@@ -13,17 +12,15 @@ import useBackButtonHandler from '../../Components/BackHandlerUtils';
 const Requests = ({navigation}) => {
     const [searchText, setSearchText] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
-    const [name, setName] = useState('')
-    const [designation, setDesignation] = useState('')
-    const [quantity, setQuantity] = useState('')
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertAcceptVisible,setAlertAcceptVisible] =useState(false)
     const [requestList, setRequestList] = useState([]);
     const [requestId, setRequestId] = useState('');
     const [distributorItem, setDistributorItem] = useState({})
     const [isLoading, setIsLoading] = useState(false);
+    const [showIcon, setShowIcon] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const { t } = useTranslation();
-    //console.log('distributor', distributorItem)
     const searchPlaceholder = t('search');
     useBackButtonHandler(navigation, false);
     const showAlert = (item) => {
@@ -39,90 +36,83 @@ const Requests = ({navigation}) => {
         setAlertVisible(false);
         setAlertAcceptVisible(false)
     };
+    const onRefresh = () => {
+        setRefreshing(true);
+        getRequestList()
+        setSearchText('')
+        setShowIcon(false);
+        setRefreshing(false);
+    };
+      
     useEffect(() => {
        getRequestList();
        setSearchText('')
-    //    setTimeout(() => {
-    //     setIsLoading(false);
-    // }, 2000);
     }, []);
-    function getRequestList(){
+    function getRequestList() {
         setIsLoading(true);
-        RequestApi.getRequest().then((res) => {
-            // console.log('resss', res.data);
-            if(res.status === 200){
-                setRequestList(res.data.results)
-                setIsLoading(false)
+        RequestApi.getRequest()
+          .then(res => {
+            if (res.status === 200) {
+              setRequestList(res.data.results);
             }
-        }).catch((err) => {
-           // console.log(err);
-            setIsLoading(false)
-        })
-    }
-    const handleReject = (status) => {
-        // console.log('requestId',requestId)
-        // console.log('status', status)
+          })
+          .catch(err => {
+            // Handle error if necessary
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }
+      
+    const handleReject = status => {
         setIsLoading(true);
-        if(status === 'Reject'){
-            RequestApi.rejectRequest(requestId).then((res) => {
-                // console.log('resss', res.data)
-                if(res.status === 200){
-                    setIsLoading(false)
-                    hideAlert();
-                    setModalVisible(false)
-                    ToastAndroid.show('Request is rejected successfully', ToastAndroid.SHORT);
-                    getRequestList();
-                }
-            }).catch((err) => {
-                //console.log(err);
-              })
-              .finally(() => {
-                setIsLoading(false);
-              });
+        if (status === 'Reject') {
+          RequestApi.rejectRequest(requestId)
+            .then(res => {
+              // Handle response
+            })
+            .catch(err => {
+              // Handle error if necessary
+            })
+            .finally(() => {
+              setIsLoading(false);
+              hideAlert();
+              setModalVisible(false);
+              ToastAndroid.show('Request is rejected successfully', ToastAndroid.SHORT);
+              getRequestList();
+            });
+        } else {
+          RequestApi.acceptRequest(requestId)
+            .then(res => {
+              // Handle response
+            })
+            .catch(err => {
+              // Handle error if necessary
+            })
+            .finally(() => {
+              setIsLoading(false);
+              hideAlert();
+              setModalVisible(false);
+              ToastAndroid.show('Request is accepted successfully', ToastAndroid.SHORT)
+              getRequestList();
+            });
         }
-        else{
-            RequestApi.acceptRequest(requestId).then((res) => {
-                // console.log('resss', res.data)
-                if(res.status === 200){
-                    setIsLoading(false)
-                    hideAlert();
-                    setModalVisible(false)
-                    ToastAndroid.show('Request is accepted successfully', ToastAndroid.SHORT)
-                    getRequestList();
-                }
-            }).catch((err) => {
-               // console.log(err);
-              })
-              .finally(() => {
-                setIsLoading(false);
-              });
-        }
-        // Handle reject button press
-       // hideAlert();
-        // Additional logic as needed
-    };
+      };
     const modalItem = ( item ) => {
-        // console.log('distributor----', item)
         setDistributorItem(item)
-        // setName(item.name)
-        // setDesignation(item.designation)
-        // setQuantity(item.quantity)
     }
     function searchHandler(text){
         setSearchText(text)
         RequestApi.searchRequest(text).then((res) => {
-            // console.log('resss--',res.data)
             if(res.status === 200){
                 setRequestList(res.data.results)
             }
         })
     }
-    // console.log('distributor', distributorItem.name)
-    const HEADER_HEIGHT = 200; // Define the height of your header
+    const HEADER_HEIGHT = 200;
     const scrollY = new Animated.Value(0);
     const requestData = ( itemData ) => {   
         const objectLength = Object.keys(itemData.item).length;
-        //console.log('item====', objectLength);
         if (objectLength === 0 || !itemData.item) {
             return (
               <View>
@@ -140,13 +130,6 @@ const Requests = ({navigation}) => {
                             setModalVisible(!modalVisible);
                             modalItem( itemData.item )
                         }} style={{ borderRadius: 8 , backgroundColor:'rgba(182, 182, 182, 1)',justifyContent:'center', alignItems:'center',height:90, width:'25%'}}>
-    
-                            {/* <Image
-                                style={styles.tinyLogo}
-                                source={require('../../../assets/Images/Man.jpg')}
-                                resizeMode='cover'
-    
-                            /> */}
                             <Text style={{textAlign:'center',color:'rgba(57, 57, 57, 1)',fontSize:27,fontFamily:'Poppins-Medium',}}>{itemData.item.name.slice(0, 2).toUpperCase()}</Text>
                         </Pressable>
     
@@ -188,10 +171,23 @@ const Requests = ({navigation}) => {
                     placeholderTextColor={'rgba(132, 132, 132, 1)'}
                     onChangeText={text => searchHandler(text)}
                     value={searchText}
+                    onPressIn={() => setShowIcon(true)}
                 />
-                <TouchableOpacity onPress={searchHandler}>
-                    <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
-                </TouchableOpacity>
+                {showIcon ? (
+                    <Pressable
+                        onPress={() => {
+                            setSearchText('')
+                            setShowIcon(false)
+                            searchHandler('')
+                        }}>
+                        <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+                   </Pressable>
+                ) : (
+                    <Pressable>
+                        <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
+                    </Pressable>
+                )}
+                
             </View>
             {isLoading ? (
                 <LoadingIndicator visible={isLoading} text='Loading...'></LoadingIndicator>
@@ -204,27 +200,13 @@ const Requests = ({navigation}) => {
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                         { useNativeDriver: false }
                     )}
-                //    ListHeaderComponent={
-                //     <View
-                //         style={styles.container}
-                //     >
-                //         <TextInput
-                //             style={styles.input}
-                //             placeholder={searchPlaceholder}
-                //             placeholderTextColor={'rgba(132, 132, 132, 1)'}
-                //             onChangeText={text => searchHandler(text)}
-                //             value={searchText}
-                //         />
-                //         <TouchableOpacity onPress={searchHandler}>
-                //             <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
-                //         </TouchableOpacity>
-                //     </View>
-                //    }
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                      }
                 />
                 ) : (
                     <EmptyComponent />
                 )}
-            {/* Modal */}
             <Modal
                 animationIn="slideInUp"
                 animationOut="slideOutDown"
@@ -251,10 +233,6 @@ const Requests = ({navigation}) => {
                                 source={require('../../../assets/Images/ProductImage.png')}
                                 resizeMode='cover'
                             />
-                            {/* <View style={ {borderRadius: 8 , backgroundColor:'rgba(182, 182, 182, 1)',justifyContent:'center', alignItems:'center',height:85, width:'25%'}}>
-                                <Text style={{textAlign:'center',color:'rgba(57, 57, 57, 1)',fontSize:27,fontFamily:'Poppins-Medium',}}>{distributorItem.name?.slice(0, 2).toUpperCase() || ''}</Text>
-                            </View> */}
-
                             <View style={{ justifyContent: 'center', marginLeft: 15, height: 100, width: '35%' }}>
                                 <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 17, color: 'rgba(57, 57, 57, 1)' }}> {distributorItem.name}</Text>
                                 <Text style={{
@@ -307,13 +285,12 @@ const Requests = ({navigation}) => {
             </Modal>
             {/* Reject alert Box */}
             <Modal
-               animationIn="fadeIn" // Use slideInUp animation for the modal to slide up
-               animationOut="fadeOut" // Use slideOutDown animation to close the modal
-               backdropTransitionOutTiming={0} // Remove backdrop gradually when closing modal
-               backdropOpacity={0.5} // Adjust the backdrop opacity
+               animationIn="fadeIn" 
+               animationOut="fadeOut" 
+               backdropTransitionOutTiming={0} 
+               backdropOpacity={0.5} 
                useNativeDriverForBackdrop 
                 isVisible={alertVisible}
-            // ... other modal props ...
             >
                 <View style={styles.alertModal}>
                     <Text style={styles.alertTitle}>{t('confirmationTitle')}</Text>
@@ -331,13 +308,12 @@ const Requests = ({navigation}) => {
 
             {/* Accept Button */}
             <Modal
-               animationIn="fadeIn" // Use slideInUp animation for the modal to slide up
-               animationOut="fadeOut" // Use slideOutDown animation to close the modal
-               backdropTransitionOutTiming={0} // Remove backdrop gradually when closing modal
-               backdropOpacity={0.5} // Adjust the backdrop opacity
+               animationIn="fadeIn" 
+               animationOut="fadeOut" 
+               backdropTransitionOutTiming={0} 
+               backdropOpacity={0.5} 
                useNativeDriverForBackdrop 
                 isVisible={alertAcceptVisible}
-            // ... other modal props ...
             >
                 <View style={styles.alertModal}>
                     <Text style={styles.alertTitle}>Confirm your Action</Text>
@@ -360,11 +336,6 @@ export default Requests
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        // paddingTop: 24,
-        // paddingLeft: 16,
-        // paddingRight: 16,
-        // paddingBottom: 16,
-        // width: 328,
         backgroundColor: '#ffffff',
     },
     container: {
@@ -372,7 +343,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
-        // paddingVertical: 8,
         backgroundColor: '#f2f2f2',
         borderColor: '#ccc',
         borderRadius: 4,
@@ -391,7 +361,7 @@ const styles = StyleSheet.create({
     },
     subContainer: {
         flexDirection: 'row',
-        marginLeft: 17,
+        marginLeft: 14,
         alignItems: 'flex-start',
 
     },
@@ -404,13 +374,9 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: '#ffffff',
-        // padding: 10,
         height: 110,
         width: '90%',
-        // paddingRight: 12,
-        // paddingTop: 8,
          paddingLeft: 3,
-        // paddingBottom: 18,
         borderRadius: 5,
         justifyContent: 'space-evenly',
         borderRadius: 10,
@@ -422,17 +388,10 @@ const styles = StyleSheet.create({
 
     },
     Modalcard: {
-        backgroundColor: '#ffffff', // Customize button style as needed
-        // padding: 10,
+        backgroundColor: '#ffffff', 
         height: 130,
         width: '100%',
-        // paddingRight: 12,
-        // paddingTop: 8,
-        // paddingLeft: 8,
-        // paddingBottom: 18,
         borderRadius: 5,
-        // justifyContent: 'flex-start',
-        // alignItems:'center',
         alignItems: 'center',
         borderRadius: 10,
         flexDirection: 'row',
@@ -440,7 +399,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     ModalSecondCard: {
-        backgroundColor: '#ffffff', // Customize button style as needed
+        backgroundColor: '#ffffff',
         padding: 10,
         height: 132,
         width: '100%',
@@ -473,7 +432,6 @@ const styles = StyleSheet.create({
         width: 103,
         height: 36,
         borderRadius: 4,
-        // padding: 12,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -483,7 +441,6 @@ const styles = StyleSheet.create({
         width: 103,
         height: 36,
         borderRadius: 4,
-        // padding: 12,
         alignItems: 'center',
         justifyContent: 'center',
         marginLeft: 12
@@ -532,9 +489,6 @@ const styles = StyleSheet.create({
 
     },
     modalView: {
-        // marginTop: 180,
-        //backgroundColor: 'white',
-        //borderRadius: 20,
         padding: 16,
         width: '100%',
         height: '100%',
@@ -546,9 +500,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
-    },
-    buttonClose: {
-        //backgroundColor: '#2196F3',
     },
     textStyle: {
         color: 'white',

@@ -19,7 +19,6 @@ useEffect(() => {
   const getValueFromStorage = async () => {
       try {
         const user = await AsyncStorage.getItem('role'); 
-        // console.log('role2344355', user)
         setRoles(user)
         orderPoints(user)
         
@@ -33,16 +32,11 @@ useEffect(() => {
 }, [addressItem]);
 
 const orderPoints=(user)=>{
-  // console.log("page params",roles)
   
   OrderPointsService(user,ton).then((res) => {
 
       if(res.status === 200){
-          // console.log('success orderPoints',res.data)
           setPoints(res.data.points)
-      }
-      else{
-       // console.log('erorr',error)
       }
   })
 }
@@ -129,7 +123,6 @@ const styles = StyleSheet.create({
     paddingRight:20,
     paddingTop:20,
     paddingLeft:24,
-    // paddingBottom:20,
     borderRadius: 5,
     margin: 10,
     marginLeft:25,

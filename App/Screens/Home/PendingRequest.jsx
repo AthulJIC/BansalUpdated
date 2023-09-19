@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, View, Image } from 'react-native';
-import { CircularProgress } from 'react-native-svg-circular-progress';
-import Svg from 'react-native-svg';
+import {  Text, StyleSheet, View, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { HomeApi } from '../../service/home/homeservice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,10 +8,6 @@ const PendingRequest = () => {
     const [progress, setProgress] = useState(0);
     const [role, setRole] = useState('');
     const [request, setRequest] = useState(0);
-    const total = 12000; 
-
-    const percentage = (progress / total) * 100;
-
     const { t } = useTranslation();
     const handleButtonPress = () => {
         navigation.navigate(label);
@@ -22,7 +16,6 @@ const PendingRequest = () => {
         const getValueFromStorage = async () => {
             try {
               const user = await AsyncStorage.getItem('role'); 
-            //   console.log('role2344355', role)
               setRole(user)
             } catch (error) {
               console.error('Error fetching data from AsyncStorage:', error);
@@ -34,16 +27,13 @@ const PendingRequest = () => {
       }, []);
     function getLoyaltyPoints(){
         HomeApi.getPoints().then((res) => {
-            // console.log(res.data);
             if(res.status === 200){
-                //console.log('success')
                 setProgress(res.data.total_points)
             }
         })
     }
     function getPendingRequest(){
         HomeApi.getRequest().then((res) => {
-            // console.log(res.data);
             if(res.status === 200){
                setRequest(res.data.count)
             }

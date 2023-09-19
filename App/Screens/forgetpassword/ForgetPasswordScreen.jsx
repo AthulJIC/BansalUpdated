@@ -4,9 +4,7 @@ useEffect
 function ForgetPasswordScreen({route, navigation}){
   useEffect(() => {
     const backAction = () => {
-
-        // If not on the home screen, navigate to the home screen
-        navigation.goBack(); // Replace 'Home' with the name of your home screen component
+        navigation.goBack();
         return true;
       }
     const backHandler = BackHandler.addEventListener(

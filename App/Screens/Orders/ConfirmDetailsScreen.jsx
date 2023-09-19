@@ -13,10 +13,8 @@ function ConfirmDetailsScreen({navigation}){
     const route = useRoute();
     const {  referParams } = route.params;
     const [modalVisible, setModalVisible] = useState(false);
-    const [searchText, setSearchText] = useState('');
     const [details, setDetails] = useState(referParams);
     const[username, setUsername] = useState('') ;
-    //console.log("username",username)
     const { t } = useTranslation(); 
     useBackButtonHandler(navigation, false);
  const updateDetails = (newDetails) => {
@@ -27,7 +25,6 @@ function ConfirmDetailsScreen({navigation}){
     };
     const confirmHandler=()=>{
         ReferService(details.mobileNo,details.name,details.location,details.quantity,details.location).then((res) => {
-        //   console.log('Received data:', res);
         })
     }
     useEffect(() => {

@@ -2,46 +2,20 @@ import React, { useState } from "react";
 import {
   View,
   TouchableOpacity,
-  TextInput,
   Pressable,
   Text,
   StyleSheet,
   KeyboardAvoidingView,
   ScrollView,
-  Image,
 } from "react-native";
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
 import { useTranslation } from 'react-i18next';
-import ErrorIcon from "../../../assets/Icon/ErrorIcon";
 import { useNavigation } from '@react-navigation/native';
 
 function ErrorPopup({ isVisible,onClose}) {
     const navigation=useNavigation()
-  const [name, setName] = useState('');
- 
-//   const [editQuantity, setEditQuantity] = useState(quantity);
- 
-  const { t } = useTranslation();
-
-//   const handleRef = () => {
-//     if (name === null || (onEdit === false && !editQuantity)) {
-//       setQuantityError(true);
-//       return;
-//     }
-
-//     const updatedQuantity = onEdit ? editQuantity : name;
-    
-//     if (onRefer) {
-//       onRefer(updatedQuantity);
-//     }
-    
-//     if (onUpdateQuantity) {
-//       onUpdateQuantity(updatedQuantity);
-//     }
-
-//     onClose();
-//   }
+    const { t } = useTranslation();
 
   const description = 'April, July, October, and December will be the months the redemption window will be open and user’s be allowed to redeem loyalty points.';
 
@@ -85,7 +59,7 @@ function ErrorPopup({ isVisible,onClose}) {
 
 const styles = StyleSheet.create({
   modalContainer: {
-    justifyContent: 'flex-end', // Position modal at the bottom
+    justifyContent: 'flex-end', 
     margin: 0,
   },
   centeredView: {
@@ -105,7 +79,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     height: 45,
-    width: '100%', // Set width to 100% to occupy the whole screen
+    width: '100%', 
     color: '#848484',
     borderColor: 'black',
     borderWidth: 0.5,

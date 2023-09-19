@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable, FlatList } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, FlatList,Image,RefreshControl } from 'react-native';
 import AcceptedIcon from '../../../assets/Icon/AcceptedIcon';
 import ProcessingIcon from '../../../assets/Icon/ProcessingIcon';
 import RejectedIcon from '../../../assets/Icon/RejectedIcon';
@@ -9,6 +9,8 @@ import LoadingIndicator from '../../Components/LoadingIndicator';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
+
+
 
 const DistributorHistory = ({navigation}) => {
   const filterTitle = [
@@ -33,51 +35,131 @@ const DistributorHistory = ({navigation}) => {
   const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading ] = useState(false); 
+  const [isEndReachedLoading, setIsEndReachedLoading] = useState(false);
+  const [page, setPage] =useState(1);
+  const [next, setNext] = useState(false);
+  const [nextUrl, setNextUrl] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
   useBackButtonHandler(navigation, false);
 
  useFocusEffect(
     useCallback(() => {
+      setPage(1)
       setSelectedFilter(filterTitle[0])
       getHistoryList()
     }, [])
   );
+  const onRefresh = useCallback(() => {
+    if (isEndReachedLoading || !nextUrl) {
+      setPage(1)
+      return;
+    }
+    setRefreshing(true);
+
+    if (selectedFilter.title === 'All Requests') {
+      getHistoryList();
+    } else {
+      getDistributorHistory(selectedFilter.title);
+    }
+
+    setRefreshing(false);
+  }, [selectedFilter, getHistoryList, getDistributorHistory]);
+
   function getHistoryList(){
     setIsLoading(true);
-     HistoryApi.getDistributorHistory().then((res) => {
-      //  console.log('resssss', res.data)
-       if(res.status === 200){
-         setFilteredData(res.data.results)
-         setIsLoading(false)
+    console.log('page', page)
+    //console.log('next===', next)
+    HistoryApi.getDistributorHistory(page).then((res) => {
+    if (res.status === 200) {
+      if (res.data.results.length > 0) {
+        if (page == 1) {
+          setFilteredData(res.data.results);
+        }
+        else {
+          setFilteredData([...filteredData, ...res.data.results]);
+        }
+        setPage(page + 1);
+        setIsLoading(false)
+        setNextUrl(res.data.next)
       }
-     }).catch((err) => {
-      //console.log(err);
-    })
-    .finally(() => {
-      setIsLoading(false);
+      else {
+        if (page == 1) {
+          setData([]);
+        }
+      }
+    setIsEndReachedLoading(false);
+  }
+  else {
+    setIsEndReachedLoading(false);
+  }
+})
+  .catch(function (error) {
+    console.log(error);
+    setIsEndReachedLoading(false);
+    setIsLoading(false)
+  });
+  }
+  const handlePress = useCallback(
+    (item) => {
+     // setPage(1);
+      setFilteredData([]);
+      setIsLoading(true);
+      setSelectedFilter(item);
+      if (item.title === 'All Requests') {
+        getHistoryList();
+      } else {
+       // alert('test');
+        getDistributorHistory(item.title);
+      }
+    },
+    [getHistoryList, getDistributorHistory]
+  );
+  function getDistributorHistory(item){
+    console.log('page3', page)
+    setIsLoading(true);
+    HistoryApi.getDistributorStatus(page,item).then((res) => {
+      if (res.status === 200) {
+        if (res.data.results.length > 0) {
+          if (page == 1) {
+            setFilteredData(res.data.results);
+          }
+          else {
+            setFilteredData([...filteredData, ...res.data.results]);
+          }
+          setPage(page + 1);
+          setIsLoading(false)
+          setNextUrl(res.data.next)
+        }
+        else {
+          if (page == 1) {
+            setData([]);
+          }
+        }
+      setIsEndReachedLoading(false);
+    }
+    else {
+      setIsEndReachedLoading(false);
+    }
+  })
+    .catch(function (error) {
+      console.log(error);
+      setIsEndReachedLoading(false);
+      setIsLoading(false)
     });
   }
-  const handlePress = (item) => {
-    setIsLoading(true)
-    // console.log('itemmmmm===',item)
-    setSelectedFilter(item);
-    if(item.title === 'All Requests'){
+  async function endReachedHandler() {
+    if (isEndReachedLoading || !nextUrl) {
+      setPage(1)
+      return;
+    }
+  
+    setIsEndReachedLoading(true);
+    if(selectedFilter?.title === 'All Requests'){
       getHistoryList();
     }
-    else{
-      HistoryApi.getDistributorStatus(item.title).then((res) => {
-        // console.log('resssss', res.data)
-       if(res.status === 200){
-         setFilteredData(res.data.results)
-         setIsLoading(false)
-      }
-      }).catch((err) => {
-        //console.log(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-    }
-  };
+    else getDistributorHistory(selectedFilter?.title)
+  }
   const requestData = (itemData) => {
     if (itemData.item && itemData.item.created_at) {
       const dateTime = moment(itemData.item.created_at);
@@ -160,8 +242,7 @@ const DistributorHistory = ({navigation}) => {
         </View>
       );
     } else {
-      // Handle the case when itemData.item or itemData.item.created_at is missing
-      return null; // You can return null or some default content or an error message here
+      return null;
     }
   };
   
@@ -177,7 +258,10 @@ const DistributorHistory = ({navigation}) => {
                 styles.filterContainer,
                 selectedFilter.id === item.id && styles.selectedFilter,
               ]}
-              onPress={() => handlePress(item)}
+              onPress={() => {
+                setPage(1);
+                handlePress(item);
+              }}
             >
               <Text
                 style={[
@@ -192,12 +276,33 @@ const DistributorHistory = ({navigation}) => {
         })}
       </ScrollView>
       </View>
-      <View style={styles.flatListSection}>        
-      <FlatList
-          data={filteredData}
-          renderItem={requestData}
-          keyExtractor={(item) => item.id.toString()}
-      />
+      <View style={styles.flatListSection}>  
+      {filteredData.length === 0 ? (
+        <View style={{flex:1,justifyContent:'center', alignItems:'center'}}>
+            <Image
+                style={styles.tinyLogo}
+                source={require('../../../assets/Images/TransactionsEmpty.png')}
+                resizeMode='cover'
+              />
+              <Text style={{fontFamily:'Poppins-Large',fontWeight:'500',fontSize:16,textAlign:'center',
+              margin:22,lineHeight:24,color:'#393939'}}>No Request History</Text>
+              <Text  style={{width:'90%',fontFamily:'Poppins-Regular',fontWeight:'500',fontSize:14,textAlign:'center',
+              lineHeight:20,color:'#848484',alignSelf:'center'}}>
+              We don’t see any records from your history.</Text>
+        </View>
+  
+      ) : (
+
+        <FlatList
+            data={filteredData}
+            renderItem={requestData}
+            keyExtractor={(item) => item.id.toString()}
+            onEndReached={endReachedHandler}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+        />
+      )}      
       </View>
       {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'></LoadingIndicator>}
     </View>
@@ -223,7 +328,7 @@ const styles = StyleSheet.create({
     marginBottom:20
   },
   filterSection: {
-    height: 60, // Adjust as needed
+    height: 60,
     justifyContent: 'center',
     marginBottom: 10,
   },
@@ -248,6 +353,14 @@ const styles = StyleSheet.create({
     padding: 8,
     marginLeft:10
   },
+  tinyLogo: {
+    width: '50%',
+    height: 145,
+    borderRadius: 8,
+    //marginLeft: 10,
+    //marginHorizontal: 20,
+    alignSelf:'center'
+},
 });
 
 export default DistributorHistory;

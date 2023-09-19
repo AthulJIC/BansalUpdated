@@ -7,17 +7,28 @@ function SplashScreen({ navigation }) {
     useFocusEffect(
         useCallback(() => {
           const timeoutId = setTimeout(async () => {
-            const updateScreen = await AsyncStorage.getItem('LastScreen');
-            //console.log('screen', updateScreen);
+            const updateScreen = await AsyncStorage.getItem('isLoggedIn');
+            //const screen = await AsyncStorage.getItem('RememberMe');
+            console.log('screen====', updateScreen)
             if (!updateScreen) {
               navigation.navigate('Login');
             } else {
-              if (updateScreen === 'Home') {
-                navigation.navigate('Home screen');
+              if (updateScreen === 'true') {
+                navigation.navigate('Homescreen');
               } else {
                 navigation.navigate('Login');
-              }
+              } 
             }
+            // if(!screen && !updateScreen){
+            //   navigation.navigate("Login")
+            // }
+            // else{
+            //   if (screen === 'true' && updateScreen === 'Home') {
+            //         navigation.navigate('Home screen');
+            //       } else {
+            //         navigation.navigate('Login');
+            //       }
+            // }
           }, 2000);
       
           return () => {

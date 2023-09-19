@@ -1,4 +1,4 @@
-import {View,Text, StyleSheet,Image, TouchableOpacity, Pressable,Alert, ScrollView} from 'react-native'
+import {View,Text, StyleSheet, Pressable,Alert, ScrollView} from 'react-native'
 import LanguageIcon from '../../../assets/Icon/LanguageIcon'
 import ContactIcon from '../../../assets/Icon/ContactIcon'
 import AboutIcon from '../../../assets/Icon/AboutIcon'
@@ -9,7 +9,7 @@ import BookMarkActiveIcon from '../../../assets/Icon/BookmarkActiveIcon'
 import HistoryIcon from '../../../assets/Icon/HistoryIcon'
 import AddressIcon from '../../../assets/Icon/AddressIcon'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ProfileApi } from '../../service/profile/profileservice'
 import { useTranslation } from 'react-i18next';
@@ -24,8 +24,6 @@ const Profile =({route})=>{
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     let navigation = useNavigation();
-    let updatedName = route.params?.onEdit
-    //console.log("name",updatedName)
     useBackButtonHandler(navigation, false);
     let profileData=[
        
@@ -100,17 +98,14 @@ const Profile =({route})=>{
             try {
               const user = await AsyncStorage.getItem('role');
               const userName = await AsyncStorage.getItem('username');
-              //console.log('username', userName);
               const userEmail = await AsyncStorage.getItem('email');
               const refresh = await AsyncStorage.getItem('refresh_token');
       
-              // Use a local variable to hold the new state values
               let newRole = user;
               let newUserName = userName;
               let newUserEmail = userEmail;
               let newRefreshToken = refresh;
       
-              // Check if the values have changed before setting state
               if (
                 newRole !== role ||
                 newUserName !== name ||
@@ -149,14 +144,17 @@ function loginHandler(){
                     refresh : refreshToken
                 }
                 ProfileApi.logout(data).then(async(res) => {
-                    // console.log('resss', res.data);
                     if(res.status === 200){
-                        await AsyncStorage.setItem('isLoggedIn', "false");
+                        await AsyncStorage.removeItem('isLoggedIn');
+                        await AsyncStorage.removeItem('mobile_no');
+                        await AsyncStorage.removeItem('role');
+                        await AsyncStorage.removeItem('username');
+                        await AsyncStorage.removeItem('email')
+
                         setIsLoading(false)
                         navigation.navigate('Login')
                     }
                 }).catch((err) => {
-                    //console.log(err);
                 })
                   .finally(() => {
                     setIsLoading(false);

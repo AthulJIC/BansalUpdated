@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View ,Image,TouchableOpacity, Pressable} from "react-native";
+import { StyleSheet, Text, View , Pressable, Image} from "react-native";
 import PenIcon from "../../../assets/Icon/PenIcon";
 import StarIcon from "../../../assets/Icon/StarIcon";
 import ProductPopup from "./ProductPopup";
@@ -7,16 +7,16 @@ import { ConfirmPurchaseService } from "../../service/Orders/ConfirmPurchaseServ
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
+import LoadingIndicator from "../../Components/LoadingIndicator";
 
 function ConfirmPurchase({route,navigation}){
     const item = route?.params;
     const [modalVisible,setModalVisible]=useState(false)
     const [ton,setTons]=useState(item.quantity)
-    const [quantity, setQuantity] = useState(0)
     const[username, setUsername] = useState('') ;
     const { t } = useTranslation();
+    const [isLoading,setIsLoading] = useState(false);
     useBackButtonHandler(navigation, false);
-    //console.log("item=======", item)
    const uiParams={
     Product:t('quantity'),
     Name:t('unique'),
@@ -27,7 +27,6 @@ function ConfirmPurchase({route,navigation}){
         const getValueFromStorage = async () => {
             try {
               const user = await AsyncStorage.getItem('role'); 
-            //   console.log('role2344355', role)
               setUsername(user)
             } catch (error) {
               console.error('Error fetching data from AsyncStorage:', error);
@@ -36,16 +35,22 @@ function ConfirmPurchase({route,navigation}){
         getValueFromStorage();
       }, []);
    function successHandler(ton,id,distributorId){
+    if (isLoading) {
+        return;
+      }
+   setIsLoading(true);
     let Id
-    if (item.page==='favourites')
+    console.log('page', item.page)
+    if (distributorId !== undefined)
     {
+        console.log("id", id,distributorId)
          Id=distributorId
     }
     else{
+        console.log("id===", id,distributorId)
         Id=id
     }
     ConfirmPurchaseService(ton,Id,).then((res) => {
-        // console.log('Received data:', res.role);
         navigation.navigate('Success',{
             title : t('title'),
             content: t('content'),
@@ -54,10 +59,10 @@ function ConfirmPurchase({route,navigation}){
             uiParams,
             page:'orders',
             ton,
-            // roles:res.roles
       });
+      setIsLoading(false)
      }) .catch((errr)=>{
-        //console.log("errr",errr)
+        setIsLoading(false)
       })
 }
     const ProductVisible=()=>{
@@ -71,19 +76,20 @@ function ConfirmPurchase({route,navigation}){
         <View style={{flex:1, backgroundColor:'white'}}>
             <View style={[styles.Modalcard, styles.shadowProp]}>
             <View style={{backgroundColor:'rgba(182, 182, 182, 1)',height:112, width:'35%',borderRadius:8,alignSelf:'center',alignItems:'center',justifyContent:'center',marginLeft:10}}>
-                <Text style={{fontSize:30,fontFamily:'Poppins-SemiBold',color:'rgba(57, 57, 57, 1)'}}>{item.selectedItem.name?.slice(0, 2).toUpperCase()}</Text>
+                {/* <Text style={{fontSize:30,fontFamily:'Poppins-SemiBold',color:'rgba(57, 57, 57, 1)'}}>{item.selectedItem.name?.slice(0, 2).toUpperCase()}</Text> */}
+                <Image source={require('../../../assets/Images/ProductImage.png')} style={{height:112, width:'100%'}}></Image>
             </View>
                 <View style={{justifyContent: 'center', marginLeft: 15,height:100,width:'35%'}}>
                     <Text style={{ fontFamily: 'Poppins-Medium',fontSize: 17 , color:'rgba(57, 57, 57, 1)',marginTop:5}}>{item.selectedItem.name}</Text>
                     <Text style={{
                         fontFamily: 'Poppins-Medium', fontSize: 12,
                         color: '#393939'
-                    }}>{username}</Text>
+                    }}>Distributor</Text>
                     <Text style={{
                         fontFamily: 'Poppins-Regular',fontSize: 13,
-                        color: '#848484',marginTop:12
+                        color: '#848484',marginTop:16
                     }}>{t('quantity')}</Text>
-                    <View style={{flexDirection:'row',marginTop:8}}>
+                    <View style={{flexDirection:'row'}}>
                         <Text style={{
                             fontFamily: 'Poppins-Medium', fontSize: 17,
                             color: '#B1292C'
@@ -95,10 +101,6 @@ function ConfirmPurchase({route,navigation}){
                 </View>
             </View>
             <View style={[styles.ModalSecondCard, styles.shadowProp]}>
-                {/* <View style={{ flexDirection: 'row',justifyContent: 'space-between' }}>
-                    <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>Transaction ID</Text>
-                    <Text style={{color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>A1234455667</Text>
-                </View> */}
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
                     <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>{t('unique')}</Text>
                     <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right', width:"60%"}}>{item.selectedItem.user_id}</Text>
@@ -128,13 +130,13 @@ function ConfirmPurchase({route,navigation}){
                 </Pressable>
             </View>
             <ProductPopup  onUpdateQuantity={updateTon}  isVisible={modalVisible} onClose={()=> setModalVisible(false)} quantity={item.quantity} onEdit={true} />
+            {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'/>}
         </View>
     )
 }
 const styles = StyleSheet.create({
     Modalcard: {
         backgroundColor: '#ffffff', 
-        // padding: 10,
         height: 130,
         width: '90%',
         borderRadius: 5,
@@ -145,7 +147,7 @@ const styles = StyleSheet.create({
         alignSelf:'center'
     },
     ModalSecondCard: {
-        backgroundColor: '#ffffff', // Customize button style as needed
+        backgroundColor: '#ffffff', 
         padding: 10,
         height: 132,
         width: '90%',
@@ -231,14 +233,9 @@ const styles = StyleSheet.create({
         backgroundColor:'white',
         height:630,
         borderTopRightRadius:9,
-        borderTopLeftRadius:9
-        
-        
+        borderTopLeftRadius:9   
     },
     modalView: {
-       // marginTop: 180,
-        //backgroundColor: 'white',
-        //borderRadius: 20,
         padding: 16,
         width: '100%',
         height: '100%',
@@ -250,9 +247,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
-    },
-    buttonClose: {
-        //backgroundColor: '#2196F3',
     },
     textStyle: {
         color: 'white',

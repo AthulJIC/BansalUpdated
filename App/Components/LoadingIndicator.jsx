@@ -3,16 +3,10 @@ import { View, Text, ActivityIndicator, StyleSheet,Modal } from 'react-native';
 
 const LoadingIndicator = ({ visible, text }) => {
   if (!visible) {
-    return null; // If 'visible' prop is false, don't render anything
+    return null; 
   }
 
   return (
-    // <View style={styles.overlay}>
-    //   <View style={styles.container}>
-    //     <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-    //     {text && <Text style={styles.text}>{text}</Text>}
-    //   </View>
-    // </View>
     <Modal
       transparent={true}
       animationType="none"

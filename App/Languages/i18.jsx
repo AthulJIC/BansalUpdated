@@ -4,7 +4,6 @@ import { initReactI18next } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
 import enTranslation from './en.json';
 import hiTranslation from './hi.json';
-import { useContext } from 'react';
 const {language}=useAppContext
 i18n
   .use(initReactI18next)
@@ -14,7 +13,7 @@ i18n
       hi: { translation: hiTranslation },
     },
     lng: language,
-    fallbackLng: 'en', // Fallback language
+    fallbackLng: 'en',
   });
 
 export default i18n;

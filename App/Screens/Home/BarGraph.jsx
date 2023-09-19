@@ -6,11 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { HomeApi } from '../../service/home/homeservice';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon  from 'react-native-vector-icons/MaterialIcons';
 
 const BarGraph = () => {
-    //console.log('roleeee',role)
-
-
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState('Monthly');
@@ -23,24 +21,22 @@ const BarGraph = () => {
     const [totalOrders, setTotalOrders] = useState(50);
     const [total, setTotal] = useState('');
     const [role, setRole] = useState('')
+    const [isOpen, setIsOpen] = useState(false);
     const [items, setItems] = useState([
         { label:'Weekly', value: 'Weekly' },
         { label:'Monthly', value: 'Monthly'},
         { label:'Quarterly', value: 'Quarterly'},
         
     ]);
-    // console.log('total', total)
-    // console.log('barValue',barValue,barMonth)
     const [activeButton, setActiveButton] = useState('Orders');
     let barData;
-    const destinationOrderValue = 200;
-    const destinationPointsValue = 12000;
     const referenceLine1Position = totalOrders * 0.3; 
     const referenceLine2Position = totalOrders * 0.65;
     const referenceLine3Position = totalOrders;
    
     function barHandler(item){
         setValue(item.value);
+        setIsOpen(false);
             if(item.value === 'Monthly'){
                 setBarSpacing(11);
                 setBarWidth(12)
@@ -96,22 +92,13 @@ const BarGraph = () => {
                 label : moment(dataPoint.date).format('ddd').toLocaleString('en-US')
             }))
         }
-    //const barWidth =Dimensions.get("window").width - 50;
-    // const handleButtonPress = () => {
-    //     navigation.navigate(label);
-    // };
-
-    function onChange(){
-
-    }
     useEffect(() => {
         const getValueFromStorage = async () => {
             try {
               const user = await AsyncStorage.getItem('role'); 
-            //   console.log('role2344355', role)
               setRole(user)
             } catch (error) {
-              console.error('Error fetching data from AsyncStorage:', error);
+             // console.error('Error fetching data from AsyncStorage:', error);
             }
           };
           
@@ -125,9 +112,7 @@ const BarGraph = () => {
         if(role !== 'Distributor'){
             if(activeButton === 'Orders'){
                 HomeApi.getMonthlyOrder().then((res) => {
-                    // console.log(res.data);
                     if(res.status === 200){
-                        //console.log('success')
                         setBarValue(res.data.order_counts_by_month[0].count)
                         setBarMonth(res.data.order_counts_by_month[0].month)
                         setTotalOrders(res.data.total_order_count_current_year)
@@ -137,9 +122,7 @@ const BarGraph = () => {
             }
             else{
                 HomeApi.getMonthlyPoints().then((res) => {
-                    // console.log(res.data);
                     if(res.status === 200){
-                        //console.log('success')
                         setBarValue(res.data.monthly_points_data[0].total_points)
                         setBarMonth(res.data.monthly_points_data[0].month)
                         setTotalOrders(res.data.total_points_current_year)
@@ -150,9 +133,7 @@ const BarGraph = () => {
         }
         else{
             HomeApi.getDistributorMonthlyOrder().then((res) => {
-                // console.log(res.data);
                 if(res.status === 200){
-                    //console.log('success')
                     setBarValue(res.data.order_counts_by_month[0].count)
                     setBarMonth(res.data.order_counts_by_month[0].month)
                     setTotalOrders(res.data.total_order_count_current_year)
@@ -166,9 +147,7 @@ const BarGraph = () => {
         if(role !== 'Distributor'){
             if(activeButton === 'Orders'){
                 HomeApi.getQuarterlyOrder().then((res) => {
-                    // console.log(res.data);
                     if(res.status ===200){
-                        //console.log('success');
                         setBarValue(res.data.order_counts_by_quarter[0].count)
                         setBarQuarter(res.data.order_counts_by_quarter[0].quarter)
                         setTotalOrders(res.data.total_order_count_current_year)
@@ -178,9 +157,7 @@ const BarGraph = () => {
             }
             else{
                 HomeApi.getQuarterlyPoints().then((res) => {
-                    // console.log(res.data);
                     if(res.status ===200){
-                        //console.log('success');
                         setBarValue(res.data.quarterly_points_data[0].total_points)
                         setBarQuarter(res.data.quarterly_points_data[0].quarter)
                         setTotalOrders(res.data.total_points_current_year)
@@ -191,9 +168,7 @@ const BarGraph = () => {
         }
         else{
             HomeApi.getDistributorQuarterlyOrder().then((res) => {
-                // console.log(res.data);
                 if(res.status ===200){
-                    //console.log('success');
                     setBarValue(res.data.order_counts_by_quarter[0].count)
                     setBarQuarter(res.data.order_counts_by_quarter[0].quarter)
                     setTotalOrders(res.data.total_order_count_current_year)
@@ -206,7 +181,6 @@ const BarGraph = () => {
         if( role !== 'Distributor'){
             if(activeButton === 'Orders' ){
                 HomeApi.getWeeklyOrder().then((res) => {
-                    // console.log('weekly',res.data);
                     if(res.status === 200){
                         setBarWeekData(res.data.daily_order_counts);
                         setTotalOrders(res.data.total_order_count_current_week)
@@ -216,7 +190,6 @@ const BarGraph = () => {
             }
             else {
                 HomeApi.getWeeklyPoints().then((res) => {
-                    // console.log('weekly',res.data);
                     if(res.status === 200){
                         setBarWeekData(res.data.daily_points);
                         setTotalOrders(res.data.total_points)
@@ -227,7 +200,6 @@ const BarGraph = () => {
         }
         else{
             HomeApi.getDistributorWeeklyOrder().then((res) => {
-                // console.log('weekly',res.data);
                 if(res.status === 200){
                     setBarWeekData(res.data.daily_order_counts);
                     setTotalOrders(res.data.total_order_count_current_week)
@@ -237,24 +209,14 @@ const BarGraph = () => {
         }
     }
     
-
-    //console.log('bardata', barWeekData)
-    // const cvdata = cvpnodetails.map((item) => ({
-    //     label: item.cvno.toString(),
-    //     value: item.visitid.toString(),
-    // }));
     const handleButton = (buttonName) => {
         setActiveButton(buttonName);
         setValue('Monthly')
         setBarSpacing(11);
         setBarWidth(12)
         setBarWeekData([])
-
-        // setBarMonth('');
-        // setBarValue(0);
-        // setBarQuarter('')
         if(buttonName === 'Orders'){
-            setTotalOrders(10);
+            setTotalOrders(50);
             
         }
         else{
@@ -300,39 +262,35 @@ const BarGraph = () => {
                     </TouchableOpacity>
                 )}
                 <View style={{ marginHorizontal: 10,
-                    width: "34%",
+                    width: "32%",
                     marginTop: 10,
                     borderRadius:6,
                     backgroundColor:'white',
-                    marginLeft: 'auto'}}>
+                    marginLeft: 'auto',flexDirection:'row'}}>
                     <Dropdown
                         style={styles.dropdown}
-                        //placeholderStyle={styles.placeholderStyle}
                         selectedTextStyle={styles.selectedTextStyle}
-                        //inputSearchStyle={styles.inputSearchStyle}
                         value={value}
-                        iconStyle={styles.iconStyle}
+                        //iconStyle={styles.iconStyle}
                         data={items}
-                        maxHeight={150}
+                        //maxHeight={120}
                         labelField="label"
                         valueField="value"
-                        iconColor='rgba(57, 57, 57, 1)'
-                        // placeholder="Select item"
-                        //searchPlaceholder="Search..."
-                        // value={value}
-                        
+                        iconColor='white'                        
                         onChange={(item) => 
                             barHandler(item)
-                        
                         }
-                        //itemContainerStyle={{ height: 0 }} 
-                        itemTextStyle = {{color:'black',fontSize:11,fontFamily:'Poppins-Regular'}}
+                        itemTextStyle = {{color:'black',fontSize:13,fontFamily:'Poppins-Regular',textAlign:'left',marginLeft: -10, height:20}}
                         containerStyle={styles.dropdownContainer}
+                        renderRightIcon={() => (
+                            <Icon name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={27} color="rgba(57, 57, 57, 0.9)" style={{bottom:1.5}}/>
+                        )}
+                        onFocus={() => setIsOpen(true)}
+                        onBlur={() => setIsOpen(false)} 
                     />
                 </View>
             </View>
             <Text style={styles.Text}>
-                {/* {t('totalorders')} */}
                 {t('total')} { activeButton === 'Orders' ? t('orders') : t('points')}
             </Text>
             <Text style={styles.number} >{total}</Text>
@@ -433,9 +391,8 @@ const styles = StyleSheet.create({
 
     },
     dropdown: {
-        // margin: 10,
         height: 30,
-        width:'100%'
+        width:'100%',
     },
     placeholderStyle: {
         fontSize: 16,
@@ -452,15 +409,13 @@ const styles = StyleSheet.create({
         marginRight:2,
     },
     dropdownContainer:{
-        // marginLeft:15,
-       //height:100
-        borderRadius:6
+        borderRadius:3,
     },
     activeButton: {
         backgroundColor: 'rgba(255, 255, 255, 1)', 
     },
     activeButtonText: {
-        color: 'black', // Change this to the desired active text color
+        color: 'black',
     },
     buttonText: {
         fontFamily: 'Poppins-Regular',

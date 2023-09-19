@@ -1,4 +1,4 @@
-import {View,Text, StyleSheet} from 'react-native'
+import {View, StyleSheet} from 'react-native'
 import LoyalityBonus from './LoyalityBonus';
 import Transactions from './Transactions';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';

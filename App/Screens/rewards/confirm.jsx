@@ -1,6 +1,5 @@
 import {Image, Pressable, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import { useAppContext } from '../../context/AppContext'
-import ChangeAddress from '../../../assets/Icon/changeIcon';
 import PenIcon from '../../../assets/Icon/PenIcon';
 import { confirmService } from '../../service/RewardsService/ConfirmService';
 import ErorrPopUp from './erorrRedeem';
@@ -13,12 +12,9 @@ const ConfirmPage=({route,navigation})=>{
     const [visible,setVisible]=useState(false)
     const { t } = useTranslation();
     const {addressItem}=route.params
-    // console.log("selectedProduct",selectedProduct)
     useBackButtonHandler(navigation, false);
     const confirmHandler=(id)=>{
-      
-        // setVisible(true)
-        confirmService(id).then((res) => {
+              confirmService(id).then((res) => {
             // if(res.status === 200){
             //     console.log('success',)
             //     setOrdersList(res.data.results)

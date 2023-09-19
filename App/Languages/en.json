@@ -1,13 +1,13 @@
 
 {
     "LogIn":"Log In",
-    "greeting": "Welcome Back",
+    "greeting": "Welcome!",
     "buttonTextOne": "English",
     "confirmButton":"Confirm",
     "choose":"Choose",
     "search":"Search",
     "refer":"Refer Leads",
-    "bonus":"Loyality Bonus",
+    "bonus":"Loyalty Bonus",
     "points1":"Points will expire in ",
     "points2":"Days",
     "points3":"Points",

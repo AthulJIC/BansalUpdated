@@ -2,9 +2,9 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useState, useEffect } from "react";
 import { useAppContext } from "../../context/AppContext";
 import { useTranslation } from 'react-i18next';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLanguageContext } from '../../context/LanguageContext';
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LanguageScreen = ({navigation}) => {
   const { language, changeNewLanguage } = useLanguageContext();

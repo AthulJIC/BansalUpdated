@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import { useCallback, useEffect, useState } from "react";
+import {  FlatList, StyleSheet, Text, View } from "react-native";
 import AcceptedIcon from "../../../assets/Icon/AcceptedIcon";
 import ProcessingIcon from "../../../assets/Icon/ProcessingIcon";
 import RejectedIcon from "../../../assets/Icon/RejectedIcon";
@@ -8,39 +8,26 @@ import { TransactionAPI } from "../../service/Points/TransactionService";
 import moment from 'moment';
 import { Image } from "react-native";
 import LoadingIndicator from "../../Components/LoadingIndicator";
-const filterTitle = [
-    {
-      id: 1,
-      title: 'All Requests',
-    },
-    {
-      id: 2,
-      title: 'Pending',
-    },
-    {
-      id: 3,
-      title: 'Accepted',
-    },
-    {
-      id: 4,
-      title: 'Rejected',
-    },
-  ];
+import { useFocusEffect } from "@react-navigation/native";
+
 const Transactions=()=>{
-    const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
     const [filteredData, setFilteredData] = useState([]);
     const [dateTime,setDateTime]=useState('')
     const [isLoading,setIsLoading]=useState(false)
    
-    useEffect(() => {
-      setIsLoading(true)
-      transactions()
-    }, []);
+    useFocusEffect(
+      useCallback(() => {
+        const fetchData = async () => {
+          transactions();
+        };
+    
+        fetchData();
+      }, [])
+    );
     const transactions=()=>{
-      TransactionAPI().then((res) => {
-        // console.log("res",res)
+      setIsLoading(true);
+      TransactionAPI.getTransactions().then((res) => {
           if(res.status === 200){
-             // console.log('success',)
               setFilteredData(res.data.results)
             
               setIsLoading(false)
@@ -50,7 +37,6 @@ const Transactions=()=>{
   }
 
     const requestData = (itemData) => {
-      //console.log("itemData",itemData.item.quantity)
         const createdAt = moment(itemData.item.created_at);
         const Date = createdAt.format('DD MMM YYYY');
         const Time = createdAt.format('h:mm A');
@@ -61,16 +47,19 @@ const Transactions=()=>{
 
         if (itemData.item.status === 'Pending') {
           statusText = 'Processing'; 
-          pointsText = '500 Pts'; 
           displayText = itemData.item.quantity;
         }
         else if (itemData.item.status === 'Accepted') {
-          pointsText = '+500 Pts'; 
           displayText = itemData.item.transaction_id
         }
         else{
           displayText = itemData.item.transaction_id
         }
+
+        if(itemData.item.points > 500){
+          pointsText = "+500";
+        }
+        else pointsText = itemData.item.points;
         return(
          
          <View style={{
@@ -80,7 +69,6 @@ const Transactions=()=>{
           marginTop: 15,
           paddingRight:24,
           flex:1
-        //   justifyContent: 'space-between',
         }}>
             { itemData.item.status === 'Accepted' ? (
               <View style={{backgroundColor: 'rgba(24, 183, 88, 0.2)',
@@ -131,19 +119,12 @@ const Transactions=()=>{
             </View>
             <View style={{marginLeft:'auto',justifyContent:'flex-end'}}>
               <Text style={{color : itemData.item.status === 'Pending' ? '#1F86FF' : itemData.item.status === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)',
-              fontFamily:'Poppins-Regular',textAlign:'right'}}>{itemData.item.points}Pts</Text>
-              <Text style={{fontSize:11.11,lineHeight:16,fontFamily:'Poppins-Regular',textAlign:'right',color:'#393939'}}>{statusText}</Text>
+              fontFamily:'Poppins-Regular',textAlign:'right'}}>{pointsText}Pts</Text>
+              <Text style={{fontSize:11.11,lineHeight:16,fontFamily:'Poppins-Regular',textAlign:'right',color:'#393939'}}>{statusText.toLocaleUpperCase()}</Text>
             </View>
          </View>
         )
       }
-    //   if (isLoading) {
-    //     return (
-    //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-    //             <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-    //         </View>
-    //     );
-    // }
  return(
     <View style={styles.mainContainer}>
         <Text style={styles.font}>
@@ -213,7 +194,7 @@ const styles = StyleSheet.create({
         marginBottom:20
       },
       filterSection: {
-        height: 60, // Adjust as needed
+        height: 60,
         justifyContent: 'center',
         marginBottom: 10,
       },
