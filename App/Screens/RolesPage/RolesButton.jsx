@@ -15,7 +15,7 @@ const RolesButton = ({ label, navigation }) => {
 };
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#B1292C', // Customize button style as needed
+    backgroundColor: '#B1292C',
     padding: 10,
     height:180,
     width:'87%',

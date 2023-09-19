@@ -14,33 +14,36 @@ import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
 import { useTranslation } from 'react-i18next';
 import ErrorIcon from "../../../assets/Icon/ErrorIcon";
+import { useNavigation } from '@react-navigation/native';
 
-function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQuantity }) {
+function ErrorPopup({ isVisible,onClose}) {
+    const navigation=useNavigation()
   const [name, setName] = useState('');
-  const [editQuantity, setEditQuantity] = useState(quantity);
-  const [quantityError, setQuantityError] = useState(false);
+  console.log('onClose',onClose)
+//   const [editQuantity, setEditQuantity] = useState(quantity);
+ 
   const { t } = useTranslation();
 
-  const handleRef = () => {
-    if (name === null || (onEdit === false && !editQuantity)) {
-      setQuantityError(true);
-      return;
-    }
+//   const handleRef = () => {
+//     if (name === null || (onEdit === false && !editQuantity)) {
+//       setQuantityError(true);
+//       return;
+//     }
 
-    const updatedQuantity = onEdit ? editQuantity : name;
+//     const updatedQuantity = onEdit ? editQuantity : name;
     
-    if (onRefer) {
-      onRefer(updatedQuantity);
-    }
+//     if (onRefer) {
+//       onRefer(updatedQuantity);
+//     }
     
-    if (onUpdateQuantity) {
-      onUpdateQuantity(updatedQuantity);
-    }
+//     if (onUpdateQuantity) {
+//       onUpdateQuantity(updatedQuantity);
+//     }
 
-    onClose();
-  }
+//     onClose();
+//   }
 
-  const description = t('description')
+  const description = 'April, July, October, and December will be the months the redemption window will be open and user’s be allowed to redeem loyalty points.';
 
   return (
     <Modal
@@ -63,32 +66,13 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
               onPress={onClose}>
               <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
             </TouchableOpacity>
-            <Image style={{ marginTop: 15, alignSelf: 'center' }} source={require('../../../assets/Images/ProductFullImage.png')} />
-            <Text style={{ fontSize: 16, color: 'rgba(57, 57, 57, 1)', fontFamily: 'Poppins-Medium', marginLeft: 5, marginTop: 17 }}>TMT Bars</Text>
+           
+            <Text style={{ fontSize: 16, color: 'rgba(57, 57, 57, 1)',fontWeight:'500', fontFamily: 'Poppins-Medium', marginLeft: 5, marginTop: 17 }}>Wait Till Aprill For Redeeming Your Points</Text>
             <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 13, fontFamily: 'Poppins-Regular', marginLeft: 5 }}>{description}</Text>
-            <View>
-              <Text style={{ color: 'rgba(57, 57, 57, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', marginTop: 8 }}>{t('quantity')}</Text>
-              <TextInput
-                style={styles.inputContainer}
-                placeholder={t('Qinput')}
-                placeholderTextColor={'rgba(132, 132, 132, 1)'}
-                onChangeText={text => onEdit ? setEditQuantity(text) : setName(text)}
-                value={onEdit ? editQuantity : name}
-                onPressIn={() => { setQuantityError(false) }}
-              />
-            </View>
-            {
-              quantityError && (
-                <View style={{ flexDirection: 'row', marginLeft: 15 }}>
-                  <ErrorIcon />
-                  <Text style={{ color: 'red', marginLeft: 5 }}>This field is required</Text>
-                </View>
-              )
-            }
             <View style={styles.modalButtonContainer}>
-              <Pressable style={styles.referButton} onPress={handleRef}>
+              <Pressable style={styles.referButton} onPress={()=>{navigation.navigate('Home')}}>
                 <Text style={styles.referButtonText}>
-                  {t('purchase')}
+                Go Back To Home
                 </Text>
               </Pressable>
             </View>
@@ -154,4 +138,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductPopup;
+export default ErrorPopup ;

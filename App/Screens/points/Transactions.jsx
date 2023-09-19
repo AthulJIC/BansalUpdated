@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import AcceptedIcon from "../../../assets/Icon/AcceptedIcon";
 import ProcessingIcon from "../../../assets/Icon/ProcessingIcon";
 import RejectedIcon from "../../../assets/Icon/RejectedIcon";
 import ArrowDown from "../../../assets/Icon/Arrowdown";
+import { TransactionAPI } from "../../service/Points/TransactionService";
+import moment from 'moment';
 const filterTitle = [
     {
       id: 1,
@@ -22,31 +24,28 @@ const filterTitle = [
       title: 'Rejected',
     },
   ];
-  const data = [
-    { id: 1, name: '135687', requestId: 65, status: "Processing" , date:'05 AUG 2023', time:'6:00 PM',points:'600'},
-    { id: 2, name: ' 135687' , requestId: 10, status: 'Processing',date:'05 AUG 2023', time:'6:00 PM',points:'400' },
-    { id: 3, name: '135687', requestId: 45, status: 'ACCEPTED',date:'05 AUG 2023', time:'6:00 PM',points:'900'},
-    { id: 6, name: '135687', requestId: 30, status: 'ACCEPTED',date:'05 AUG 2023', time:'6:00 PM',points:'250' },
-    { id: 7, name: '135687', requestId: 30, status: 'Processing',date:'05 AUG 2023' , time:'6:00 PM',points:'490'},
-    { id: 8, name: '135687', requestId: 30, status: 'ACCEPTED',date:'05 AUG 2023', time:'6:00 PM',points:'900' },
-    { id: 9, name: '135687', requestId: 30, status: 'REJECTED',date:'05 AUG 2023' , time:'6:00 PM',points:'100'},
-    { id: 10, name: '135687', requestId: 45, status: 'Processing',date:'05 AUG 2023' , time:'6:00 PM',points:'200'},
-    { id: 11, name: '135687', requestId: 45, status: 'ACCEPTED',date:'05 AUG 2023' , time:'6:00 PM',points:'300'},
-    { id: 12, name: '135687', requestId: 90, status: 'REJECTED',date:'05 AUG 2023' , time:'6:00 PM',points:'490'},
-    { id: 13, name: '135687', requestId: 30, status: 'REJECTED',date:'05 AUG 2023' , time:'6:00 PM',points:'890'},
-    { id: 14, name: '135687', requestId: 45, status: 'PENDING',date:'05 AUG 2023' , time:'6:00 PM',points:'990'},
-    { id: 15, name: '135687', requestId: 30, status: 'ACCEPTED',date:'05 AUG 2023' , time:'6:00 PM',points:'400'},
-    { id: 16, name: '135687', requestId: 45, status: 'Processing',date:'05 AUG 2023' , time:'6:00 PM',points:'499'},
-    { id: 17, name: '135687', requestId:30, status: 'REJECTED',date:'05 AUG 2023' , time:'6:00 PM',points:'780'},
-    { id: 18, name: '135687', requestId: 40, status: 'ACCEPTED',date:'05 AUG 2023', time:'6:00 PM' ,points:'400'},
-    { id: 19, name: '135687', requestId: 50, status: 'Processing',date:'05 AUG 2023' , time:'6:00 PM',points:'380'},
-    { id: 20, name: '135687', requestId: 80, status: 'ACCEPTED',date:'05 AUG 2023' , time:'6:00 PM',points:'240'},
-];
 const Transactions=()=>{
     const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
-    const [filteredData, setFilteredData] = useState(data);
+    const [filteredData, setFilteredData] = useState([]);
+    const [dateTime,setDateTime]=useState('')
+    useEffect(() => {
+      transactions()
+    }, []);
+    const transactions=()=>{
+      TransactionAPI().then((res) => {
+        // console.log("res",res)
+          if(res.status === 200){
+              console.log('success',)
+              setFilteredData(res.data.results)
+              setDateTime(res.data.results.item.created_at)
+          }
+      })
+  }
     const requestData = (itemData) => {
-        console.log(itemData);
+        const createdAt = moment(itemData.item.created_at);
+        const Date = createdAt.format('DD MMM YYYY');
+        const Time = createdAt.format('h:mm A');
+        let leads= itemData.item.id
         return(
     
          <View style={{
@@ -57,7 +56,7 @@ const Transactions=()=>{
           paddingRight:24
         //   justifyContent: 'space-between',
         }}>
-            { itemData.item.status === 'ACCEPTED' ? (
+            { itemData.item.status === 'Accepted' ? (
               <View style={{backgroundColor: 'rgba(24, 183, 88, 0.2)',
               borderRadius: 8,
               padding: 8,
@@ -80,17 +79,22 @@ const Transactions=()=>{
               </View>
             )}
             <View style={{flexDirection:'column',marginHorizontal:15}}>
+              
               <View style={{flexDirection:'row',justifyContent:'flex-start'}}>
-              <Text  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Regular'}}>{itemData.item.name}</Text>            
+              {leads==='null'?(
+                <View>
+              <Text  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Regular'}}>{itemData.item.id}</Text>            
               <Text style={{  fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:5,marginHorizontal:5}}>{'\u2B24'}</Text>
-              <Text style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular'}}>{`${itemData.item.requestId}  string text`}
+              <Text style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular'}}>{`${itemData.item.requestId}  string text`}hi
                 {/* `${itemData.item.requestId}` Tons */}
                 </Text>
+                </View>): 
+                <Text  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Regular'}}>{leads}</Text> }
               </View>
               <View style={{flexDirection:'row',flexWrap: 'nowrap'}}>
-                <Text style={{marginHorizontal:3,fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{itemData.item.date}</Text>
+                <Text style={{marginHorizontal:3,fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{Date}</Text>
                 <Text style={{fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:5,marginHorizontal:5}}>{'\u2B24'}</Text>
-                <Text style={{fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{itemData.item.time}</Text>
+                <Text style={{fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{Time}</Text>
               </View>
             </View>
             <View style={{marginLeft:'auto',justifyContent:'flex-end'}}>

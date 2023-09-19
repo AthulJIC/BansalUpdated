@@ -3,28 +3,42 @@ import { Animated, Button, StyleSheet, Text, TouchableOpacity, View } from "reac
 import { BarChart } from "react-native-gifted-charts";
 import ProgressBar from 'react-native-progress/Bar';
 import { useTranslation } from 'react-i18next';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { CommonAPI } from "../../service/common/Dbservice";
+import { useAppContext } from "../../context/AppContext";
 
-const barData = [
-    {value: 1, label: 'Jan'},
+
+// const barData = [
+//     {value: 1, label: 'Jan'},
    
-]
+// ]
 const LoyalityBonus = () => {
+    const [points,setPoints]=useState("")
     const [progress] = useState(new Animated.Value(0));
     const { t } = useTranslation();
+    const { userDetails, updateUserDetails, updateSelectedProduct, UserPoints } = useAppContext();
+    let ProgressValue=((points/12000)*100)/100
     useEffect(() => {
-      Animated.timing(progress, {
-        toValue: 500,
-        duration: 1000,
-        useNativeDriver: false
-      }).start();
-    
+          Animated.timing(progress, {
+            toValue: 500,
+            duration: 1000,
+            useNativeDriver: false
+          }).start();
+          getLoyaltyPoints()
     }, []);
- 
+    const getLoyaltyPoints=()=>{
+      CommonAPI.Points().then((res) => {
+          if(res.status === 200){
+              console.log('success',res.data)
+              setPoints(res.data.total_points)
+          }
+      })
+  }
     return (
       <View style={styles.mainContainer}>
         <Text style={styles.textStyle}>{t('bonus')}</Text>
         <View>
-          <Text style={styles.points}>{'2000 ' + t('points3')}</Text>
+          <Text style={styles.points}>{points +" "+ t('points3')}</Text>
           <Text style={styles.expire}>{t('points1') +'  240 ' +t('points2') }</Text>
         </View>
         {/* <View>
@@ -35,7 +49,7 @@ const LoyalityBonus = () => {
          <View style={{justifyContent:'center',marginTop:55}}>
             <Text style={{marginLeft:220,fontSize:9.26,fontWeight:'400',
             color:'#FFFFFF',lineHeight:14,fontFamily:'Poppins-Regular'}}>{'+12000 '+ t('points3')}</Text> 
-      <ProgressBar progress={0.5} width={300}height={16} color='#F18C13' borderRadius={22} backgroundColor='#ffffff'/>
+      <ProgressBar progress={ProgressValue} width={300}height={16} color='#F18C13' borderRadius={22} backgroundColor='#ffffff'/>
     </View>
       </View>
     );

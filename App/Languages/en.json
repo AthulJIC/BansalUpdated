@@ -43,6 +43,17 @@
     "town":"Town/City",
     "state":"State",
     "default":"Set As Default",
-    "savebutton":"Save"
+    "savebutton":"Save",
+    "FieldRequired":"This field is required",
+    "description":"TMT Sariya are reinforced bars having a tough outer core and a soft inner core used in all types of general and heavy construction including building, infrastructural projects, housing projects, dams, bridges & houses.",
+    "confirm":"Confirm Purchase Request",
+    "Ton":"Ton",
+    "Mnumber":"Mobile",
+    "Location":"Location",
+    "500 Pts":"500 Pts",
+    "on confirmation":"on confirmation",
+    "lines":"You can earn 500 Pts from this referral. Redeem this points on the rewards section for exciting gifts.",
+    "title":"Purchase Request Successful",
+    "content":"Pts would be credited once the request has been confirmed by the distributor."
   }
   

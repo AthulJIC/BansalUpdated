@@ -35,7 +35,7 @@ const PendingRequest = () => {
       }, []);
     function getLoyaltyPoints(){
         HomeApi.getPoints().then((res) => {
-            console.log(res.data);
+            // console.log(res.data);
             if(res.status === 200){
                 console.log('success')
                 setProgress(res.data.total_points)

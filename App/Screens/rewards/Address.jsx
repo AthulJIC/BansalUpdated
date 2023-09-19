@@ -1,5 +1,5 @@
-import React, { useLayoutEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Pressable, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Pressable, KeyboardAvoidingView, ScrollView, TextInput,Image } from 'react-native';
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
 import ArrowIcon from '../../../assets/Icon/Arrow';
@@ -7,88 +7,252 @@ import EditIcon from '../../../assets/Icon/Edit';
 import CheckBox from '@react-native-community/checkbox';
 import { useNavigation,getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-
-const addresses = [
-  {
-    id: '1',
-    name: 'John Doe',
-    address: '123 Main St, City, Country',
-    mobileNo: '89989898989',
-    pincode: '898989898898',
-    City: 'thalassery',
-    state: 'Kerala'
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    address: '456 Elm St, Town, Country',
-    mobileNo: '89989898989',
-    pincode: '898989898898',
-    City: 'thalassery',
-    state: 'Kerala'
-  },
-  // Add more addresses as needed
-];
+import { AddAddressService, deleteAddressService, updateAddressService } from '../../service/RewardsService/addAddressService';
+import { AddressListService } from '../../service/RewardsService/AddressListService';
 
 const AddressList = ({navigation,route}) => {
   const data = route?.params.fromProfile;
-  console.log(data);
+  const [addresses,setaddresses]=useState([])
   const [addressItem,setadressItem]=useState([])
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isVisible, setVisible] = useState(false)
   const [name, setName] = useState('');
   const [mobileNo, setMobileNo] = useState('');
   const [location, setLocation] = useState('');
-  const [quantity, setQuantity] = useState('')
+  const [area, setArea] = useState('')
   const [landMark, setLandMark] = useState('')
   const [pinCode, setPinCode] = useState('')
-  const [town, setTown] = useState('')
+  const [Value, setTown] = useState('')
   const [states, setStates] = useState('')
   const [removeButton, setRemoveButton] = useState(false)
   const [rememberSelect, setrememberSelect] = useState(false)
+  const [userId,setUserId]=useState('')
+  const [editPress,setEditPress]=useState(false)
+  const [textVisible,setTextVisible]=useState(false)
+
+  const [nameError, setNameError] = useState('');
+  const [mobileNoError, setMobileNoError] = useState('');
+  const [pinCodeError, setPinCodeError] = useState('');
+  const [statesError, setStatesError] = useState('');
+  const [landMarkError, setLandMarkError] = useState('');
+  const [townError, setTownError] = useState('');
   const { t } = useTranslation();
+ console.log("textVisible",textVisible)
   const selectAddress = (addressId) => {
     setSelectedAddress(addressId);
   };
+  useEffect(() => {
+    addressList()
+}, [isVisible]);
+  const onAddAddress=()=>{
+    setName('')
+    setMobileNo('')
+    setLocation("")
+    setPinCode("")
+    setTown("")
+    setStates("")
+    setLandMark("")
+    setTown('')
+    setArea("")
+
+  }
+  const params={
+    mobile:mobileNo,
+    name:name,
+    location:location,
+    area:area,
+    landMark:landMark,
+    pinCode:pinCode,
+    Value:Value,
+    states:states,
+    isDefault:rememberSelect
+  }
+  const handleInputFocus = (field) => {
+    switch (field) {
+      case 'name':
+        setNameError('');
+        break;
+      case 'mobileNo':
+        setMobileNoError('');
+        break;
+      case 'pinCode':
+        setPinCodeError('');
+        break;
+      case 'states':
+        setStatesError('');
+        break;
+      case 'landMark':
+        setLandMarkError('');
+        break;
+      case 'town':
+        setTownError('');
+        break;
+      default:
+        break;
+    }
+  };
+  const addressList=()=>{
+    AddressListService().then((res)=>{
+      // console.log("Address List",res.data.results)
+      setaddresses(res.data.results)
+    })
+  }
+  const confirmHandler=()=>{
+    setNameError('');
+    setMobileNoError('');
+    setPinCodeError('');
+    setStatesError('');
+    setLandMarkError('');
+    setTownError('');
+    let isValid = true;
+    if (name.trim() === '') {
+      setNameError('Name is required');
+      isValid = false;
+    }
+
+    if (mobileNo.trim() === '') {
+      setMobileNoError('Mobile number Required');
+      isValid = false;
+    }
+    if(mobileNo.length > 0 && mobileNo.length !== 10)
+    {
+      setMobileNoError('Mobile number Should be 10 digits');
+      isValid = false;
+    }
+
+    if (pinCode.trim() === '' || pinCode.length !== 6 || pinCode.length >6 ) {
+      setPinCodeError('Pin code should be 6 digits');
+      isValid = false;
+    }
+
+    if (states.trim() === '') {
+      setStatesError('State is required');
+      isValid = false;
+    }
+
+    if (landMark.trim() === '') {
+      setLandMarkError('Landmark is required');
+      isValid = false;
+    }
+
+    if (Value.trim() === '') {
+      setTownError('Town is required');
+      isValid = false;
+    }
+    if (isValid) {
+      {editPress ?
+        updateAddressService(params,userId).then((res) => {
+           console.log('AddAddressService Received data:', res);
+           setVisible(false)
+        })
+        :
+        AddAddressService(params).then((res) => {
+          console.log('AddAddressService Received data:', res.data);
+          setVisible(false)
+       })}
+      }
+}
+
+
+const deleteHandler=()=>{
+  deleteAddressService(userId).then((res) => {
+    console.log('AddAddressService Received data:', res.data);
+    setVisible(false)
+ })}
+
   const onEditPress = (item) => {
     setName(item.name)
-    setMobileNo(item.mobileNo)
-    setLocation()
+    setMobileNo(item.mobile)
+    setLocation(item.address_1)
+    setArea(item.address_2)
     setPinCode(item.pincode)
+    setLandMark(item.land_mark)
+    setTown(item.city)
+    setStates(item.state)
+    setrememberSelect(item.is_default)
+    setUserId(item.id)
+    setEditPress(true)
+  }
+ const continueButton=()=>{
+  if(selectedAddress===null){
+      setTextVisible(true)
+  }
+  else{
+   
+    navigation.navigate('Confirm',{addressItem})
+  }
+ }
+ const renderItem = ({ item }) => {
+  console.log('item=====', item)
+    return (
+      <Pressable
+        disabled={data}
+        onPress={() => {
+          selectAddress(item.id);
+          setadressItem(item);
+          setTextVisible(false)
+        }}
+        style={[
+          styles.addressItem,
+          selectedAddress === item.id && { borderColor: '#B1292C', borderWidth: 1 },
+        ]}
+      >
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={[styles.name, selectedAddress === item.id && { color: '#B1292C' }]}>{item.name}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              onEditPress(item);
+              setRemoveButton(true);
+              setVisible(true);
+            }}
+            style={styles.modalCard}
+          >
+            <EditIcon width={45} height={16} />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.address}>
+          {item.address_1},{item.address_2},{item.land_mark},{item.city},{item.state}
+        </Text>
+        <Text style={{ marginTop: 8 }}>{item.mobile}</Text>
+      </Pressable>
+    );
   }
 
-  const renderItem = ({ item }) => (
-    <Pressable disabled={data}
-      onPress={() => {selectAddress(item.id) ;setadressItem(item)}}
-      style={[
-        styles.addressItem,
-        selectedAddress === item.id && { borderColor: '#B1292C', borderWidth: 1 },
-      ]}
-    >
-      <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-        <Text style={[styles.name, selectedAddress === item.id && { color: '#B1292C' }]}>{item.name}</Text>
-        <TouchableOpacity onPress={() => { setVisible(true); onEditPress(item); setRemoveButton(true) }} style={styles.modalCard}>
-        <EditIcon width={45} height={16} />
-        </TouchableOpacity>
-      </View>
-      <Text style={styles.address}>{item.address}</Text>
-    </Pressable>
-  );
-
+ 
   return (
     <View style={{ backgroundColor: '#ffffff', height: '100%', borderRadius: 8 }}>
-      <TouchableOpacity onPress={() => { setVisible(true); setRemoveButton(false) }} style={styles.addaddressItem}>
+      <TouchableOpacity onPress={() => {onAddAddress(); setVisible(true); setRemoveButton(false) }} style={styles.addaddressItem}>
         <Text>{t('address')}</Text>
         <ArrowIcon width={24} height={24} color="#393939" />
       </TouchableOpacity>
+    
+{addresses.length !== 0 ?
+      (
+      <View>
       <FlatList
         data={addresses}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
+      {textVisible ?
+      <Text style={{color:'rgba(177, 41, 44, 1)',fontFamily:"Poppins",fontSize:13.33,textAlign:'center',lineHeight:20}}>
+      Please select an address for delivery.
+      </Text>: null}
+      </View>)
+      :
+      (<View style={{alignSelf:'center',justifyContent:"center",alignItems:'center'}}> 
+        <View style={{width:220,height:200,backgroundColor:'#F2F2F2',justifyContent:"center",alignItems:"center",borderRadius:100,marginTop:20,}}>
+      <Image style={{width:170,height:100}} source={require('../../../assets/Images/AddressEmpty.png')} alt="Image" />
+     </View> 
+     <Text style={{marginTop:20,width:220,height:24,fontFamily:'Poppins-Bold',
+     fontSize:16,fontWeight:'500',alignItems:'center',marginLeft:90,color:'#393939'}}>No addresses yet</Text>
+     <Text style={{fontFamily:"Poppins",fontSize:13.33,color:"#848484",textAlign:'center',lineHeight:20}}>
+     Please add your address for delivery.
+     </Text>
+     </View>)}
       <View style={styles.modalButtonContainer}>
         { !data && 
-          <Pressable onPress={()=>{navigation.navigate('Confirm',{addressItem})}} style={{ marginBottom: 10, borderRadius: 5, width: '90%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
+          <Pressable onPress={()=>{continueButton()}} style={{ marginBottom: 10, borderRadius: 5, width: '90%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
             <Text style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
              {t('continueButton')}
             </Text>
@@ -121,34 +285,41 @@ const AddressList = ({navigation,route}) => {
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setName(text)}
                   value={name}
+                  onFocus={() => handleInputFocus('name')}
                 />
+                {nameError ? <Text style={{ color: '#B1292C' }}>{nameError}</Text> : null}
                 <TextInput
                   style={styles.inputContainer}
                   placeholder={t('mobile')}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setMobileNo(text)}
                   value={mobileNo}
+                  keyboardType='number-pad'
+                  onFocus={() => handleInputFocus('mobileNo')}
                 />
+                 {mobileNoError ? <Text style={{ color: '#B1292C' }}>{mobileNoError}</Text> : null}
                 <TextInput
                   style={styles.inputContainer}
                   placeholder={t("house")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setLocation(text)}
                   value={location}
+                 
                 />
                 <TextInput
                   style={styles.inputContainer}
                   placeholder={t('area')}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
-                  onChangeText={text => setQuantity(text)}
-                  value={quantity}
+                  onChangeText={text => setArea(text)}
+                  value={area}
                 />
                 <TextInput
                   style={styles.inputContainer}
                   placeholder={t("landMark")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setLandMark(text)}
-                  value={quantity}
+                  value={landMark}
+                  onFocus={() => handleInputFocus('landMark')}
                 />
                 <TextInput
                   style={styles.inputContainer}
@@ -156,21 +327,28 @@ const AddressList = ({navigation,route}) => {
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setPinCode(text)}
                   value={pinCode}
+                  keyboardType='number-pad'
+                  onFocus={() => handleInputFocus('pinCode')}
                 />
+                {pinCodeError ? <Text style={{ color: '#B1292C' }}>{pinCodeError}</Text> : null}
                 <TextInput
                   style={styles.inputContainer}
                   placeholder={t("town")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setTown(text)}
-                  value={quantity}
+                  value={Value}
+                  onFocus={() => handleInputFocus('town')}
                 />
+                {townError ? <Text style={{ color: '#B1292C' }}>{townError}</Text> : null}
                 <TextInput
                   style={styles.inputContainer}
                   placeholder={t("state")}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setStates(text)}
-                  value={quantity}
+                  value={states}
+                  onFocus={() => handleInputFocus('states')}
                 />
+                {statesError ? <Text style={{ color: '#B1292C' }}>{statesError}</Text> : null}
                 <View style={styles.checkboxContainer}>
                   <CheckBox
                     value={rememberSelect}
@@ -183,11 +361,11 @@ const AddressList = ({navigation,route}) => {
                 </View>
                 <View style={{marginTop:75}}>
                   {removeButton == true ?
-                    <TouchableOpacity style={styles.removeButton}>
+                    <TouchableOpacity onPress={()=>{deleteHandler(userId)}}  style={styles.removeButton}>
                       <Text style={styles.removeText}>Remove</Text>
                     </TouchableOpacity> : null}
                   <View style={removeButton ? { marginTop: 1 } : { marginTop: 10 }}>
-                    <Pressable style={styles.referButton} >
+                    <Pressable onPress={confirmHandler} style={styles.referButton} >
                       <Text style={styles.referButtonText}>
                         Save
                       </Text>

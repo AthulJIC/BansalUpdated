@@ -1,9 +1,23 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
+import { useAppContext } from "../../context/AppContext";
+import { useTranslation } from 'react-i18next';
 
 const LanguageScreen = () => {
     const [activeButton, setActiveButton] = useState('English');
-
+    const [newLanguage, setnewLanguage] = useState('')
+    const { changeLanguage } = useAppContext();
+    const { t, i18n } = useTranslation();
+    const englishLanguage = () => {
+      setnewLanguage(i18n.language === 'hi' ? 'en' : 'en');
+      i18n.changeLanguage(i18n.language === 'hi' ? 'en' : 'en');
+      changeLanguage(i18n.language === 'hi' ? 'en' : 'en')
+    }
+    const hindiLanguage = () => {
+      // setnewLanguage(i18n.language === 'en' ? 'hi' : 'en')
+      i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'en');
+      changeLanguage(i18n.language === 'en' ? 'hi' : 'en')
+    };
   const handleButtonPress = (buttonName) => {
     setActiveButton(buttonName);
   };
@@ -14,7 +28,7 @@ const LanguageScreen = () => {
                 styles.button,
                 activeButton === 'English' && styles.activeButton,
                 ]}
-                onPress={() => handleButtonPress('English')}
+                onPress={() => {handleButtonPress('English');;englishLanguage()}}
             >
                <Text style={[styles.buttonText, activeButton === 'English' && {color:'rgba(177, 41, 44, 1)'}]}>English</Text>
             </Pressable>
@@ -23,7 +37,7 @@ const LanguageScreen = () => {
                 styles.button,
                 activeButton === 'Hindi' && styles.activeButton,
                 ]}
-                onPress={() => handleButtonPress('Hindi')}
+                onPress={() => {handleButtonPress('Hindi');hindiLanguage()}}
             >
                <Text style={[styles.buttonText, activeButton === 'Hindi' && {color:'rgba(177, 41, 44, 1)'}]}>Hindi</Text>
             </Pressable>
