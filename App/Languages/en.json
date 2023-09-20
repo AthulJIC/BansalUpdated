@@ -56,6 +56,16 @@
     "title":"Purchase Request Successful",
     "content":"Pts would be credited once the request has been confirmed by the distributor.",
     "PointsLoyality":"500 Pts till your next reward",
-    "Rewards":"Rewards"
+    "Rewards":"Rewards",
+    "AddressLabel":"Address",
+    "Change":"Change",
+    "Product":"Product",
+    "MobileSuccess":"Mobile",
+    "titleRewards":"Reward redemption Successful",
+    "titleContent":"The product will be delivered to the shared address.",
+    "Redeemed":"REDEEMED",
+    "Processing":"Proccesing",
+    "GoBackHome":"Go Back To Home",
+    "Confirm Details":"Confirm Details"
   }
   

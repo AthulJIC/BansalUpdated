@@ -5,6 +5,7 @@ import ReferLead from '../../Components/ReferLead';
 import StarIcon from '../../../assets/Icon/StarIcon';
 import { useRoute } from '@react-navigation/native';
 import { ReferService } from '../../service/Orders/ReferLeadsService';
+import { useTranslation } from 'react-i18next';
 
 
 function ConfirmDetailsScreen(){
@@ -12,7 +13,8 @@ function ConfirmDetailsScreen(){
     const {  referParams } = route.params;
     const [modalVisible, setModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
-    const [details, setDetails] = useState(referParams); 
+    const [details, setDetails] = useState(referParams);
+    const { t } = useTranslation(); 
  const updateDetails = (newDetails) => {
    setDetails(newDetails)
   };
@@ -30,7 +32,7 @@ function ConfirmDetailsScreen(){
                 <Text style={{fontSize:16,color:'rgba(57, 57, 57, 1)', marginLeft:7,fontFamily:'Poppins-Regular'}}>Details</Text>
                 <Pressable style={{flexDirection:'row', justifyContent:'flex-end',marginRight:7}} onPress={() => setModalVisible(true)}>
                     <PenIcon width={18} height={18} color='#2B59C3'/>
-                    <Text style={{color:'#2B59C3',fontSize:14,marginLeft:4,fontFamily:'Poppins-Regular'}}>Change</Text>
+                    <Text style={{color:'#2B59C3',fontSize:14,marginLeft:4,fontFamily:'Poppins-Regular'}}>{t('Change')}</Text>
                 </Pressable>
                 
             </View>
@@ -44,20 +46,20 @@ function ConfirmDetailsScreen(){
                <Text style={{fontSize:16,fontFamily:'Poppins-Regular',color:'rgba(57, 57, 57, 1)'}}>{details.location}</Text>
             </View>
             <View style={styles.inputContainer}>
-               <Text style={{fontSize:16,fontFamily:'Poppins-Regular',color:'rgba(57, 57, 57, 1)'}}>{details.quantity} Ton</Text>
+               <Text style={{fontSize:16,fontFamily:'Poppins-Regular',color:'rgba(57, 57, 57, 1)'}}>{details.quantity} {t('Ton')}</Text>
             </View>
             <View style={{backgroundColor:'rgba(4, 4, 4, 1)', width:'90%',height:92,padding:12,borderRadius:4,marginTop:20,alignSelf:'center'}}>
                 <View style={{flexDirection:'row'}}>
                     <StarIcon/>
-                    <Text style={{color:'rgba(241, 140, 19, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>500 Pts</Text>
-                    <Text style={{color:'rgba(255, 255, 255, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>on confirmation</Text>
+                    <Text style={{color:'rgba(241, 140, 19, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>{t('500 Pts')}</Text>
+                    <Text style={{color:'rgba(255, 255, 255, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>{t('on confirmation')}</Text>
                 </View>
-                <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:11, fontFamily:'Poppins-Regular',marginTop:5}}>You can earn 500 Pts from this referral. Redeem this points on the rewards section for exciting gifts.</Text>
+                <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:11, fontFamily:'Poppins-Regular',marginTop:5}}>{t('lines')}</Text>
             </View>
             <View style={styles.modalButtonContainer}>
                 <TouchableOpacity onPress={confirmHandler} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)C', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                     <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 ,fontFamily:'Poppins-Regular'}}>
-                        Confirm Details
+                       { t('Confirm Details')}
                     </Text>
                 </TouchableOpacity>
             </View>

@@ -5,9 +5,11 @@ import PenIcon from '../../../assets/Icon/PenIcon';
 import { confirmService } from '../../service/RewardsService/ConfirmService';
 import ErorrPopUp from './erorrRedeem';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 const ConfirmPage=({route,navigation})=>{
     const { selectedProduct } = useAppContext();
     const [visible,setVisible]=useState(false)
+    const { t } = useTranslation();
     const {addressItem}=route.params
     // console.log("selectedProduct",selectedProduct)
     const confirmHandler=(id)=>{
@@ -22,10 +24,10 @@ const ConfirmPage=({route,navigation})=>{
           })
     }
    const uiParams={
-        Product:"Product",
-        Name:"Name",
-        Mobile:"Mobile",
-        Address:"Address"
+        Product:t("Product"),
+        Name:t("name"),
+        Mobile:t("MobileSuccess"),
+        Address:t("AddressLabel")
     }
     return (
         <View style={{backgroundColor:'#ffffff',height:'100%'}}>
@@ -41,7 +43,7 @@ const ConfirmPage=({route,navigation})=>{
                 <View style={styles.subContainer}>
                     <Text style={{
                         fontFamily: 'Poppins-Medium', fontWeight: '200', fontSize: 13, color: '#B1292C', marginHorizontal: 5
-                    }}>{selectedProduct.points} Points</Text>
+                    }}>{selectedProduct.points} {t('points')}</Text>
                     <View style={{width:'85%'}}>
                     <Text style={{
                         fontFamily: 'Poppins-Medium', fontWeight: '500', fontSize: 13, color: '#393939', marginLeft: 5, marginBottom: 4
@@ -55,12 +57,12 @@ const ConfirmPage=({route,navigation})=>{
             </View>
         </View>
          <View style={{flexDirection:'row', justifyContent:'space-between',marginLeft:25}}>
-            <Text style={{fontFamily:'Poppins-Medium',color:'#393939',fontSize:16}}>Address</Text>
+            <Text style={{fontFamily:'Poppins-Medium',color:'#393939',fontSize:16}}>{t('AddressLabel')}</Text>
             <TouchableOpacity onPress={()=>{navigation.navigate('AddressList',{
                     fromProfile: false,
                 })}} style={{flexDirection:'row',marginRight:22,justifyContent:'center',alignItems:'center'}}>
             <PenIcon width={20} height={20} color={'#2B59C3'}/>
-           <Text style={{margin:5}}>Change</Text>
+           <Text style={{margin:5}}>{t('Change')}</Text>
             </TouchableOpacity>
            
          </View>
@@ -84,10 +86,10 @@ const ConfirmPage=({route,navigation})=>{
         </View>
         <View style={styles.modalButtonContainer}>
                 <Pressable onPress={()=>{confirmHandler(selectedProduct.id)
-                    navigation.navigate('Success',{title: 'Reward redemption Successful',content:'The product will be delivered to the shared address.',addressItem,selectedProduct,uiParams})}} 
+                    navigation.navigate('Success',{title: t('titleRewards'),content:t('titleContent'),addressItem,selectedProduct,uiParams})}} 
                     style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                     <Text style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
-                       Confirm
+                    {t('confirmButton')}
                     </Text>
                 </Pressable>
             </View> 
