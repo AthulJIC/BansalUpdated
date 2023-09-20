@@ -19,7 +19,7 @@ import { useNavigation } from '@react-navigation/native';
 function ErrorPopup({ isVisible,onClose}) {
     const navigation=useNavigation()
   const [name, setName] = useState('');
-  console.log('onClose',onClose)
+ 
 //   const [editQuantity, setEditQuantity] = useState(quantity);
  
   const { t } = useTranslation();

@@ -54,6 +54,8 @@
     "on confirmation":"on confirmation",
     "lines":"You can earn 500 Pts from this referral. Redeem this points on the rewards section for exciting gifts.",
     "title":"Purchase Request Successful",
-    "content":"Pts would be credited once the request has been confirmed by the distributor."
+    "content":"Pts would be credited once the request has been confirmed by the distributor.",
+    "PointsLoyality":"500 Pts till your next reward",
+    "Rewards":"Rewards"
   }
   

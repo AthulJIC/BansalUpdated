@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Animated, TextInput, TouchableOpacity, StyleSheet, FlatList, Image, ScrollView } from 'react-native'
+import { View, Text, Pressable, Animated, TextInput, TouchableOpacity, StyleSheet, FlatList, Image, ScrollView, ActivityIndicator } from 'react-native'
 import DownArrowIcon from '../../../assets/Icon/DownArrowIcon';
 import Icon from 'react-native-vector-icons/Feather';
 import { useEffect, useState } from 'react';
@@ -23,6 +23,7 @@ const OrderScreen = ({ navigation }) => {
     const [bookmarkedItems, setBookmarkedItems] = useState([]);
     const [locationList, setLocationList] = useState([])
     const [bookMarkId, setBookmarkId] = useState('')
+    const [isLoading,setisLoading]=useState(false)
     const { t } = useTranslation();
 
     let orderData = locationList.map((dataPoint) => ({
@@ -41,6 +42,7 @@ const OrderScreen = ({ navigation }) => {
         ordersList()
     }, [value, searchText])
     const ordersList = () => {
+        setisLoading(true)
         OrderService(value, searchText).then((res) => {
             // if(res.status === 200){
             //     console.log('success',)
@@ -48,6 +50,7 @@ const OrderScreen = ({ navigation }) => {
             // }
             // console.log('Received data:', res.data.results);
             setOrdersList(res.data.results)
+            setisLoading(false)
         })
     }
     const locationHistory = () => {
@@ -77,7 +80,7 @@ const OrderScreen = ({ navigation }) => {
                 //     console.log('success',)
                 //     setOrdersList(res.data.results)
                 // }
-                console.log('Book Mark Delete Response:', res);
+                // console.log('Book Mark Delete Response:', res);
                 // setOrdersList(res.data.results)
             })
 
@@ -88,7 +91,7 @@ const OrderScreen = ({ navigation }) => {
                 //     console.log('success',)
                 //     setOrdersList(res.data.results)
                 // }
-                console.log('Received data Book Mark:', res);
+                // console.log('Received data Book Mark:', res);
                 setBookmarkId(res.id)
                 // setOrdersList(res.data.results)
             })
@@ -101,7 +104,18 @@ const OrderScreen = ({ navigation }) => {
         const firstTwoChars = item.name ? item.name.slice(0, 2) : '';
         return (
             item === 'noData' ? (
-                <Text style={styles.noDataText}>No data available</Text>
+                <View style={{flex:1,alignSelf:'center',marginTop:100}}>
+                     <Image
+                style={styles.tinyLogo}
+                source={require('../../../assets/Images/orderEmpty.png')}
+                resizeMode='cover'
+            />
+            <Text style={{fontFamily:'Poppins-Large',fontWeight:'500',fontSize:16,textAlign:'center',
+            margin:22,lineHeight:24,color:'#393939'}}>No Results Found</Text>
+            <Text  style={{fontFamily:'Poppins-Regular',fontWeight:'500',fontSize:16,textAlign:'center',
+              lineHeight:20,color:'#848484'}}>Please try again with a different keyword.</Text>
+                </View>
+               
             ) : (
                 <View style={[styles.card, styles.shadowProp]}>
                     <View onPress={() => {
@@ -139,6 +153,13 @@ const OrderScreen = ({ navigation }) => {
             referParams: params,
         });
     };
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+                <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+            </View>
+        );
+    } 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
 
@@ -333,11 +354,12 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
     },
     tinyLogo: {
-        width: 90,
-        height: 100,
+        width: 230,
+        height: 190,
         borderRadius: 8,
         marginLeft: 10,
-        marginHorizontal: 20
+        marginHorizontal: 20,
+        alignSelf:'center'
     },
     dropdown: {
         // margin: 10,

@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Pressable, KeyboardAvoidingView, ScrollView, TextInput,Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Pressable, KeyboardAvoidingView, ScrollView, TextInput,Image, ActivityIndicator } from 'react-native';
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
 import ArrowIcon from '../../../assets/Icon/Arrow';
@@ -36,8 +36,9 @@ const AddressList = ({navigation,route}) => {
   const [statesError, setStatesError] = useState('');
   const [landMarkError, setLandMarkError] = useState('');
   const [townError, setTownError] = useState('');
+  const [isLoading,setisLoading]=useState(false)
   const { t } = useTranslation();
- console.log("textVisible",textVisible)
+
   const selectAddress = (addressId) => {
     setSelectedAddress(addressId);
   };
@@ -92,9 +93,12 @@ const AddressList = ({navigation,route}) => {
     }
   };
   const addressList=()=>{
+    setisLoading(true)
     AddressListService().then((res)=>{
       // console.log("Address List",res.data.results)
+      
       setaddresses(res.data.results)
+      setisLoading(false)
     })
   }
   const confirmHandler=()=>{
@@ -142,12 +146,12 @@ const AddressList = ({navigation,route}) => {
     if (isValid) {
       {editPress ?
         updateAddressService(params,userId).then((res) => {
-           console.log('AddAddressService Received data:', res);
+          //  console.log('AddAddressService Received data:', res);
            setVisible(false)
         })
         :
         AddAddressService(params).then((res) => {
-          console.log('AddAddressService Received data:', res.data);
+          // console.log('AddAddressService Received data:', res.data);
           setVisible(false)
        })}
       }
@@ -156,7 +160,7 @@ const AddressList = ({navigation,route}) => {
 
 const deleteHandler=()=>{
   deleteAddressService(userId).then((res) => {
-    console.log('AddAddressService Received data:', res.data);
+    // console.log('AddAddressService Received data:', res.data);
     setVisible(false)
  })}
 
@@ -183,7 +187,7 @@ const deleteHandler=()=>{
   }
  }
  const renderItem = ({ item }) => {
-  console.log('item=====', item)
+
     return (
       <Pressable
         disabled={data}
@@ -217,7 +221,13 @@ const deleteHandler=()=>{
       </Pressable>
     );
   }
-
+  if (isLoading) {
+    return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+            <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+        </View>
+    );
+  }
  
   return (
     <View style={{ backgroundColor: '#ffffff', height: '100%', borderRadius: 8 }}>

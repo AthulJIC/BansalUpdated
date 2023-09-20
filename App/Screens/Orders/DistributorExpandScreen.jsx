@@ -18,8 +18,8 @@ function DistributorExpandScreen({navigation, route}){
         navigation.navigate('ConfirmPurchase',{
              selectedItem:selectedItem,
              quantity:quantity});
-      };
-      console.log("selectedItem",selectedItem)
+       };
+    //   console.log("selectedItem",selectedItem)
     return(
         <View style={{flex:1,backgroundColor:'white'}}>
             <View style={{backgroundColor:'rgba(182, 182, 182, 1)',height:112, width:'95%',borderRadius:8,alignSelf:'center',alignItems:'center',justifyContent:'center'}}>

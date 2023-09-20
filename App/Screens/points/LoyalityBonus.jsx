@@ -29,7 +29,7 @@ const LoyalityBonus = () => {
     const getLoyaltyPoints=()=>{
       CommonAPI.Points().then((res) => {
           if(res.status === 200){
-              console.log('success',res.data)
+              // console.log('success',res.data)
               setPoints(res.data.total_points)
           }
       })

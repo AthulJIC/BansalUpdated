@@ -17,7 +17,7 @@ const Profile =()=>{
     const [name, setName] = useState();
     const [emailid, setEmailId] = useState();
     const [ refreshToken, setRefreshToken] = useState()
-    console.log(role);
+
     let navigation = useNavigation();
     let profileData=[
        
@@ -92,7 +92,6 @@ const Profile =()=>{
             const userName = await AsyncStorage.getItem('username');
             const userEmail = await AsyncStorage.getItem('email')
             const refresh = await AsyncStorage.getItem('refresh_token')
-            console.log('role2344355', role)
             setRole(user)
             setName(userName)
             setEmailId(userEmail)
@@ -124,7 +123,7 @@ function loginHandler(){
         refresh : refreshToken
     }
     ProfileApi.logout(data).then((res) => {
-        console.log('resss', res.data);
+        // console.log('resss', res.data);
         if(res.status === 200){
             navigation.navigate('Login')
         }

@@ -22,7 +22,7 @@ function ConfirmPurchase({route,navigation}){
     }
    function successHandler(){
     ConfirmPurchaseService(ton,item.selectedItem.id).then((res) => {
-        console.log('Received data:', res.role);
+        // console.log('Received data:', res.role);
         navigation.navigate('Success',{
             title : t('title'),
             content: t('content'),

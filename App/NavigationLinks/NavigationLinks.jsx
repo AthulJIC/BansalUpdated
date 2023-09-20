@@ -71,7 +71,6 @@ function MyTabs() {
     const getValueFromStorage = async () => {
       try {
         const user = await AsyncStorage.getItem('role'); 
-        console.log('role2344355', role)
         setRole(user)
       } catch (error) {
         console.error('Error fetching data from AsyncStorage:', error);

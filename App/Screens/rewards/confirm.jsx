@@ -9,16 +9,16 @@ const ConfirmPage=({route,navigation})=>{
     const { selectedProduct } = useAppContext();
     const [visible,setVisible]=useState(false)
     const {addressItem}=route.params
-    console.log("selectedProduct",selectedProduct)
+    // console.log("selectedProduct",selectedProduct)
     const confirmHandler=(id)=>{
-        console.log('id',id)
+      
         // setVisible(true)
         confirmService(id).then((res) => {
             // if(res.status === 200){
             //     console.log('success',)
             //     setOrdersList(res.data.results)
             // }
-            console.log('confirm Response:', res.data.erorr);
+            // console.log('confirm Response:', res.data.erorr);
           })
     }
    const uiParams={

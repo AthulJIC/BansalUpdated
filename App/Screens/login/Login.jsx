@@ -55,7 +55,7 @@ function loginHandler(){
     password: password
   }
   LoginApi.userLogin(data).then(async(res) => {
-    console.log('resss', res.data)
+    // console.log('resss', res.data)
     if(res.status === 200){
       await AsyncStorage.setItem('access_token', res.data.access);
       await AsyncStorage.setItem('refresh_token', res.data.refresh);

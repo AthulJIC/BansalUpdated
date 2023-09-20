@@ -11,7 +11,7 @@ const ProfileEditScreen = ({navigation}) => {
     const [emailid, setEmailId] = useState();
     const [mobile, setMobile] = useState();
     const [userError, setUserError] = useState(false)
-    console.log('username', userName)
+  
     useEffect(() => {
         const getValueFromStorage = async () => {
           try {
@@ -42,7 +42,7 @@ const ProfileEditScreen = ({navigation}) => {
                 name: userName
             }
            ProfileApi.updateUserName(data).then(async(res) => {
-                console.log('resss', res.data)
+                // console.log('resss', res.data)
                 if(res.status === 200){
                     await AsyncStorage.setItem('username', res.data.name);
                     navigation.navigate('Profile')
