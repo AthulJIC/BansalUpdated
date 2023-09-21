@@ -5,6 +5,7 @@ import { createStackNavigator,TransitionPresets } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 //Screens
+import SplashScreen from '../Screens/SplashScreen/SplashScreen';
 import HeaderComponent from '../Components/Header';
 import LoginScreen from '../Screens/login/Login';
 // import RolesScreen from '../Screens/RolesPage/rolesPages';
@@ -201,13 +202,16 @@ const NavigationLinks = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator  initialRouteName="Login"
+      <Stack.Navigator  initialRouteName="SplashScreen"
       
       screenOptions={{
         ...TransitionPresets.SlideFromRightIOS,
         ...customSlideFromLeft,
       }}>
-
+         <Stack.Screen name='SplashScreen' component={SplashScreen}
+         options={{
+          headerShown: false,
+      }}/>
         <Stack.Screen name="Login" component={LoginScreen} 
             options={{
             headerShown: false, // Hide the header for Login screen
