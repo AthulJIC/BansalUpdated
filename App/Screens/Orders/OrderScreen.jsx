@@ -188,6 +188,7 @@ const OrderScreen = ({ navigation }) => {
                                 onChange={item => {
                                     setValue(item.value);
                                 }}
+                                itemTextStyle = {{color:'black',fontSize:11,fontFamily:'Poppins-Regular'}}
                                 containerStyle={styles.dropdownContainer}
                             />
                             <Pressable style={{ backgroundColor: 'rgba(43, 89, 195, 1)', height: 37, width: '30%', borderRadius: 5, alignItems: 'center', justifyContent: 'center', marginRight: 15, marginTop: 7 }}
