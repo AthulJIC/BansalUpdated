@@ -232,7 +232,7 @@ const deleteHandler=()=>{
   return (
     <View style={{ backgroundColor: '#ffffff', height: '100%', borderRadius: 8 }}>
       <TouchableOpacity onPress={() => {onAddAddress(); setVisible(true); setRemoveButton(false) }} style={styles.addaddressItem}>
-        <Text>{t('address')}</Text>
+        <Text style={{color:"#393939",fontFamily:"Poppins-Medium",fontSize:16,fontWeight:500,lineHeight:24}}>{t('address')}</Text>
         <ArrowIcon width={24} height={24} color="#393939" />
       </TouchableOpacity>
     

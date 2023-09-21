@@ -104,7 +104,7 @@ const RewardScreen = (r) => {
         <View style={styles.imageView}>
           <Image
             style={styles.ImageContainer}
-            source={{ uri: item.item_image }}
+            source={{ uri:item.item_image }}
           />
         </View>
         <View style={{ alignItems: 'flex-start' }}>
@@ -137,7 +137,7 @@ const RewardScreen = (r) => {
               justifyContent: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderRadius: 8
             }}>
               <CustomIcon width={20} height={20} fillColor="#F18C13" />
-              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16 }} >
+              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16,color:"#393939" }} >
                 {totalPoints} {t('points')}</Text>
             </View>
 
@@ -260,7 +260,8 @@ const styles = StyleSheet.create({
     fontSize: 11.11,
     lineHeight: 20,
     width: 140,
-    height: 60
+    height: 60,
+    color:'#848484'
   },
   imageView: {
     width: 140,
