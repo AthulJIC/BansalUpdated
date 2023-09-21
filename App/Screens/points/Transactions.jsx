@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import AcceptedIcon from "../../../assets/Icon/AcceptedIcon";
 import ProcessingIcon from "../../../assets/Icon/ProcessingIcon";
 import RejectedIcon from "../../../assets/Icon/RejectedIcon";
 import ArrowDown from "../../../assets/Icon/Arrowdown";
 import { TransactionAPI } from "../../service/Points/TransactionService";
 import moment from 'moment';
+import { Image } from "react-native";
 const filterTitle = [
     {
       id: 1,
@@ -28,32 +29,40 @@ const Transactions=()=>{
     const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
     const [filteredData, setFilteredData] = useState([]);
     const [dateTime,setDateTime]=useState('')
+    const [isLoading,setIsLoading]=useState(false)
+   
     useEffect(() => {
       transactions()
     }, []);
     const transactions=()=>{
       TransactionAPI().then((res) => {
         // console.log("res",res)
+        setIsLoading(true)
           if(res.status === 200){
               console.log('success',)
               setFilteredData(res.data.results)
+            
+              setIsLoading(false)
               setDateTime(res.data.results.item.created_at)
-          }
+            }
       })
   }
+
     const requestData = (itemData) => {
+      console.log("itemData",itemData)
         const createdAt = moment(itemData.item.created_at);
         const Date = createdAt.format('DD MMM YYYY');
         const Time = createdAt.format('h:mm A');
         let leads= itemData.item.id
         return(
-    
+         
          <View style={{
           flexDirection: 'row',
           height: 50,
           width: '99%',
           marginTop: 15,
-          paddingRight:24
+          paddingRight:24,
+          flex:1
         //   justifyContent: 'space-between',
         }}>
             { itemData.item.status === 'Accepted' ? (
@@ -105,18 +114,40 @@ const Transactions=()=>{
          </View>
         )
       }
+      if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+                <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+            </View>
+        );
+    }
  return(
     <View style={styles.mainContainer}>
         <Text style={styles.font}>
             Transactions
         </Text>
         <View style={styles.container}>
-      <View style={styles.flatListSection}>        
+      <View style={styles.flatListSection}> 
+      {filteredData.length === 0 ? (
+            <View style={{flex:1,marginTop:90}}>
+                 <Image
+            style={styles.tinyLogo}
+            source={require('../../../assets/Images/TransactionsEmpty.png')}
+            resizeMode='cover'
+        />
+        <Text style={{fontFamily:'Poppins-Large',fontWeight:'500',fontSize:16,textAlign:'center',
+        margin:22,lineHeight:24,color:'#393939'}}>No Transactions</Text>
+        <Text  style={{width:'90%',fontFamily:'Poppins-Regular',fontWeight:'500',fontSize:16,textAlign:'center',
+          lineHeight:20,color:'#848484',alignSelf:'center'}}>
+          We don’t see any records from your history.</Text>
+            </View>
+           
+        ) :        
       <FlatList
           data={filteredData}
           renderItem={requestData}
           keyExtractor={(item) => item.id.toString()}
-      />
+      />}
       </View>
     </View>
     </View>
@@ -128,11 +159,13 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignItems:'flex-start',
         height:'100%',
-        width:'328',
+        width:'100%',
         marginLeft:20,
         paddingTop:20,
         paddingBottom:20,
-        borderRadius:10
+        borderRadius:10,
+        backgroundColor:'#ffffff',
+        flex:1
       },
     font:{
         fontFamily:'Poppins-Medium',
@@ -174,4 +207,12 @@ const styles = StyleSheet.create({
         padding: 8,
         marginLeft:10
       },
+      tinyLogo: {
+        width: 230,
+        height: 190,
+        borderRadius: 8,
+        marginLeft: 10,
+        marginHorizontal: 20,
+        alignSelf:'center'
+    },
 })

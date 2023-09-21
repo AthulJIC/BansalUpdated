@@ -13,7 +13,6 @@ const PendingRequest = () => {
     const total = 12000; 
 
     const percentage = (progress / total) * 100;
-    console.log('role', role)
 
     const { t } = useTranslation();
     const handleButtonPress = () => {
@@ -23,7 +22,7 @@ const PendingRequest = () => {
         const getValueFromStorage = async () => {
             try {
               const user = await AsyncStorage.getItem('role'); 
-              console.log('role2344355', role)
+            //   console.log('role2344355', role)
               setRole(user)
             } catch (error) {
               console.error('Error fetching data from AsyncStorage:', error);
@@ -44,7 +43,7 @@ const PendingRequest = () => {
     }
     function getPendingRequest(){
         HomeApi.getRequest().then((res) => {
-            console.log(res.data);
+            // console.log(res.data);
             if(res.status === 200){
                setRequest(res.data.count)
             }
@@ -65,9 +64,9 @@ const PendingRequest = () => {
             (
                 <View style={{flexDirection:'row', marginTop:15}}>
                     <View >
-                        <Text style={styles.Text}>Loyalty Balance</Text>
-                        <Text style={styles.number} >{progress} Pts</Text>
-                        <Text style={styles.rewardText}>500 Pts till your next reward</Text>
+                        <Text style={styles.Text}>{t('bonus')}</Text>
+                        <Text style={styles.number} >{progress} {t('points3')}</Text>
+                        <Text style={styles.rewardText}>{t('PointsLoyality')}</Text>
                     </View>
                     {/* <View style={{marginLeft:50}}>
                         <Svg width={100} height={100}>

@@ -75,6 +75,18 @@
     "whatsapp" : "WhatsApp",
     "call" : "Call",
     "addresses" : "Addresses",
-    "rewards" : "Reward"
+    "rewards" : "Reward",
+    "PointsLoyality":"500 Pts till your next reward",
+    "Rewards":"Rewards",
+    "AddressLabel":"Address",
+    "Change":"Change",
+    "Product":"Product",
+    "MobileSuccess":"Mobile",
+    "titleRewards":"Reward redemption Successful",
+    "titleContent":"The product will be delivered to the shared address.",
+    "Redeemed":"REDEEMED",
+    "Processing":"Proccesing",
+    "GoBackHome":"Go Back To Home",
+    "Confirm Details":"Confirm Details"
   }
   

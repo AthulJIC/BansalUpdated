@@ -40,22 +40,22 @@ function IdVerificationScreen({navigation}){
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log("Camera permission given");
           const result = await launchCamera(options,(res) => {
-                console.log('Response = ', res);
+                // console.log('Response = ', res);
                 if (res.didCancel) {
-                console.log('User cancelled image picker');
+                // console.log('User cancelled image picker');
                 } else if (res.error) {
-                console.log('ImagePicker Error: ', res.error);
+                // console.log('ImagePicker Error: ', res.error);
                 } else if (res.customButton) {
-                console.log('User tapped custom button: ', res.customButton);
+                // console.log('User tapped custom button: ', res.customButton);
                 alert(res.customButton);
                 } else {
                 // let source = res;
                 // var resourcePath1 = source.assets[0].uri;
                 const source = { uri: res.uri };
-                console.log('response', JSON.stringify(res));
+                // console.log('response', JSON.stringify(res));
                 setSelectedImage(res)
                 }
-                console.log('imageee',selectedImage)
+                // console.log('imageee',selectedImage)
         })
           setLoading(true)
           setTimeout(() => {

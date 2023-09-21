@@ -7,14 +7,14 @@ import { HomeApi } from '../../service/home/homeservice';
 
 const HomeScreen = () => {
     const [adImages, setAdImages] = useState([]);
-    console.log('image', adImages)
+    // console.log('image', adImages)
     useEffect(() => {
        getAdImages();
         
       }, []);
       function getAdImages(){
           HomeApi.getAds().then((res) => {
-            console.log('ress', res.data);
+            // console.log('ress', res.data);
             if(res.status === 200){
                 setAdImages(res.data.results)
             }
@@ -27,7 +27,7 @@ const HomeScreen = () => {
                 <PendingRequest />
                 <BarGraph/>
                 {adImages.map((item,index) => {
-                    console.log(item.ad_image)
+                    // console.log(item.ad_image)
                     return(
                         <View key={index} style={{width:'100%', height:180}}>
                           <Image source={{uri:item.ad_image}} style={styles.ImageContainer}></Image>

@@ -29,8 +29,8 @@ const BarGraph = () => {
         { label:'Quarterly', value: 'Quarterly'},
         
     ]);
-    console.log('total', total)
-    console.log('barValue',barValue,barMonth)
+    // console.log('total', total)
+    // console.log('barValue',barValue,barMonth)
     const [activeButton, setActiveButton] = useState('Orders');
     let barData;
     const destinationOrderValue = 200;
@@ -172,7 +172,7 @@ const BarGraph = () => {
         const getValueFromStorage = async () => {
             try {
               const user = await AsyncStorage.getItem('role'); 
-              console.log('role2344355', role)
+            //   console.log('role2344355', role)
               setRole(user)
             } catch (error) {
               console.error('Error fetching data from AsyncStorage:', error);
@@ -189,7 +189,7 @@ const BarGraph = () => {
         if(role !== 'Distributor'){
             if(activeButton === 'Orders'){
                 HomeApi.getMonthlyOrder().then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                     if(res.status === 200){
                         console.log('success')
                         setBarValue(res.data.order_counts_by_month[0].count)
@@ -201,7 +201,7 @@ const BarGraph = () => {
             }
             else{
                 HomeApi.getMonthlyPoints().then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                     if(res.status === 200){
                         console.log('success')
                         setBarValue(res.data.monthly_points_data[0].total_points)
@@ -214,7 +214,7 @@ const BarGraph = () => {
         }
         else{
             HomeApi.getDistributorMonthlyOrder().then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
                 if(res.status === 200){
                     console.log('success')
                     setBarValue(res.data.order_counts_by_month[0].count)
@@ -230,7 +230,7 @@ const BarGraph = () => {
         if(role !== 'Distributor'){
             if(activeButton === 'Orders'){
                 HomeApi.getQuarterlyOrder().then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                     if(res.status ===200){
                         console.log('success');
                         setBarValue(res.data.order_counts_by_quarter[0].count)
@@ -242,7 +242,7 @@ const BarGraph = () => {
             }
             else{
                 HomeApi.getQuarterlyPoints().then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                     if(res.status ===200){
                         console.log('success');
                         setBarValue(res.data.quarterly_points_data[0].total_points)
@@ -255,7 +255,7 @@ const BarGraph = () => {
         }
         else{
             HomeApi.getDistributorQuarterlyOrder().then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
                 if(res.status ===200){
                     console.log('success');
                     setBarValue(res.data.order_counts_by_quarter[0].count)
@@ -270,7 +270,7 @@ const BarGraph = () => {
         if( role !== 'Distributor'){
             if(activeButton === 'Orders' ){
                 HomeApi.getWeeklyOrder().then((res) => {
-                    console.log('weekly',res.data);
+                    // console.log('weekly',res.data);
                     if(res.status === 200){
                         setBarWeekData(res.data.daily_order_counts);
                         setTotalOrders(res.data.total_order_count_current_week)
@@ -280,7 +280,7 @@ const BarGraph = () => {
             }
             else {
                 HomeApi.getWeeklyPoints().then((res) => {
-                    console.log('weekly',res.data);
+                    // console.log('weekly',res.data);
                     if(res.status === 200){
                         setBarWeekData(res.data.daily_points);
                         setTotalOrders(res.data.total_points)
@@ -291,7 +291,7 @@ const BarGraph = () => {
         }
         else{
             HomeApi.getDistributorWeeklyOrder().then((res) => {
-                console.log('weekly',res.data);
+                // console.log('weekly',res.data);
                 if(res.status === 200){
                     setBarWeekData(res.data.daily_order_counts);
                     setTotalOrders(res.data.total_order_count_current_week)

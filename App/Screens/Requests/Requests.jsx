@@ -45,7 +45,7 @@ const Requests = () => {
 
     const searchPlaceholder = t('search');
     const showAlert = (item) => {
-        console.log('itemmmmm===',item)
+
         setRequestId(item)
         setAlertVisible(true);
     };
@@ -71,7 +71,7 @@ const Requests = () => {
     }
     function getRequestList(){
         RequestApi.getRequest().then((res) => {
-            console.log('resss', res.data);
+            // console.log('resss', res.data);
             if(res.status === 200){
                 setRequestList(res.data.results)
             }
@@ -84,11 +84,11 @@ const Requests = () => {
     };
 
     const handleReject = (status) => {
-        console.log('requestId',requestId)
-        console.log('status', status)
+        // console.log('requestId',requestId)
+        // console.log('status', status)
         if(status === 'Reject'){
             RequestApi.rejectRequest(requestId).then((res) => {
-                console.log('resss', res.data)
+                // console.log('resss', res.data)
                 if(res.status === 200){
                     hideAlert();
                     getRequestList();
@@ -97,7 +97,7 @@ const Requests = () => {
         }
         else{
             RequestApi.acceptRequest(requestId).then((res) => {
-                console.log('resss', res.data)
+                // console.log('resss', res.data)
                 if(res.status === 200){
                     hideAlert();
                     getRequestList();
@@ -109,7 +109,7 @@ const Requests = () => {
         // Additional logic as needed
     };
     const modalItem = ( item ) => {
-        console.log('distributor----', item)
+        // console.log('distributor----', item)
         setDistributorItem(item)
         // setName(item.name)
         // setDesignation(item.designation)
@@ -118,13 +118,13 @@ const Requests = () => {
     function searchHandler(text){
         setSearchText(text)
         RequestApi.searchRequest(text).then((res) => {
-            console.log('resss--',res.data)
+            // console.log('resss--',res.data)
             if(res.status === 200){
                 setRequestList(res.data.results)
             }
         })
     }
-    console.log('distributor', distributorItem.name)
+    // console.log('distributor', distributorItem.name)
     const HEADER_HEIGHT = 200; // Define the height of your header
     const scrollY = new Animated.Value(0);
     const requestData = ( itemData ) => {

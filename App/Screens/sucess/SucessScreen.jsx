@@ -5,13 +5,15 @@ import { useNavigation } from '@react-navigation/native';
 import { OrderPointsService } from "../../service/Orders/successPoints";
 import { useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 function SuccessScreen({route}){
+  const { t } = useTranslation();
   const [roles,setRoles]=useState()
   const [points,setPoints]=useState('')
      const {title,content,addressItem,selectedProduct,uiParams,page,ton} = route?.params;
      let pages=page
-     console.log("points",points)
+     
      const navigation=useNavigation()
 useEffect(() => {
   const getValueFromStorage = async () => {
@@ -57,25 +59,25 @@ const orderPoints=(user)=>{
         {pages=="orders" ?
         <View style={{flexDirection:'row',justifyContent:'space-between',borderBottomWidth:1,borderBottomColor:'#848484',paddingBottom:25}}>
             <Text style={{width:95,height:28,fontFamily:'Poppins-Medium',
-            fontWeight:'500',fontSize:19.2,lineHeight:28,color:'#393939'}}>-{points} Pts</Text>
+            fontWeight:'500',fontSize:19.2,lineHeight:28,color:'#393939'}}>-{points} t{('points3')}</Text>
             <TouchableOpacity style={{borderRadius:8,paddingHorizontal:15,paddingVertical:8,backgroundColor:'rgba(31, 134, 255, 0.2)',justifyContent:'center',}}>
               <Text style={{width:70,height:16,fontFamily:'Poppins-Medium',
-            fontWeight:'500',fontSize:11.2,lineHeight:16,alignItems:'center',color:'#1F86FF'}}>Proccesing</Text>
+            fontWeight:'500',fontSize:11.2,lineHeight:16,alignItems:'center',color:'#1F86FF'}}>{t('Processing')}</Text>
             </TouchableOpacity>
             
             </View> : <View style={{flexDirection:'row',justifyContent:'space-between',borderBottomWidth:1,borderBottomColor:'#848484',paddingBottom:25}}>
             <Text style={{width:95,height:28,fontFamily:'Poppins-Medium',
-            fontWeight:'500',fontSize:19.2,lineHeight:28,color:'#393939'}}>-{selectedProduct.points} Pts</Text>
+            fontWeight:'500',fontSize:19.2,lineHeight:28,color:'#393939'}}>-{selectedProduct.points} {t('points3')}</Text>
             <TouchableOpacity style={{borderRadius:8,paddingHorizontal:15,paddingVertical:8,backgroundColor:'rgba(24, 183, 88, 0.2)',justifyContent:'center',}}>
               <Text style={{width:58,height:16,fontFamily:'Poppins-Medium',
-            fontWeight:'500',fontSize:11.2,lineHeight:16,alignItems:'center',color:'#18B758'}}>REDEEMED</Text>
+            fontWeight:'500',fontSize:11.2,lineHeight:16,alignItems:'center',color:'#18B758'}}>{t('Redeemed')}</Text>
             </TouchableOpacity>
             
             </View>}
             <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:8}}>
               <Text style={styles.description}>{uiParams.Product}</Text>
               {pages=='orders'?
-               <Text style={[styles.descriptionValues,{color:'#B1292C'}]}>{addressItem.quantity} Ton</Text>
+               <Text style={[styles.descriptionValues,{color:'#B1292C'}]}>{addressItem.quantity} {t('Ton')}</Text>
               :
               <Text style={[styles.descriptionValues,{color:'#B1292C'}]}>{selectedProduct.title}</Text> }
             </View>
@@ -110,7 +112,7 @@ const orderPoints=(user)=>{
        <View style={styles.modalButtonContainer}>
               <Pressable style={styles.referButton} onPress={()=>{navigation.navigate('Home')}}>
                 <Text style={styles.referButtonText}>
-                Go Back To Home
+              { t('GoBackHome')}
                 </Text>
               </Pressable>
             </View>

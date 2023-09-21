@@ -7,7 +7,7 @@
     "choose":"चुनना",
     "search":"खोजे",
     "refer":"लीड्स देखें",
-    "bonus":"वफादारी संतुलन",
+    "bonus":"लॉयल्टी पॉइंट्स",
     "points1":"पॉइंट्स",
     "points2":" दिनों में समाप्त हो जाएंगे",
     "points3" :"पॉइंट्स",
@@ -76,6 +76,18 @@
    "call" : "कॉल",
    "favourites" : "पसंदीदा",
    "addresses" : "पतों",
-   "rewards" : "इनाम"
+   "rewards" : "इनाम",
+   "PointsLoyality":"आपके अगले इनाम तक 500 अंक",
+   "Rewards":"पुरस्कार",
+   "AddressLabel":"पता",
+   "Change":"परिवर्तन",
+   "Product":"उत्पाद",
+   "MobileSuccess":"मोबाइल",
+   "titleRewards":"इनाम मोचन सफल",
+   "titleContent":"उत्पाद साझा पते पर वितरित किया जाएगा।",
+   "Redeemed":"छुड़ाया",
+   "Processing":"प्रसंस्करण",
+   "GoBackHome":"घर वापस जाओ",
+   "Confirm Details":"विवरण की पुष्टि करें"
   }
   

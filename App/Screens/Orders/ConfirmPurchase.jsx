@@ -13,7 +13,7 @@ function ConfirmPurchase({route,navigation}){
     const [ton,setTons]=useState(item.quantity)
     const [quantity, setQuantity] = useState(0)
     const { t } = useTranslation();
-  
+   console.log(item)
    const uiParams={
     Product:t('quantity'),
     Name:t('unique'),
@@ -22,7 +22,7 @@ function ConfirmPurchase({route,navigation}){
     }
    function successHandler(){
     ConfirmPurchaseService(ton,item.selectedItem.id).then((res) => {
-        console.log('Received data:', res.role);
+        // console.log('Received data:', res.role);
         navigation.navigate('Success',{
             title : t('title'),
             content: t('content'),
@@ -45,11 +45,9 @@ function ConfirmPurchase({route,navigation}){
     return(
         <View style={{flex:1, backgroundColor:'white'}}>
             <View style={[styles.Modalcard, styles.shadowProp]}>
-                <Image
-                    style={styles.modalImage}
-                    source={require('../../../assets/Images/Man.jpg')}
-                    resizeMode='cover'
-                />
+            <View style={{backgroundColor:'rgba(182, 182, 182, 1)',height:112, width:'35%',borderRadius:8,alignSelf:'center',alignItems:'center',justifyContent:'center',marginLeft:10}}>
+                <Text style={{fontSize:30,fontFamily:'Poppins-SemiBold',color:'rgba(57, 57, 57, 1)'}}>{item.selectedItem.name?.slice(0, 2).toUpperCase()}</Text>
+            </View>
                 <View style={{justifyContent: 'center', marginLeft: 15,height:100,width:'35%'}}>
                     <Text style={{ fontFamily: 'Poppins-Medium',fontSize: 17 , color:'rgba(57, 57, 57, 1)',marginTop:5}}>{item.selectedItem.name}</Text>
                     <Text style={{

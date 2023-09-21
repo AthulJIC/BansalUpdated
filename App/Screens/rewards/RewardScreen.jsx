@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, Pressable, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, Pressable, SafeAreaView, ActivityIndicator } from 'react-native';
 import CustomIcon from '../../../assets/Icon/startIcon';
 import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
@@ -30,9 +30,11 @@ const RewardScreen = (r) => {
   const [redeemValue,setRedeemValue]=useState('')
   const [erorrVisible,seterorrVisible]=useState(false)
   const { userDetails, updateUserDetails, updateSelectedProduct, UserPoints } = useAppContext();
+  const [isLoading,setIsLoading]=useState(false)
 
   const navigation = useNavigation();
   const { t } = useTranslation();
+
   useEffect(() => {
     RewardsHandler()
     getLoyaltyPoints()
@@ -43,7 +45,7 @@ const RewardScreen = (r) => {
       if(res.status === 200){
           console.log('success',)
           // setOrdersList(res.data.results)
-          console.log('confirm Response:', res.data.error);
+          // console.log('confirm Response:', res.data.error);
           setRedeemValue(res.data.error)
       }
     })
@@ -63,7 +65,7 @@ const RewardScreen = (r) => {
       //     console.log('success',)
       //     setOrdersList(res.data.results)
       // }
-      console.log('Rewards list Response:', res.data.results);
+    //  console.log('Rewards list Response:', res.data.results);
       setProductsArray(res.data.results)
     })
   }
@@ -76,10 +78,12 @@ const RewardScreen = (r) => {
     setRedeemId(item.id)
   }
   const getLoyaltyPoints=()=>{
+    setIsLoading(true)
     CommonAPI.Points().then((res) => {
         if(res.status === 200){
-            console.log('success',res.data)
+            console.log('success')
             setTotalPoints(res.data.total_points)
+            setIsLoading(false)
         }
     })
 }
@@ -94,6 +98,7 @@ const RewardScreen = (r) => {
     setModalVisible(false)
   }
   const renderCard = ({ item }) => (
+   
     <View>
       <View style={styles.card}>
         <View style={styles.imageView}>
@@ -114,19 +119,26 @@ const RewardScreen = (r) => {
   <ErorrPopUp isVisible={erorrVisible} onClose={() => seterorrVisible(false)}/>
     </View>
   );
+  if (isLoading) {
+    return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+            <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+        </View>
+    );
+}
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 ,backgroundColor:'#ffffff'}}>
       <ScrollView nestedScrollEnabled={true} >
         <View style={[styles.container, styles.shadowProp]}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '95%', alignItems: 'center' }}>
-            <Text style={styles.rewardText}>Rewards</Text>
+            <Text style={styles.rewardText}>{t('Rewards')}</Text>
             <View style={{
               backgroundColor: 'rgba(241, 140, 19, 0.3)', width: 149, height: 40,
               justifyContent: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderRadius: 8
             }}>
               <CustomIcon width={20} height={20} fillColor="#F18C13" />
               <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16 }} >
-                {totalPoints} Points</Text>
+                {totalPoints} {t('points')}</Text>
             </View>
 
           </View>

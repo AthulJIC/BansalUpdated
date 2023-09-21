@@ -41,21 +41,21 @@ const HistoryScreen = () => {
   }, []);
   function getHistoryList(){
      HistoryApi.getHistory().then((res) => {
-       console.log('resssss', res.data)
+      //  console.log('resssss', res.data)
        if(res.status === 200){
          setFilteredData(res.data.results)
       }
      })
   }
   const handlePress = (item) => {
-    console.log('itemmmmm===',item)
+    // console.log('itemmmmm===',item)
     setSelectedFilter(item);
     if(item.title === 'All Transactions'){
       getHistoryList();
     }
     else{
       HistoryApi.getHistoryStatus(item.value).then((res) => {
-        console.log('resssss', res.data)
+        // console.log('resssss', res.data)
        if(res.status === 200){
          setFilteredData(res.data.results)
       }

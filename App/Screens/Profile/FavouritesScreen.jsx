@@ -1,4 +1,4 @@
-import { Text, View ,ScrollView,FlatList,Animated,StyleSheet,Pressable,Image} from "react-native";
+import { Text, View ,ScrollView,FlatList,Animated,StyleSheet,Pressable,Image, ActivityIndicator} from "react-native";
 import ReferLead from "../rewards/addressForm";
 import { useEffect, useState } from "react";
 import BookMarkActiveIcon from "../../../assets/Icon/BookmarkActiveIcon";
@@ -12,6 +12,7 @@ function FavouritesScreen({navigation}){
     const [bookMarkListValue,setBookMarkListValue]=useState([])
     const [Bookmarked,setIsBookMarked]=useState(false)
     const [selectedIndices, setSelectedIndices] = useState([]);
+    const [isLoading,setisLoading]=useState(false)
     const initialSelectedState = bookMarkListValue.reduce((acc, item, index) => {
         acc[item.id] = index < 2;
         return acc;
@@ -25,9 +26,11 @@ function FavouritesScreen({navigation}){
         setModalVisible(false);
     };
     const BookMarkList = () => {
+        setisLoading(true)
         BookMarkListService().then((res) => {
             setBookMarkListValue(res.data.results)
             setSelectedIndices(bookMarkListValue.map((item, index) => index))
+            setisLoading(false)
         })
     }
     function chooseHandler(item){
@@ -89,8 +92,25 @@ function FavouritesScreen({navigation}){
             </View>
         )
     }; 
+   
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+                <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+            </View>
+        );
+    } 
+         
     return(
-        <View style={{flex:1, backgroundColor:'white'}}>
+    <View style={{flex:1, backgroundColor:'white'}}>
+        {bookMarkListValue.length===0?
+        <View style={{alignSelf:'center',marginTop:200}}>
+        <Image
+         source={require('../../../assets/Images/favouritesEmpty.png')}
+         style={{ width: 200, height: 200,justifyContent:'center',alignItems:'center' }}
+         />
+         </View>
+         :
         <FlatList
           data={bookMarkListValue.map((item, index) => ({ ...item, index }))}
           renderItem={({ item, index }) => requestData(item, index)}
@@ -98,7 +118,7 @@ function FavouritesScreen({navigation}){
             onScroll={Animated.event(
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                 { useNativeDriver: false }
-            )}/>
+            )}/>}
             <ReferLead isVisible={modalVisible} onClose={closeModal} onRefer={handleRefer}/>
 
         </View>
