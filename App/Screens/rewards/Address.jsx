@@ -306,6 +306,7 @@ const deleteHandler=()=>{
                   value={mobileNo}
                   keyboardType='number-pad'
                   onFocus={() => handleInputFocus('mobileNo')}
+                  maxLength={15}
                 />
                  {mobileNoError ? <Text style={{ color: '#B1292C' }}>{mobileNoError}</Text> : null}
                 <TextInput

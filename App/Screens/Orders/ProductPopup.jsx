@@ -71,6 +71,8 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
               <Text style={{ color: 'rgba(57, 57, 57, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', marginTop: 8 }}>{t('quantity')}</Text>
               <TextInput
                 style={styles.inputContainer}
+                keyboardType="decimal-pad"
+                maxLength={10}
                 placeholder={t('Qinput')}
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setEditQuantity(text) : setName(text)}
@@ -80,8 +82,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
             </View>
             {
               quantityError && (
-                <View style={{ flexDirection: 'row', marginLeft: 15 }}>
-                  <ErrorIcon />
+                <View style={{ flexDirection: 'row',marginTop:8 }}>
                   <Text style={{ color: 'red', marginLeft: 5 }}>This field is required</Text>
                 </View>
               )

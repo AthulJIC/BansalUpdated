@@ -2,18 +2,19 @@ import { StyleSheet, Text, View ,Image,TouchableOpacity, Pressable} from "react-
 import PenIcon from "../../../assets/Icon/PenIcon";
 import StarIcon from "../../../assets/Icon/StarIcon";
 import ProductPopup from "./ProductPopup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConfirmPurchaseService } from "../../service/Orders/ConfirmPurchaseService";
 import { useTranslation } from 'react-i18next';
-StarIcon
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function ConfirmPurchase({route,navigation}){
     const item = route?.params;
     const [modalVisible,setModalVisible]=useState(false)
     const [ton,setTons]=useState(item.quantity)
     const [quantity, setQuantity] = useState(0)
+    const[username, setUsername] = useState('') ;
     const { t } = useTranslation();
-   console.log(item)
+   console.log("username",username)
    const uiParams={
     Product:t('quantity'),
     Name:t('unique'),
@@ -34,6 +35,20 @@ function ConfirmPurchase({route,navigation}){
             // roles:res.roles
       })
     })
+    useEffect(() => {
+        const getValueFromStorage = async () => {
+          try {
+            const value = await AsyncStorage.getItem('role'); 
+            console.log('role2344355', username)
+            if (value !== null) {
+              setUsername(value);
+            }
+          } catch (error) {
+            console.error('Error fetching data from AsyncStorage:', error);
+          }
+        };
+        getValueFromStorage();
+      }, []);
 }
     const ProductVisible=()=>{
         setModalVisible(true)
@@ -53,7 +68,7 @@ function ConfirmPurchase({route,navigation}){
                     <Text style={{
                         fontFamily: 'Poppins-Medium', fontSize: 12,
                         color: '#393939'
-                    }}>Engineer</Text>
+                    }}>{username}</Text>
                     <Text style={{
                         fontFamily: 'Poppins-Regular',fontSize: 13,
                         color: '#848484',marginTop:12
@@ -74,20 +89,20 @@ function ConfirmPurchase({route,navigation}){
                     <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>Transaction ID</Text>
                     <Text style={{color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>A1234455667</Text>
                 </View> */}
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5}}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
                     <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>{t('unique')}</Text>
-                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>{item.selectedItem.user_id}</Text>
+                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right', width:"60%"}}>{item.selectedItem.user_id}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5 }}>
                     <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>{t('Mnumber')}</Text>
-                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right'}}>{item.selectedItem.mobile}</Text>
+                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,fontWeight:'500',lineHeight:20,textAlign:'right', width:"50%"}}>{item.selectedItem.mobile}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5}}>
                     <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>{t('Location')}</Text>
-                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,textAlign:'right', width:'37%'}}>{item.selectedItem.district_name},{item.selectedItem.state_name}</Text>
+                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,textAlign:'right', width:"50%"}}>{item.selectedItem.district_name},{item.selectedItem.state_name}</Text>
                 </View>
             </View>
-            <View style={{backgroundColor:'rgba(4, 4, 4, 1)', width:'90%',height:92,padding:12,borderRadius:4,marginTop:20,alignSelf:'center'}}>
+            <View style={{backgroundColor:'rgba(4, 4, 4, 1)', width:'90%',height:110,padding:12,borderRadius:4,marginTop:20,alignSelf:'center'}}>
                 <View style={{flexDirection:'row'}}>
                     <StarIcon/>
                     <Text style={{color:'rgba(241, 140, 19, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>{t('500 Pts')}</Text>

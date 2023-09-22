@@ -22,22 +22,17 @@ function DistributorExpandScreen({navigation, route}){
     //   console.log("selectedItem",selectedItem)
     return(
         <View style={{flex:1,backgroundColor:'white'}}>
-            <View style={{backgroundColor:'rgba(182, 182, 182, 1)',height:112, width:'95%',borderRadius:8,alignSelf:'center',alignItems:'center',justifyContent:'center'}}>
+            <View style={{backgroundColor:'rgba(182, 182, 182, 1)',height:112, width:'90%',borderRadius:8,alignSelf:'center',alignItems:'center',justifyContent:'center'}}>
                 <Text style={{fontSize:30,fontFamily:'Poppins-SemiBold',color:'rgba(57, 57, 57, 1)'}}>{selectedItem?.name?.slice(0, 2).toUpperCase()}</Text>
             </View>
-            <View>
-                <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:20}}>
-                    <Text style={{fontFamily: 'Poppins-Medium', fontSize: 14,color:'rgba(177, 41, 44, 1)',marginLeft:15}}>{selectedItem.requestId}</Text>
-                    <Pressable style={{marginRight:15}}>
-                        <BookmarkIcon height={17} width={17} color='#393939'/>
-                    </Pressable>
-                </View>
+            <View style={{marginLeft:10,marginTop:7}}>
+              
                 <Text style={{color:'rgba(57, 57, 57, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Medium'}}>{selectedItem.name}</Text>
                 <Text style={{color:'rgba(132, 132, 132, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Regular'}}>{selectedItem.district_name}, {selectedItem.state_name}</Text>
                 <View style={{ width:'95%',borderBottomColor:'black', borderBottomWidth:1,alignSelf:'center',marginTop:10}}></View>
                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:16,fontFamily:'Poppins-Medium',marginLeft:15,marginTop:10}}>{t('Products')}</Text>
             </View>
-            <View style={{backgroundColor:'white', width:'37%', height:235,elevation:8,borderRadius:8, marginLeft:10,marginTop:10}}>
+            <View style={{backgroundColor:'white', width:'37%', height:235,elevation:8,borderRadius:8, marginLeft:20,marginTop:10}}>
                 <Image source={require('../../../assets/Images/ProductImage.png')} style={{width:120, height:120,marginTop:7,borderRadius:8,alignSelf:'center'}}></Image>
                 <View>
                     <Text style={{fontSize:16, color:'rgba(57, 57, 57, 1)', fontFamily:'Poppins-Medium',marginLeft:10,marginTop:7}}>TMT Bars</Text>

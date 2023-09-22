@@ -49,6 +49,7 @@ function ReferLead({ isVisible, onClose, onRefer }) {
                                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                                 onChangeText={text => setMobileNo(text)}
                                 value={mobileNo}
+                                maxLength={10}
                             />
                             <TextInput
                                 style={styles.inputContainer}

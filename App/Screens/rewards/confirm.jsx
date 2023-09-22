@@ -32,12 +32,14 @@ const ConfirmPage=({route,navigation})=>{
     return (
         <View style={{backgroundColor:'#ffffff',height:'100%'}}>
         <View style={[styles.card, styles.shadowProp]}>
+            <View style={styles.imageView}>
            <Image
                     style={styles.tinyLogo}
                     source={{uri:selectedProduct.item_image}}
                     resizeMode='cover'
 
                 />
+                </View>
           <View style={{ justifyContent: 'center'}}>
                 <Text style={{ marginLeft: 20, fontFamily: 'Poppins-Medium', fontSize: 16, color: 'rgba(57, 57, 57, 1)' }}>{selectedProduct.title}</Text>
                 <View style={styles.subContainer}>
@@ -62,7 +64,7 @@ const ConfirmPage=({route,navigation})=>{
                     fromProfile: false,
                 })}} style={{flexDirection:'row',marginRight:22,justifyContent:'center',alignItems:'center'}}>
             <PenIcon width={20} height={20} color={'#2B59C3'}/>
-           <Text style={{margin:5}}>{t('Change')}</Text>
+           <Text style={{margin:5,color:"rgba(43, 89, 195, 1)"}}>{t('Change')}</Text>
             </TouchableOpacity>
            
          </View>
@@ -142,7 +144,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 90,
         borderRadius: 8,
-        marginLeft: 40
+        
     },
     subContainer: {
         marginLeft: 17,
@@ -156,5 +158,15 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 22,
         alignSelf:'center'
-      }
+      },
+      imageView: {
+        width: "35%",
+        marginLeft:7,
+        height: 112,
+        justifyContent:'center',
+        backgroundColor: '#F2F2F2',
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop:5
+      },
 })
