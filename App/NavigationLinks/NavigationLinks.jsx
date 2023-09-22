@@ -7,8 +7,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 //Screens
 import SplashScreen from '../Screens/SplashScreen/SplashScreen';
 import HeaderComponent from '../Components/Header';
-import LoginScreen from '../Screens/login/Login';
 // import RolesScreen from '../Screens/RolesPage/rolesPages';
+import LoginScreen from '../Screens/login/Login';
 import HomeScreen from '../Screens/Home/Home';
 import OrderScreen from '../Screens/Orders/OrderScreen';
 import Requests from '../Screens/Requests/Requests';
