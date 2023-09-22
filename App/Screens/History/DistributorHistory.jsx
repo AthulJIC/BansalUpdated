@@ -62,67 +62,92 @@ const DistributorHistory = () => {
     }
   };
   const requestData = (itemData) => {
-    //console.log(itemData);
-    const dateTime = moment(itemData.item.created_at);
-    const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
-    const time = dateTime.format('hh:mm A').toLocaleString('en-US');
-    return(
-
-     <View style={{
-      flexDirection: 'row',
-      height: 50,
-      width: '99%',
-      marginTop: 15,
-      //justifyContent: 'space-around',
-      alignSelf: 'flex-start',
-      // Add this line to align items at the top
-    }}>
-        { itemData.item.user_approval === 'Accepted' ? (
-          <View style={{backgroundColor: 'rgba(24, 183, 88, 0.2)',
-          borderRadius: 8,
-          padding: 8,
-          height:47,
-          marginLeft:15
-          }}>
-            <AcceptedIcon/> 
+    if (itemData.item && itemData.item.created_at) {
+      const dateTime = moment(itemData.item.created_at);
+      const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
+      const time = dateTime.format('hh:mm A').toLocaleString('en-US');
+  
+      return (
+        <View
+          style={{
+            flexDirection: 'row',
+            height: 50,
+            width: '99%',
+            marginTop: 15,
+            alignSelf: 'flex-start',
+          }}
+        >
+          {itemData.item.user_approval === 'Accepted' ? (
+            <View
+              style={{
+                backgroundColor: 'rgba(24, 183, 88, 0.2)',
+                borderRadius: 8,
+                padding: 8,
+                height: 47,
+                marginLeft: 15,
+              }}
+            >
+              <AcceptedIcon />
+            </View>
+          ) : itemData.item.user_approval === 'Pending' ? (
+            <View
+              style={{
+                backgroundColor: 'rgba(31, 134, 255, 0.2)',
+                borderRadius: 8,
+                padding: 8,
+                height: 47,
+                marginLeft: 15,
+              }}
+            >
+              <ProcessingIcon />
+            </View>
+          ) : (
+            <View
+              style={{
+                backgroundColor: 'rgba(235, 28, 28, 0.2)',
+                borderRadius: 8,
+                padding: 8,
+                height: 47,
+                marginLeft: 15,
+              }}
+            >
+              <RejectedIcon />
+            </View>
+          )}
+          <View style={{ flexDirection: 'column' }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'nowrap', marginLeft: 25 }}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{ color: 'black', width: '37%', fontSize: 14, fontFamily: 'Poppins-Medium' }}
+              >
+                {itemData.item.name}
+              </Text>
+              <Text style={{ fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)', marginTop: 5, marginHorizontal: 5 }}>
+                {'\u2B24'}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', flexWrap: 'nowrap', marginLeft: 25 }}>
+              <Text style={{ marginHorizontal: 3, fontSize: 11, color: 'black', fontFamily: 'Poppins-Regular' }}>{date}</Text>
+              <Text style={{ fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)', marginTop: 5, marginHorizontal: 5 }}>
+                {'\u2B24'}
+              </Text>
+              <Text style={{ fontSize: 11, color: 'black', fontFamily: 'Poppins-Regular' }}>{time}</Text>
+            </View>
           </View>
-        ) : itemData.item.user_approval === 'Pending' ? (
-          <View style={{backgroundColor: 'rgba(31, 134, 255, 0.2)',
-          borderRadius: 8,
-          padding: 8,
-          height:47,
-          marginLeft:15
-          }}>
-          <ProcessingIcon/>
-          </View>
-        ) :(
-          <View style={{backgroundColor: 'rgba(235, 28, 28, 0.2)',
-          borderRadius: 8,
-          padding: 8,
-          height:47,
-          marginLeft:15
-          }}>
-          <RejectedIcon/>
-          </View>
-        )}
-        <View style={{flexDirection:'column'}}>
-          <View style={{flexDirection:'row', flexWrap: 'nowrap', marginLeft:25}}>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: 'black', width: '37%',fontSize:14,fontFamily:'Poppins-Medium'}}>{itemData.item.name}</Text>            
-          <Text style={{  fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:5,marginHorizontal:5}}>{'\u2B24'}</Text>
-          {/* <Text style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular'}}>{itemData.item.requestId}</Text> */}
-          </View>
-          <View style={{flexDirection:'row',flexWrap: 'nowrap',marginLeft:25}}>
-            <Text style={{marginHorizontal:3,fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{date}</Text>
-            <Text style={{fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:5,marginHorizontal:5}}>{'\u2B24'}</Text>
-            <Text style={{fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{time}</Text>
+          <View style={{ marginLeft: 'auto', marginRight: 15 }}>
+            <Text style={{ color: itemData.item.user_approval === 'Pending' ? 'rgba(31, 134, 255, 1)' : itemData.item.user_approval === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)', fontFamily: 'Poppins-Medium', marginRight: 5 }}>
+              {itemData.item.user_approval.toLocaleUpperCase()}
+            </Text>
           </View>
         </View>
-        <View style={{marginLeft:'auto', marginRight:15}}>
-          <Text style={{color : itemData.item.user_approval === 'Pending' ? 'rgba(31, 134, 255, 1)' : itemData.item.user_approval === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)',fontFamily:'Poppins-Medium',marginRight:5}}>{itemData.item.user_approval.toLocaleUpperCase()}</Text>
-        </View>
-     </View>
-    )
-  }
+      );
+    } else {
+      // Handle the case when itemData.item or itemData.item.created_at is missing
+      return null; // You can return null or some default content or an error message here
+    }
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.filterSection}>

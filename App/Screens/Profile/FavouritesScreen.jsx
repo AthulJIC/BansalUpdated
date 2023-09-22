@@ -66,13 +66,6 @@ function FavouritesScreen({navigation}){
         return(
 
             <View style={[styles.card, styles.shadowProp]}>
-                <Pressable>
-                    <Image
-                        style={styles.tinyLogo}
-                        source={require('../../../assets/Images/Man.jpg')}
-                        resizeMode='cover'
-                    />
-                </Pressable>
 
                 <View style={{width:'60%', height:88}}>
                     <View style={{flexDirection:'row',justifyContent:'space-between'}}>
