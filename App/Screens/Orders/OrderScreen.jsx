@@ -26,7 +26,7 @@ const OrderScreen = ({ navigation }) => {
     const [isLoading,setisLoading]=useState(false)
     const[username, setUsername] = useState('') ;
     const { t } = useTranslation();
-    
+
     let orderData = locationList.map((dataPoint) => ({
         value: dataPoint.district_name,
         label: dataPoint.district_name,
@@ -117,6 +117,7 @@ const OrderScreen = ({ navigation }) => {
     }
 
     const requestData = ({ item }) => {
+        console.log(item)
         const isBookmarked = bookmarkedItems.includes(item.id);
         const firstTwoChars = item.name ? item.name.slice(0, 2) : '';
         return (
@@ -180,7 +181,7 @@ const OrderScreen = ({ navigation }) => {
             <FlatList
                 data={ordersLists.length === 0 ? ['noData'] : ordersLists}
                 renderItem={requestData}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.user_id}
                 ListHeaderComponent={
                     <View>
                         <View style={{ flexDirection: 'row', marginTop: 5, justifyContent: 'space-between' }}>

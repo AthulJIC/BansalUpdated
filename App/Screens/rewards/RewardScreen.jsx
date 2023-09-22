@@ -34,7 +34,7 @@ const RewardScreen = (r) => {
 
   const navigation = useNavigation();
   const { t } = useTranslation();
-
+ 
   useEffect(() => {
     RewardsHandler()
     getLoyaltyPoints()
@@ -43,21 +43,13 @@ const RewardScreen = (r) => {
   const confirmValidator=()=>{
     confirmService(redeemId).then((res) => {
       if(res.status === 200){
-          console.log('success',)
-          // setOrdersList(res.data.results)
-          // console.log('confirm Response:', res.data.error);
+          console.log('success',res.data)
           setRedeemValue(res.data.error)
+          seterorrVisible(true)
       }
+      
     })
-    setModalVisible(true)
-    // if(redeemValue.length === 0)
-    // {
-    //   setModalVisible(true)
-    // }
-    // else{
-    //   setModalVisible(false)
-    //   seterorrVisible(true)
-    // }
+    setModalVisible(false)
   }
   const RewardsHandler = () => {
     RewardslistService().then((res) => {
@@ -65,7 +57,6 @@ const RewardScreen = (r) => {
       //     console.log('success',)
       //     setOrdersList(res.data.results)
       // }
-    //  console.log('Rewards list Response:', res.data.results);
       setProductsArray(res.data.results)
     })
   }
@@ -98,8 +89,9 @@ const RewardScreen = (r) => {
     setModalVisible(false)
   }
   const renderCard = ({ item }) => (
-   
+ 
     <View style={{width:'50%'}}>
+        {console.log("item",item)}
       <View style={styles.card}>
         <View style={styles.imageView}>
           <Image
