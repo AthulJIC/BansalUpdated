@@ -14,7 +14,7 @@ import { LocationService } from '../../service/Orders/LocationService';
 import { ReferService } from '../../service/Orders/ReferLeadsService';
 import { BookMarkService } from '../../service/Orders/BookMarkService';
 import { BookMarkDeleteService } from '../../service/Orders/BookMarkService';
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const OrderScreen = ({ navigation }) => {
     const [ordersLists, setOrdersList] = useState([])
     const [searchText, setSearchText] = useState([0]);
@@ -24,8 +24,9 @@ const OrderScreen = ({ navigation }) => {
     const [locationList, setLocationList] = useState([])
     const [bookMarkId, setBookmarkId] = useState('')
     const [isLoading,setisLoading]=useState(false)
+    const[username, setUsername] = useState('') ;
     const { t } = useTranslation();
-
+    
     let orderData = locationList.map((dataPoint) => ({
         value: dataPoint.district_name,
         label: dataPoint.district_name,
@@ -42,7 +43,10 @@ const OrderScreen = ({ navigation }) => {
         ordersList()
     }, [value, searchText])
     const ordersList = () => {
-        setisLoading(true)
+        if(searchText.length=='')
+        {
+            setisLoading(true)
+        }
         OrderService(value, searchText).then((res) => {
             // if(res.status === 200){
             //     console.log('success',)
@@ -66,6 +70,20 @@ const OrderScreen = ({ navigation }) => {
             }
         })
     }
+    useEffect(() => {
+        const getValueFromStorage = async () => {
+          try {
+            const value = await AsyncStorage.getItem('role'); 
+            // console.log('role2344355', username)
+            if (value !== null) {
+              setUsername(value);
+            }
+          } catch (error) {
+            console.error('Error fetching data from AsyncStorage:', error);
+          }
+        };
+        getValueFromStorage();
+      }, []);
     const HEADER_HEIGHT = 200;
     const scrollY = new Animated.Value(0);
     function chooseHandler(item) {
@@ -99,7 +117,6 @@ const OrderScreen = ({ navigation }) => {
     }
 
     const requestData = ({ item }) => {
-
         const isBookmarked = bookmarkedItems.includes(item.id);
         const firstTwoChars = item.name ? item.name.slice(0, 2) : '';
         return (
@@ -118,17 +135,14 @@ const OrderScreen = ({ navigation }) => {
                
             ) : (
                 <View style={[styles.card, styles.shadowProp]}>
-                    <View onPress={() => {
-                        setModalVisible(!modalVisible);
-                        modalItem(itemData.item)
-                    }} style={{ borderRadius: 8, backgroundColor: 'rgba(182, 182, 182, 1)', justifyContent: 'center', alignItems: 'center', height: 95, width: '25%', marginLeft: 10, marginRight: 10 }}>
+                    <View style={{ borderRadius: 8, backgroundColor: 'rgba(182, 182, 182, 1)', justifyContent: 'center', alignItems: 'center', height: 95, width: '25%', marginLeft: 10, marginRight: 10 }}>
                         <Text style={{ textAlign: 'center', color: 'rgba(57, 57, 57, 1)', fontSize: 27, fontFamily: 'Poppins-Medium', }}>{firstTwoChars.toUpperCase()}</Text>
                     </View>
 
-                    <View style={{ width: '60%', height: 88 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: 'rgba(177, 41, 44, 1)' }}> {item.user_id}</Text>
-                            <Pressable onPress={() => bookmarkHandler(item.id)}>
+                    <View style={{ width: '67%', height: 100}}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: 'rgba(177, 41, 44, 1)',marginTop:0 }}> {item.user_id}</Text>
+                            <Pressable style={{marginLeft:'auto'}} onPress={() => bookmarkHandler(item.id)}>
                                 {!isBookmarked ?
                                     (<BookmarkIcon height={16} width={16} color='#393939' />) :
                                     <BookMarkActiveIcon height={16} width={16} color='rgba(127, 176, 105, 1)' />
@@ -191,10 +205,13 @@ const OrderScreen = ({ navigation }) => {
                                 itemTextStyle = {{color:'black',fontSize:11,fontFamily:'Poppins-Regular'}}
                                 containerStyle={styles.dropdownContainer}
                             />
+                            {username!='Contractor' ?
+                            <View>
                             <Pressable style={{ backgroundColor: 'rgba(43, 89, 195, 1)', height: 37, width: '30%', borderRadius: 5, alignItems: 'center', justifyContent: 'center', marginRight: 15, marginTop: 7 }}
                                 onPress={() => setModalVisible(true)}>
                                 <Text style={{ color: 'white', fontSize: 13, fontFamily: 'Poppins-Regular' }}>Refer Leads</Text>
                             </Pressable>
+                            </View>:''}
                         </View>
                         <View style={styles.container}>
                             <TextInput
@@ -259,7 +276,8 @@ const styles = StyleSheet.create({
         height: 40,
         marginRight: 8,
         color: '#848484',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        width:'90%',
     },
     inputContainer: {
         height: 45,
@@ -276,7 +294,7 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: '#ffffff',
-        height: 115,
+        height: 130,
         width: '90%',
         borderRadius: 5,
         borderRadius: 10,
@@ -383,7 +401,8 @@ const styles = StyleSheet.create({
     },
     inputSearchStyle: {
         height: 40,
-        fontSize: 16,
+        fontSize: 13,
+        color:"#000000"
     },
     dropdownContainer: {
         marginLeft: 15,

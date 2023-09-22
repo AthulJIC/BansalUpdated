@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   backgroundColor: 'rgba(0, 0, 0, 0.8)',
 },
   input: {
-    width: '93%',
+    width: '90%',
     height:50,
     marginBottom: 7,
     borderColor: '#848484',
@@ -189,13 +189,15 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
     alignItems:'center',
-    marginLeft:6
+    marginLeft:7,
+    width:'90%'
  },
   checkbox: {
      height:20,
      width: 20, 
      transform: [{ scaleX: 1 }, { scaleY: 1 }],
-     marginTop:5
+     marginTop:5,
+     marginHorizontal: 7
   },
   label: {
     fontFamily:'Poppins-Regular',
@@ -211,7 +213,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius:4,
     height:45,
-    width: '95%',
+    width: '90%',
     alignSelf:'center'
   },
   buttonText: {

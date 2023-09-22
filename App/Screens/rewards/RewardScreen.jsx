@@ -99,7 +99,7 @@ const RewardScreen = (r) => {
   }
   const renderCard = ({ item }) => (
    
-    <View>
+    <View style={{width:'50%'}}>
       <View style={styles.card}>
         <View style={styles.imageView}>
           <Image
@@ -127,21 +127,8 @@ const RewardScreen = (r) => {
     );
 }
   return (
-    <SafeAreaView style={{ flex: 1 ,backgroundColor:'#ffffff'}}>
-      <ScrollView nestedScrollEnabled={true} >
+    <View style={{ flex: 1 ,backgroundColor:'#ffffff'}}>
         <View style={[styles.container, styles.shadowProp]}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '95%', alignItems: 'center' }}>
-            <Text style={styles.rewardText}>{t('Rewards')}</Text>
-            <View style={{
-              backgroundColor: 'rgba(241, 140, 19, 0.3)', width: 149, height: 40,
-              justifyContent: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderRadius: 8
-            }}>
-              <CustomIcon width={20} height={20} fillColor="#F18C13" />
-              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16,color:"#393939" }} >
-                {totalPoints} {t('points')}</Text>
-            </View>
-
-          </View>
           <FlatList
             data={productsArray}
             renderItem={renderCard}
@@ -149,6 +136,20 @@ const RewardScreen = (r) => {
             numColumns={2} // Display two cards in a row
             contentContainerStyle={styles.flatListContent}
             style={styles.flatListStyle}
+            ListHeaderComponent={
+              <View style={{ flexDirection: 'row', justifyContent:'flex-start', width: '100%', alignItems: 'center' }}>
+                <Text style={styles.rewardText}>{t('Rewards')}</Text>
+                <View style={{
+                  backgroundColor: 'rgba(241, 140, 19, 0.3)', width: '40%', height: 40,
+                  justifyContent: 'center', alignItems: 'center', flexDirection: 'row', borderRadius: 8,
+                   marginLeft:'auto'}}>
+                  <CustomIcon width={20} height={20} fillColor="#F18C13" />
+                  <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14,color:"#393939",marginLeft:5,marginTop:3 }} >
+                    {totalPoints} {t('points')}</Text>
+                </View>
+
+              </View>
+            }
           />
           {/* Modal */}
           <View style={styles.centeredView}>
@@ -196,8 +197,7 @@ const RewardScreen = (r) => {
             </Modal>
           </View>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }
 export default RewardScreen
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#ffffff',
-    height: '100%'
+    width : '100%'
   },
   flatListContent: {
     paddingBottom: 16,
@@ -218,20 +218,16 @@ const styles = StyleSheet.create({
   rewardText: {
     fontFamily: 'Poppins-Medium',
     color: '#B1292C',
-    fontSize: 19.2
+    fontSize: 16
   },
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'rgba(255, 255, 255, 1)',
     borderRadius: 8,
-    borderWidth: 1,
     paddingLeft: 10,
-    paddingRight: 12,
-    height: 328,
-    justifyContent: 'center',
     margin: 8,
-    alignItems: 'center',
-    borderColor: '#ffffff',
-    elevation: 3
+    elevation: 3,
+    width:'90%',
+    height:328,
 
   },
   cardName: {
@@ -259,25 +255,28 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: 11.11,
     lineHeight: 20,
-    width: 140,
+    width: '100%',
     height: 60,
     color:'#848484'
   },
   imageView: {
-    width: 140,
+    width: "90%",
     height: 140,
-    justifyContent: 'center',
+    justifyContent:'center',
     backgroundColor: '#F2F2F2',
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop:8
   },
   ImageContainer: {
-    width: 115,
+    width: "75%",
     height: 113,
-    borderRadius: 8
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems:'center'
   },
   button: {
-    width: 140,
+    width:'90%',
     height: 36,
     borderRadius: 4,
     justifyContent: 'center',

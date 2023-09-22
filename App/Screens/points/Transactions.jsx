@@ -49,11 +49,27 @@ const Transactions=()=>{
   }
 
     const requestData = (itemData) => {
-      console.log("itemData",itemData)
+      console.log("itemData",itemData.item.quantity)
         const createdAt = moment(itemData.item.created_at);
         const Date = createdAt.format('DD MMM YYYY');
         const Time = createdAt.format('h:mm A');
-        let leads= itemData.item.id
+        let leads= itemData.item.id;
+        let statusText = itemData.item.status;
+        let pointsText = ''; 
+        let displayText = '';
+
+        if (itemData.item.status === 'Pending') {
+          statusText = 'Processing'; 
+          pointsText = '500 Pts'; 
+          displayText = itemData.item.quantity;
+        }
+        else if (itemData.item.status === 'Accepted') {
+          pointsText = '+500 Pts'; 
+          displayText = itemData.item.transaction_id
+        }
+        else{
+          displayText = itemData.item.transaction_id
+        }
         return(
          
          <View style={{
@@ -72,7 +88,7 @@ const Transactions=()=>{
               height:47}}>
                 <ArrowDown width={32} height={32} color="#18B758"/> 
               </View>
-            ) : itemData.item.status === 'Processing' ? (
+            ) : itemData.item.status === 'Pending' ? (
               <View style={{backgroundColor: 'rgba(31, 134, 255, 0.2)',
               borderRadius: 8,
               padding: 8,
@@ -92,13 +108,19 @@ const Transactions=()=>{
               <View style={{flexDirection:'row',justifyContent:'flex-start'}}>
               {leads==='null'?(
                 <View>
-              <Text  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Regular'}}>{itemData.item.id}</Text>            
+              <Text  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Regular'}}>{itemData.item.transaction_id}</Text>            
               <Text style={{  fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:5,marginHorizontal:5}}>{'\u2B24'}</Text>
-              <Text style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular'}}>{`${itemData.item.requestId}  string text`}hi
-                {/* `${itemData.item.requestId}` Tons */}
+             <Text style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular'}}>{displayText }
                 </Text>
-                </View>): 
-                <Text  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Regular'}}>{leads}</Text> }
+                </View>
+                ): 
+                <View style={{flexDirection:'row',justifyContent:'flex-start',width:'85%'}}>
+
+                <Text numberOfLines={1} ellipsizeMode="tail"  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Regular',width: itemData.item.lead !== null ? '15%' : '20%'}}>{itemData.item.name}</Text> 
+                <Text style={{  fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:7,marginHorizontal:5}}>{'\u2B24'}</Text>
+             <Text numberOfLines={1} ellipsizeMode="tail" style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular',width:'50%'}}>{displayText}</Text>
+                </View>
+                } 
               </View>
               <View style={{flexDirection:'row',flexWrap: 'nowrap'}}>
                 <Text style={{marginHorizontal:3,fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{Date}</Text>
@@ -107,9 +129,9 @@ const Transactions=()=>{
               </View>
             </View>
             <View style={{marginLeft:'auto',justifyContent:'flex-end'}}>
-              <Text style={{color : itemData.item.status === 'Processing' ? '#1F86FF' : itemData.item.status === 'ACCEPTED' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)',
+              <Text style={{color : itemData.item.status === 'Pending' ? '#1F86FF' : itemData.item.status === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)',
               fontFamily:'Poppins-Regular',textAlign:'right'}}>{itemData.item.points}Pts</Text>
-              <Text style={{fontSize:11.11,lineHeight:16,fontFamily:'Poppins-Regular',textAlign:'right',color:'#393939'}}>{itemData.item.status}</Text>
+              <Text style={{fontSize:11.11,lineHeight:16,fontFamily:'Poppins-Regular',textAlign:'right',color:'#393939'}}>{statusText}</Text>
             </View>
          </View>
         )

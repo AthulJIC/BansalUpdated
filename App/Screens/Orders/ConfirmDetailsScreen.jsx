@@ -1,12 +1,12 @@
 import {View,Text,Pressable,TextInput, StyleSheet,TouchableOpacity} from 'react-native';
 import PenIcon from '../../../assets/Icon/PenIcon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReferLead from '../../Components/ReferLead';
 import StarIcon from '../../../assets/Icon/StarIcon';
 import { useRoute } from '@react-navigation/native';
 import { ReferService } from '../../service/Orders/ReferLeadsService';
 import { useTranslation } from 'react-i18next';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ConfirmDetailsScreen(){
     const route = useRoute();
@@ -14,6 +14,8 @@ function ConfirmDetailsScreen(){
     const [modalVisible, setModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [details, setDetails] = useState(referParams);
+    const[username, setUsername] = useState('') ;
+    console.log("username",username)
     const { t } = useTranslation(); 
  const updateDetails = (newDetails) => {
    setDetails(newDetails)
@@ -26,6 +28,20 @@ function ConfirmDetailsScreen(){
         //   console.log('Received data:', res);
         })
     }
+    useEffect(() => {
+        const getValueFromStorage = async () => {
+          try {
+            const value = await AsyncStorage.getItem('role'); 
+            console.log('role2344355', username)
+            if (value !== null) {
+              setUsername(value);
+            }
+          } catch (error) {
+            console.error('Error fetching data from AsyncStorage:', error);
+          }
+        };
+        getValueFromStorage();
+      }, []);
     return(
         <View style={{flex:1,backgroundColor:'white'}}>
             <View style={{flexDirection:'row',justifyContent:'space-between'}}>
