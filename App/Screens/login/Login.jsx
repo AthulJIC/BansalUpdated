@@ -43,7 +43,8 @@ const LoginPage = ({navigation}) => {
        setPassword('');
     }
     else {
-      await AsyncStorage.setItem('isLoggedIn', "true");
+      await AsyncStorage.setItem('username', username);
+      await AsyncStorage.setItem('password', password)
     }
     loginHandler()
     
@@ -62,7 +63,7 @@ function loginHandler(){
       await AsyncStorage.setItem('role', res.data.role);
       await AsyncStorage.setItem('username', res.data.username);
       await AsyncStorage.setItem('email', res.data.email)
-     
+      await AsyncStorage.setItem('isLoggedIn', "true");
       navigation.navigate('Home screen')
       
     }

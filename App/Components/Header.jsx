@@ -82,8 +82,8 @@ function HeaderComponent() {
   
   return (
     <View>
-      <View style={{ flexDirection: 'row', alignItems:'center', margin:10,width:'100%', justifyContent:'space-between' }}>
-        <View>
+      <View style={{ flexDirection: 'row', alignItems:'center', margin:10,width:'100%', justifyContent:'flex-start' }}>
+        <View style={{marginLeft:7}}>
           <Text style={{ fontFamily: 'Poppins-Regular', color: '#848484', fontSize: 13 }}>{t('greeting')}</Text>
           <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#393939', fontSize: 17 }}>{username}</Text>
         </View>

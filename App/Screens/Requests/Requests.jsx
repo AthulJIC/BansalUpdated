@@ -42,14 +42,15 @@ const Requests = () => {
     const [distributorItem, setDistributorItem] = useState({})
     const [isLoading, setIsLoading] = useState(true);
     const { t } = useTranslation();
-
+    console.log('distributor', distributorItem)
     const searchPlaceholder = t('search');
     const showAlert = (item) => {
 
         setRequestId(item)
         setAlertVisible(true);
     };
-    const showAcceptAlert=()=>{
+    const showAcceptAlert=(item)=>{
+        setRequestId(item)
         setAlertAcceptVisible(true)
     }
     const hideAlert = () => {
@@ -91,6 +92,7 @@ const Requests = () => {
                 // console.log('resss', res.data)
                 if(res.status === 200){
                     hideAlert();
+                    setModalVisible(false)
                     getRequestList();
                 }
             })
@@ -100,6 +102,7 @@ const Requests = () => {
                 // console.log('resss', res.data)
                 if(res.status === 200){
                     hideAlert();
+                    setModalVisible(false)
                     getRequestList();
                 }
             })
@@ -160,7 +163,7 @@ const Requests = () => {
                         <Pressable onPress={()=>showAlert(itemData.item.id)} style={styles.buttonReject}>
                             <Text style={styles.buttonText}>{t("reject")}</Text>
                         </Pressable>
-                        <Pressable onPress={showAcceptAlert} style={styles.buttonAccept}>
+                        <Pressable onPress={()=>showAcceptAlert(itemData.item.id)} style={styles.buttonAccept}>
                             <Text style={styles.buttonText}>{t("accept")}</Text>
                         </Pressable>
                     </View>
@@ -173,27 +176,6 @@ const Requests = () => {
     };
     return (
         <KeyboardAvoidingView style={styles.mainContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <Animated.View
-                style={[{
-                    height: HEADER_HEIGHT,
-                    marginTop: scrollY.interpolate({
-                        inputRange: [0, HEADER_HEIGHT],
-                        outputRange: [0, -HEADER_HEIGHT],
-                        extrapolate: 'clamp',
-                    }),
-                }, styles.container]}
-            >
-                <TextInput
-                    style={styles.input}
-                    placeholder={searchPlaceholder}
-                    placeholderTextColor={'rgba(132, 132, 132, 1)'}
-                    onChangeText={text => searchHandler(text)}
-                    value={searchText}
-                />
-                <TouchableOpacity onPress={searchHandler}>
-                    <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
-                </TouchableOpacity>
-            </Animated.View>
             { requestList.length !== 0 ? (
 
                 <FlatList
@@ -204,7 +186,22 @@ const Requests = () => {
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                         { useNativeDriver: false }
                     )}
-                   // keyboardShouldPersistTaps="handled" 
+                   ListHeaderComponent={
+                    <View
+                        style={styles.container}
+                    >
+                        <TextInput
+                            style={styles.input}
+                            placeholder={searchPlaceholder}
+                            placeholderTextColor={'rgba(132, 132, 132, 1)'}
+                            onChangeText={text => searchHandler(text)}
+                            value={searchText}
+                        />
+                        <TouchableOpacity onPress={searchHandler}>
+                            <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
+                        </TouchableOpacity>
+                    </View>
+                   }
                 />
             ): <EmptyComponent/>}
 
@@ -258,28 +255,28 @@ const Requests = () => {
                         <View style={[styles.ModalSecondCard, styles.shadowProp]}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>{t('transaction')}</Text>
-                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>{distributorItem.transaction_id}</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right',width:'50%' }}>{distributorItem.transaction_id}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
                                 <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>{t('unique')}</Text>
-                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>A1234455667</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' ,width:'50%'}}>A1234455667</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
                                 <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>{t('mobile')}</Text>
-                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>{distributorItem.mobile}</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right',width:'50%' }}>{distributorItem.mobile}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
                                 <Text style={{ color: '#848484', fontFamily: 'Poppins-Regular' }}>{t('Location')}</Text>
-                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right' }}>{distributorItem.location}</Text>
+                                <Text style={{ color: '#393939', fontFamily: 'Poppins-Regular', fontSize: 13.33, fontWeight: '500', lineHeight: 20, textAlign: 'right',width:'50%' }}>{distributorItem.location}</Text>
                             </View>
                         </View>
                         <View style={styles.modalButtonContainer}>
-                            <TouchableOpacity onPress={() => handleReject('Reject')} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: '#EB1C1C', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
+                            <TouchableOpacity onPress={()=>showAlert(distributorItem.id)} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: '#EB1C1C', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                                 <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24, fontFamily: 'Poppins-Regular' }}>
                                 {t("reject")}
                                 </Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => handleReject('Accept')} style={{ width: '100%', backgroundColor: '#18B758', borderRadius: 6, alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
+                            <TouchableOpacity onPress={()=>showAcceptAlert(distributorItem.id)} style={{ width: '100%', backgroundColor: '#18B758', borderRadius: 6, alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                                 <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24, fontFamily: 'Poppins-Regular' }}>
                                 {t("accept")}
                                 </Text>

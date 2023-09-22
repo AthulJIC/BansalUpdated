@@ -62,7 +62,7 @@ const DistributorHistory = () => {
     }
   };
   const requestData = (itemData) => {
-    //console.log(itemData);
+    console.log(itemData.item);
     const dateTime = moment(itemData.item.created_at);
     const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
     const time = dateTime.format('hh:mm A').toLocaleString('en-US');
@@ -106,19 +106,19 @@ const DistributorHistory = () => {
           </View>
         )}
         <View style={{flexDirection:'column'}}>
-          <View style={{flexDirection:'row', flexWrap: 'nowrap', marginLeft:25}}>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: 'black', width: '37%',fontSize:14,fontFamily:'Poppins-Medium'}}>{itemData.item.name}</Text>            
-          <Text style={{  fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:5,marginHorizontal:5}}>{'\u2B24'}</Text>
-          {/* <Text style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular'}}>{itemData.item.requestId}</Text> */}
+          <View style={{flexDirection:'row',justifyContent:'flex-start',width:'85%',marginLeft:15,}}>
+            <Text numberOfLines={1} ellipsizeMode="tail"  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Regular',width: itemData.item.lead !== null ? '15%' : '20%'}}>{itemData.item.name}</Text> 
+            <Text style={{  fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:7,marginHorizontal:5}}>{'\u2B24'}</Text>
+            <Text numberOfLines={1} ellipsizeMode="tail" style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular',width:'50%'}}>{itemData.item.transaction_id}</Text>
           </View>
-          <View style={{flexDirection:'row',flexWrap: 'nowrap',marginLeft:25}}>
+          <View style={{flexDirection:'row',flexWrap: 'nowrap',marginLeft:15}}>
             <Text style={{marginHorizontal:3,fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{date}</Text>
             <Text style={{fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:5,marginHorizontal:5}}>{'\u2B24'}</Text>
             <Text style={{fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{time}</Text>
           </View>
         </View>
         <View style={{marginLeft:'auto', marginRight:15}}>
-          <Text style={{color : itemData.item.user_approval === 'Pending' ? 'rgba(31, 134, 255, 1)' : itemData.item.user_approval === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)',fontFamily:'Poppins-Medium',marginRight:5}}>{itemData.item.user_approval.toLocaleUpperCase()}</Text>
+          <Text style={{color : itemData.item.user_approval === 'Pending' ? 'rgba(31, 134, 255, 1)' : itemData.item.user_approval === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)',fontFamily:'Poppins-Medium',marginRight:5, fontSize:13}}>{itemData.item.user_approval.toLocaleUpperCase()}</Text>
         </View>
      </View>
     )
