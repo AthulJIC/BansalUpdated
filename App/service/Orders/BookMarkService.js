@@ -1,14 +1,14 @@
 import AxiosInstance from "../axiosservice";
 
 export const BookMarkService = async (itemId) => {
-
+console.log("bookmark itemID",itemId)
     const requestBody = {
         distributor:itemId,
     };
     console.log("requestBody BookMarkService ",requestBody)
     try {
         const response = await AxiosInstance.post('/account/bookmark/',requestBody);
-        // console.log("BookMarkService response",response)
+        console.log("BookMarkService response",response)
         return response.data;
     } catch (error) {
         console.error('bookmark Error:', error);
@@ -32,7 +32,7 @@ export const BookMarkDeleteService = async (Id) => {
     }
 };
 export const BookMarkListService = async (itemId) => {
-    
+    console.log("bookmark itemId",itemId)
     try {
         const response = await AxiosInstance.get('/account/bookmark-list/');
         // console.log("BookMarkListService response",response)
