@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet,ImageBackground,ScrollView,TouchableOpacity, Pressable, Keyboard} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, TextInput, Button, Text, StyleSheet,ImageBackground,ScrollView,TouchableOpacity, Pressable, Keyboard, BackHandler} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { useTranslation } from 'react-i18next';
 import {LoginApi}  from '../../service/login/loginservice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ErrorIcon from '../../../assets/Icon/ErrorIcon';
+import { useNavigationState } from '@react-navigation/native';
+import LoadingIndicator from '../../Components/LoadingIndicator';
 
 const LoginPage = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -14,8 +16,14 @@ const LoginPage = ({navigation}) => {
   const [isSelected, setSelection] = useState(false);
   const [rememberSelect,setrememberSelect]=useState(false);
   const [checkboxError, setCheckBoxError] = useState(false);
+  const navIndex = useNavigationState(state => state.index);
+  const [backPressCount, setBackPressCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
-  
+  // useEffect (() => {
+    
+  //   AddInputValues();
+  // },[])
   const LoginAPI=()=>{
     Keyboard.dismiss();
     let isValid= true;
@@ -38,22 +46,23 @@ const LoginPage = ({navigation}) => {
     
   }
   async function getUserHandler() {
-    if (!rememberSelect) {
-       setUsername('');
-       setPassword('');
+    if (rememberSelect) {
+      await AsyncStorage.setItem('loginId', username);
+      await AsyncStorage.setItem('password', password);
     }
-    else {
-      await AsyncStorage.setItem('username', username);
-      await AsyncStorage.setItem('password', password)
+    else{
+      await AsyncStorage.setItem('loginId', '');
+      await AsyncStorage.setItem('password', '');
     }
-    loginHandler()
-    
+    loginHandler() 
 }
 function loginHandler(){
+  setIsLoading(true)
   const data ={
     email: username,
     password: password
   }
+  AddInputValues()
   LoginApi.userLogin(data).then(async(res) => {
     // console.log('resss', res.data)
     if(res.status === 200){
@@ -64,16 +73,57 @@ function loginHandler(){
       await AsyncStorage.setItem('username', res.data.username);
       await AsyncStorage.setItem('email', res.data.email)
       await AsyncStorage.setItem('isLoggedIn', "true");
+      await AsyncStorage.setItem('isSelected', isSelected.toString());
+      setIsLoading(false)
       navigation.navigate('Home screen')
-      
     }
 
   })
 }
-  // const handleForgotPassword = () => {
-  //   // Implement your forgot password logic here
-  // };
 
+const handleBackPress = useCallback(() => {
+  if (backPressCount === 0) {
+    setBackPressCount(prevCount => prevCount + 1);
+    // setTimeout(() => setBackPressCount(0), 2000);
+    // ToastAndroid.show(AlertMsg.AppExitToast, ToastAndroid.SHORT);
+  } else if (backPressCount === 1) {
+    BackHandler.exitApp();
+  }
+  return true;
+}, [backPressCount]);
+
+useEffect(() => {
+  if (Platform.OS === 'android' && navIndex === 1) {
+    const backListener = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress,
+    );
+    return () => backListener.remove();
+  }       
+}, [handleBackPress]);
+
+async function AddInputValues() {
+  const savedloginId = await AsyncStorage.getItem('loginId');
+  const savedPassword = await AsyncStorage.getItem('password');
+  const savedIsSelected = await AsyncStorage.getItem('isSelected');
+  if (savedIsSelected) setSelection(savedIsSelected === 'true');
+  if ((savedloginId != null && savedloginId != undefined) && (savedPassword != null && savedPassword != undefined)) {
+    setrememberSelect(true);
+    setUsername(savedloginId);
+    setPassword(savedPassword);
+  } else {
+    setrememberSelect(false);
+    setUsername(savedloginId);
+    setPassword(savedPassword);
+  }
+}
+// if (isLoading) {
+//   return (
+//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+//           <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+//       </View>
+//   );
+// }
   return (
         <ImageBackground
         source={require('../../../assets/Images/Login.gif')} // Replace with your actual GIF path
@@ -143,6 +193,7 @@ function loginHandler(){
        </Pressable>
        </View>
       </View>
+      <LoadingIndicator visible={isLoading} text="Loading..."/>
       </ImageBackground>
   );
 };

@@ -11,12 +11,14 @@ function FavouritesScreen({navigation}){
     const [bookmarkedItems, setBookmarkedItems] = useState([]);
     const [bookMarkListValue,setBookMarkListValue]=useState([])
     const [Bookmarked,setIsBookMarked]=useState(false)
-    const [selectedIndices, setSelectedIndices] = useState([]);
+    //const [selectedIndices, setSelectedIndices] = useState([]);
     const [isLoading,setisLoading]=useState(false)
-    const initialSelectedState = bookMarkListValue.reduce((acc, item, index) => {
-        acc[item.id] = index < 2;
-        return acc;
-      }, {});
+    const initialSelectedState = bookMarkListValue.map((item, index) => index);
+    const [selectedIndices, setSelectedIndices] = useState(initialSelectedState);
+    // const initialSelectedState = bookMarkListValue.reduce((acc, item, index) => {
+    //     acc[item.id] = index < 2;
+    //     return acc;
+    //   }, {});
     const HEADER_HEIGHT = 200;
     const scrollY = new Animated.Value(0);
     useEffect(() => {
@@ -63,6 +65,7 @@ function FavouritesScreen({navigation}){
         // console.log("log",item)
         // const isBookmarked = selectedItems[item.user_id]
          isSelected = selectedIndices.includes(index);
+         console.log('isSelected======', isSelected)
         return(
 
             <View style={[styles.card, styles.shadowProp]}>
@@ -74,7 +77,7 @@ function FavouritesScreen({navigation}){
                         
                         <Text style={{fontFamily: 'Poppins-Medium', fontSize: 13,color:'rgba(177, 41, 44, 1)'}}> {item?.user_id}</Text>
                         <Pressable onPress={() => bookmarkHandler(index,item.id)}>
-                        {!isSelected ?
+                        {isSelected ?
                             (<BookmarkIcon height={16} width={16} color='#393939'/>) : 
                             <BookMarkActiveIcon height={17} width={17} color='rgba(127, 176, 105, 1)'/>
                         }                    

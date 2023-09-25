@@ -20,7 +20,7 @@ const BarGraph = () => {
     const[barQuarter, setBarQuarter] = useState('')
     const [barSpacing, setBarSpacing] = useState(11);
     const [barWidth, setBarWidth] = useState(12);
-    const [totalOrders, setTotalOrders] = useState(10);
+    const [totalOrders, setTotalOrders] = useState(50);
     const [total, setTotal] = useState('');
     const [role, setRole] = useState('')
     const [items, setItems] = useState([
@@ -38,71 +38,7 @@ const BarGraph = () => {
     const referenceLine1Position = totalOrders * 0.3; 
     const referenceLine2Position = totalOrders * 0.65;
     const referenceLine3Position = totalOrders;
-    useEffect(() => {
-        updateTotalOrders();
-        
-      }, [totalOrders]);
-    const updateTotalOrders = () => {
-       
-        // setTotalOrders(roundedValue)
-        // if (activeButton === 'Orders') {
-        //     if (totalOrders < destinationOrderValue) {
-        //         // setTotalOrders((prevTotalOrders) => prevTotalOrders * 2);
-        //         setTotalOrders(totalOrders * 2)
-        //     }
-        // } else if (activeButton === 'Points') {
-        //     if (totalOrders < destinationPointsValue) {
-        //         setTotalOrders((prevTotalOrders) => prevTotalOrders * 2);
-        //     }
-        // }
-        // if(totalOrders<100 && totalOrders>40)
-        // {
-        //     setTotalOrders(80)
-        // }
-        // else if (activeButton === 'Points'){
-        //     setTotalOrders((prevTotalOrders) => prevTotalOrders * 2);
-        // }
-        // if(activeButton === 'Orders'){
-        //     if (barValue > 10) {
-        //         const nextMultipleOfTen = Math.ceil(totalOrders / 10) * 10;
-        //         setTotalOrders(nextMultipleOfTen);
-        //     }
-        // }
-        // else
-        //     if(barValue > 750){
-        //         const nextMultipleOfTen = Math.ceil(totalOrders / 10) * 10;
-        //         setTotalOrders(nextMultipleOfTen);
-        //     }
-        // }
-    };
-    // const monthNames = [
-    //     'Jan',
-    //     'Feb',
-    //     'Mar',
-    //     'Apr',
-    //     'May',
-    //     'Jun',
-    //     'Jul',
-    //     'Aug',
-    //     'Sep',
-    //     'Oct',
-    //     'Nov',
-    //     'Dec',
-    //   ];
-     
-
-    //   if(value === 'Monthly'){
-    //     orderData = barData.map((dataPoint) => ({
-    //         value: dataPoint.value,
-    //         label: monthNames[dataPoint.month - 1], 
-    //     }));
-    //   }
-    //   else if(value === 'Quarterly'){
-    //      orderData = barData.map((dataPoint) => ({
-    //         value: dataPoint.count,
-    //         label : dataPoint.quarter
-    //      }))
-    //   }
+   
     function barHandler(item){
         setValue(item.value);
             if(item.value === 'Monthly'){

@@ -8,18 +8,13 @@ import { HomeApi } from '../../service/home/homeservice';
 const HomeScreen = () => {
     const [adImages, setAdImages] = useState([]);
     // console.log('image', adImages)
-    const backAction = () => {
-        BackHandler.exitApp(); // This will close the app
-        return true; // Prevent default back button behavior (navigation)
-    };
+    // const backAction = () => {
+    //     BackHandler.exitApp(); // This will close the app
+    //     return true; // Prevent default back button behavior (navigation)
+    // };
       
     useEffect(() => {
-       getAdImages();
-       BackHandler.addEventListener('hardwareBackPress', backAction);
-       return () => {
-       BackHandler.removeEventListener('hardwareBackPress', backAction);
-    };
-        
+       getAdImages();        
       }, []);
 
       function getAdImages(){
