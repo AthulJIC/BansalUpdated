@@ -1,5 +1,5 @@
 const AlertMsg = {
-    SessionExpird : 'Your session has expired. Please log in again.',
+    SessionExpird : 'Incorrect Unique Id or Password.',
     UnableToConnectToServer : 'The application was unable to process request. Please try again later.',
     ServerUnhandledRequest: 'Service is temporarily unavailable.',
     // WhiteSpace: 'White space cannot allowed in input field',

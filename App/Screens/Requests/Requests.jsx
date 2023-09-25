@@ -7,28 +7,7 @@ import { RequestApi } from '../../service/request/requestservice';
 import EmptyComponent from '../../Components/EmptyComponent';
 import { useTranslation } from 'react-i18next';
 
-const data = [
-    { img: '', name: 'John', designation: 'Contractor', quantity: 10 },
-    { img: '', name: 'Alice', designation: 'Engineer', quantity: 5 },
-    { img: '', name: 'Bob', designation: 'Contractor', quantity: 8 },
-    { img: '', name: 'Eva', designation: 'Engineer', quantity: 3 },
-    { img: '', name: 'Michael', designation: 'Contractor', quantity: 12 },
-    { img: '', name: 'Sophia', designation: 'Engineer', quantity: 6 },
-    { img: '', name: 'David', designation: 'Contractor', quantity: 7 },
-    { img: '', name: 'Olivia', designation: 'Engineer', quantity: 2 },
-    { img: '', name: 'William', designation: 'Contractor', quantity: 9 },
-    { img: '', name: 'Emma', designation: 'Engineer', quantity: 4 },
-    { img: '', name: 'Liam', designation: 'Contractor', quantity: 11 },
-    { img: '', name: 'Ava', designation: 'Engineer', quantity: 7 },
-    { img: '', name: 'Noah', designation: 'Contractor', quantity: 6 },
-    { img: '', name: 'Isabella', designation: 'Engineer', quantity: 3 },
-    { img: '', name: 'James', designation: 'Contractor', quantity: 8 },
-    { img: '', name: 'Mia', designation: 'Engineer', quantity: 5 },
-    { img: '', name: 'Benjamin', designation: 'Contractor', quantity: 14 },
-    { img: '', name: 'Luna', designation: 'Engineer', quantity: 1 },
-    { img: '', name: 'Lucas', designation: 'Contractor', quantity: 13 },
-    { img: '', name: 'Harper', designation: 'Engineer', quantity: 2 },
-];
+
 const Requests = () => {
     const [searchText, setSearchText] = useState('');
     const [modalVisible, setModalVisible] = useState(false);

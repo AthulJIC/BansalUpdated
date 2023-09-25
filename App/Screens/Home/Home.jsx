@@ -16,12 +16,12 @@ const HomeScreen = () => {
     useEffect(() => {
        getAdImages();
        BackHandler.addEventListener('hardwareBackPress', backAction);
-
        return () => {
        BackHandler.removeEventListener('hardwareBackPress', backAction);
     };
         
       }, []);
+
       function getAdImages(){
           HomeApi.getAds().then((res) => {
             // console.log('ress', res.data);

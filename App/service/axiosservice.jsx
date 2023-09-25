@@ -14,22 +14,23 @@ const AxiosInstance = axios.create({
 AxiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      console.log(error.response?.status);
+      //console.log(error.response?.status);
+      //console.log("data===========",error.response.data.error)
         if (error.response?.status === 401) {
-            AlertService.ShowSingleActionAlert(AlertMsg.SessionExpird).then(async (data) => {
-              console.log(data.data);
+            AlertService.ShowSingleActionAlert(error.response.data.error).then(async (data) => {
+              //console.log(data.data);
               await AsyncStorage.removeItem('access_token');
               //Move to login
             })
         }
         else if (error.response?.status >= 500) {
           AlertService.ShowSingleActionAlert(AlertMsg.UnableToConnectToServer).then((data) => {
-            console.log(data.data);
+            //console.log(data.data);
           })
         }
         else if (error.response?.status === 400) {
           AlertService.ShowSingleActionAlert(AlertMsg.ServerUnhandledRequest).then((data) => {
-            console.log(data.data);
+            //console.log(data.data);
           })
         }
         return Promise.reject(error);

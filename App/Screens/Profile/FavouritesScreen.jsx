@@ -66,9 +66,12 @@ function FavouritesScreen({navigation}){
         return(
 
             <View style={[styles.card, styles.shadowProp]}>
-
+                <View style={{ borderRadius: 8, backgroundColor: 'rgba(182, 182, 182, 1)', justifyContent: 'center', alignItems: 'center', height: 95, width: '25%', marginLeft: 10, marginRight: 10 }}>
+                    <Text style={{ textAlign: 'center', color: 'rgba(57, 57, 57, 1)', fontSize: 27, fontFamily: 'Poppins-Medium', }}>{item.name.slice(0, 2).toUpperCase()}</Text>
+                </View>
                 <View style={{width:'60%', height:88}}>
                     <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                        
                         <Text style={{fontFamily: 'Poppins-Medium', fontSize: 13,color:'rgba(177, 41, 44, 1)'}}> {item?.user_id}</Text>
                         <Pressable onPress={() => bookmarkHandler(index,item.id)}>
                         {!isSelected ?
