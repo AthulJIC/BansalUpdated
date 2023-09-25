@@ -59,7 +59,7 @@ const orderPoints=(user)=>{
         {pages=="orders" ?
         <View style={{flexDirection:'row',justifyContent:'space-between',borderBottomWidth:1,borderBottomColor:'#848484',paddingBottom:25}}>
             <Text style={{width:95,height:28,fontFamily:'Poppins-Medium',
-            fontWeight:'500',fontSize:19.2,lineHeight:28,color:'#393939'}}>-{points} t{('points3')}</Text>
+            fontWeight:'500',fontSize:19.2,lineHeight:28,color:'#393939'}}>+{points} t{('points3')}</Text>
             <TouchableOpacity style={{borderRadius:8,paddingHorizontal:15,paddingVertical:8,backgroundColor:'rgba(31, 134, 255, 0.2)',justifyContent:'center',}}>
               <Text style={{width:70,height:16,fontFamily:'Poppins-Medium',
             fontWeight:'500',fontSize:11.2,lineHeight:16,alignItems:'center',color:'#1F86FF'}}>{t('Processing')}</Text>

@@ -14,13 +14,25 @@ function ConfirmPurchase({route,navigation}){
     const [quantity, setQuantity] = useState(0)
     const[username, setUsername] = useState('') ;
     const { t } = useTranslation();
-   console.log("username",username)
+    console.log("item=======", item)
    const uiParams={
     Product:t('quantity'),
     Name:t('unique'),
     Mobile:t('Mnumber'),
     Address:t('Location'),
     }
+    useEffect(() => {
+        const getValueFromStorage = async () => {
+            try {
+              const user = await AsyncStorage.getItem('role'); 
+            //   console.log('role2344355', role)
+              setUsername(user)
+            } catch (error) {
+              console.error('Error fetching data from AsyncStorage:', error);
+            }
+          };
+        getValueFromStorage();
+      }, []);
    function successHandler(){
     ConfirmPurchaseService(ton,item.selectedItem.id).then((res) => {
         // console.log('Received data:', res.role);
@@ -35,20 +47,7 @@ function ConfirmPurchase({route,navigation}){
             // roles:res.roles
       })
     })
-    useEffect(() => {
-        const getValueFromStorage = async () => {
-          try {
-            const value = await AsyncStorage.getItem('role'); 
-            console.log('role2344355', username)
-            if (value !== null) {
-              setUsername(value);
-            }
-          } catch (error) {
-            console.error('Error fetching data from AsyncStorage:', error);
-          }
-        };
-        getValueFromStorage();
-      }, []);
+  
 }
     const ProductVisible=()=>{
         setModalVisible(true)
