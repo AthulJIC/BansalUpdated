@@ -26,6 +26,7 @@ const OrderScreen = ({ navigation }) => {
     const [bookMarkId, setBookmarkId] = useState('')
     const [isLoading,setisLoading]=useState(false)
     const[username, setUsername] = useState('') ;
+    const [is_BookMarked,setis_BookMarked]=useState(false)
     const { t } = useTranslation();
 
     let orderData = locationList.map((dataPoint) => ({
@@ -42,7 +43,7 @@ const OrderScreen = ({ navigation }) => {
     }, []);
     useEffect(() => {
         ordersList()
-    }, [value, searchText])
+    }, [value, searchText,is_BookMarked])
     const ordersList = () => {
         if(searchText.length=='')
         {
@@ -90,37 +91,62 @@ const OrderScreen = ({ navigation }) => {
     function chooseHandler(item) {
         navigation.navigate('DistributorExpand', { selectedItem: item })
     }
-    function bookmarkHandler(itemId, userId) {
-        console.log("itemId", itemId, userId)
-        if (bookmarkedItems.includes(itemId)) {
+    function bookmarkHandler(itemId,bookmark) {
+        console.log("itemId", bookMarkId)
+
+        if (bookmarkedItems.includes(itemId || bookmark==true)) {
+            console.log("delete")
             setBookmarkedItems(bookmarkedItems.filter(id => id !== itemId));
+            updateItemIsBookmarked(itemId, false)
+           
+            const id = bookMarkId || itemId;
+            console.log('bookmarId====', id)
             BookMarkDeleteService(bookMarkId).then((res) => {
-                // if(res.status === 200){
-                //     console.log('success',)
-                //     setOrdersList(res.data.results)
-                // }
+                if(res.status === 200){
+                    console.log('success',)
+                    setOrdersList(res.data.results)
+                }
                 // console.log('Book Mark Delete Response:', res);
                 // setOrdersList(res.data.results)
             })
 
         } else {
             setBookmarkedItems([...bookmarkedItems, itemId]);
+            updateItemIsBookmarked(itemId, true)
+            console.log(itemId,bookMarkId)
             BookMarkService(itemId).then((res) => {
-                // if(res.status === 200){
-                //     console.log('success',)
-                //     setOrdersList(res.data.results)
-                // }
-                // console.log('Received data Book Mark:', res);
+                if(res.status === 200){
+                    console.log('success',)
+                    setOrdersList(res.data.results)
+                }
+                console.log('Received data Book Mark:', res);
                 setBookmarkId(res.id)
                 // setOrdersList(res.data.results)
             })
         }
     }
+    const updateItemIsBookmarked = (itemId, isBookmarked) => {
+        // Create a copy of the ordersList array
+        const updatedOrdersList = [...ordersLists];
+        // Find the index of the item in the array
+        const itemIndex = updatedOrdersList.findIndex(item => item.id === itemId);
+        // If the item is found, update its is_bookmarked property
+        if (itemIndex !== -1) {
+            updatedOrdersList[itemIndex].is_bookmarked = isBookmarked;
+            // Set the updated ordersList
+            setOrdersList(updatedOrdersList);
+        }
+    };
 
     const requestData = ({ item }) => {
-        console.log(item)
-        const isBookmarked = bookmarkedItems.includes(item.id);
+        if(item?.is_bookmarked?.is_bookmarked==true)
+        {
+            setBookmarkId(item?.is_bookmarked?.bookmark_id)
+        }
+        const isBookmarked = bookmarkedItems.includes(item.id)||item.is_bookmarked ;
+        setis_BookMarked(isBookmarked)
         const firstTwoChars = item.name ? item.name.slice(0, 2) : '';
+
         return (
             item === 'noData' ? (
                 <View style={{flex:1,alignSelf:'center',marginTop:100}}>
@@ -144,8 +170,8 @@ const OrderScreen = ({ navigation }) => {
                     <View style={{ width: '67%', height: 100}}>
                         <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                             <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: 'rgba(177, 41, 44, 1)',marginTop:0 }}> {item.user_id}</Text>
-                            <Pressable style={{marginLeft:'auto'}} onPress={() => bookmarkHandler(item.id)}>
-                                {!isBookmarked ?
+                            <Pressable style={{marginLeft:'auto'}} onPress={() => bookmarkHandler(item.id,item.is_bookmarked)}>
+                                {!isBookmarked || !item?.is_bookmarked?.is_bookmarked ?
                                     (<BookmarkIcon height={16} width={16} color='#393939' />) :
                                     <BookMarkActiveIcon height={16} width={16} color='rgba(127, 176, 105, 1)' />
                                 }
