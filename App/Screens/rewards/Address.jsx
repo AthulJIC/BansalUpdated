@@ -9,6 +9,7 @@ import { useNavigation,getFocusedRouteNameFromRoute } from '@react-navigation/na
 import { useTranslation } from 'react-i18next';
 import { AddAddressService, deleteAddressService, updateAddressService } from '../../service/RewardsService/addAddressService';
 import { AddressListService } from '../../service/RewardsService/AddressListService';
+import LoadingIndicator from '../../Components/LoadingIndicator';
 
 const AddressList = ({navigation,route}) => {
   const data = route?.params.fromProfile;
@@ -221,13 +222,13 @@ const deleteHandler=()=>{
       </Pressable>
     );
   }
-  if (isLoading) {
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-            <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-        </View>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+  //           <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+  //       </View>
+  //   );
+  // }
  
   return (
     <View style={{ backgroundColor: '#ffffff', height: '100%', borderRadius: 8 }}>
@@ -388,6 +389,7 @@ const deleteHandler=()=>{
           </KeyboardAvoidingView>
         </Modal>
       </View>
+      {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'/>}
     </View>
   );
 };

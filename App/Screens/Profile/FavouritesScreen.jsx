@@ -1,8 +1,11 @@
-import { Text, View ,ScrollView,FlatList,Animated,StyleSheet,Pressable,Image} from "react-native";
+import { Text, View ,ScrollView,FlatList,Animated,StyleSheet,Pressable,Image, ActivityIndicator} from "react-native";
 import ReferLead from "../rewards/addressForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BookMarkActiveIcon from "../../../assets/Icon/BookmarkActiveIcon";
 import BookmarkIcon from "../../../assets/Icon/BookmarkIcon";
+import { BookMarkListService } from "../../service/Orders/BookMarkService";
+import { BookMarkDeleteService } from "../../service/Orders/BookMarkService";
+import LoadingIndicator from "../../Components/LoadingIndicator";
 
 function FavouritesScreen({navigation}){
     const [modalVisible, setModalVisible] = useState(false);
@@ -15,29 +18,41 @@ function FavouritesScreen({navigation}){
         acc[item.id] = index < 2;
         return acc;
       }, {});
+      let isSelected
     const HEADER_HEIGHT = 200;
     const scrollY = new Animated.Value(0);
+    useEffect(() => {
+        BookMarkList()
+    }, [])
     const closeModal = () => {
         setModalVisible(false);
     };
+    const BookMarkList = () => {
+        setisLoading(true)
+        BookMarkListService().then((res) => {
+            setBookMarkListValue(res.data.results)
+            setSelectedIndices(bookMarkListValue.map((item, index) => index))
+           setisLoading(false)
+        })
+      
+    }
     function chooseHandler(item){
         navigation.navigate('DistributorExpand',{ selectedItem: item })
    }
     const handleRefer = () => {
-        // Perform navigation to another page
         navigation.navigate('ConfirmDetail');
       };
-      const bookmarkHandler = (itemId,id) => {
-    
+      const bookmarkHandler = (itemId,id,isSelected) => {
+     console.log("isSelected",isSelected)
         // setSelectedItems((prevState) => ({
         //   ...prevState,
         //   [itemId]: !prevState[itemId],
         // }));
         // setIsBookMarked((prevIsBookMarked) => !prevIsBookMarked);
         const updatedIndices = [...selectedIndices];
-        if (updatedIndices.includes(itemId)) {
-          const itemIndex = updatedIndices.indexOf(itemId);
-          updatedIndices.splice(itemIndex, 1);
+        if (!isSelected) {
+        //   const itemIndex = updatedIndices.indexOf(itemId);
+        //   updatedIndices.splice(itemIndex, 1);
           BookMarkDeleteService(id).then((res) => {
             console.log('Book Mark Delete Response:', res);
             BookMarkList()
@@ -51,31 +66,33 @@ function FavouritesScreen({navigation}){
         // console.log("log",item)
         // const isBookmarked = selectedItems[item.user_id]
          isSelected = selectedIndices.includes(index);
+        const isLoadingBookmark = isLoading && isSelected;
+        console.log("isSelected",isSelected)
+        
         return(
 
             <View style={[styles.card, styles.shadowProp]}>
-                <Pressable>
-                    <Image
-                        style={styles.tinyLogo}
-                        source={require('../../../assets/Images/Man.jpg')}
-                        resizeMode='cover'
-
-                    />
-                </Pressable>
-
+                <View style={{ borderRadius: 8, backgroundColor: 'rgba(182, 182, 182, 1)', justifyContent: 'center', alignItems: 'center', height: 95, width: '25%', marginLeft: 10, marginRight: 10 }}>
+                    <Text style={{ textAlign: 'center', color: 'rgba(57, 57, 57, 1)', fontSize: 27, fontFamily: 'Poppins-Medium', }}>{item.name.slice(0, 2).toUpperCase()}</Text>
+                </View>
                 <View style={{width:'60%', height:88}}>
                     <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                         
                         <Text style={{fontFamily: 'Poppins-Medium', fontSize: 13,color:'rgba(177, 41, 44, 1)'}}> {item?.user_id}</Text>
-                        <Pressable onPress={() => bookmarkHandler(index,item.id)}>
-                        {!isSelected ?
-                            (<BookmarkIcon height={16} width={16} color='#393939'/>) : 
+                        <Pressable onPress={() => bookmarkHandler(index,item.id,isSelected)}>
+                        {isSelected?
+                            (
+                                isLoading? (
+                                    <ActivityIndicator size="small" color="green" />
+                                ) : (
+                                    <BookmarkIcon height={16} width={16} color='#393939'/>
+                                )
+                            ) : 
                             <BookMarkActiveIcon height={17} width={17} color='rgba(127, 176, 105, 1)'/>
-                        }                    
-                        </Pressable>
-
+                        }                           
+                         </Pressable>
                     </View>
-                    <Text style={{fontFamily: 'Poppins-Medium', fontSize: 16,color:'rgba(57, 57, 57, 1)'}}> {item.name}</Text>
+                    <Text style={{fontFamily: 'Poppins-Medium', fontSize: 16,color:'rgba(57, 57, 57, 1)'}}> {item?.name}</Text>
                     <Pressable style={styles.buttonReject} onPress={() =>chooseHandler(item)}>
                         <Text style={styles.buttonText}>Choose</Text>
                     </Pressable>
@@ -83,18 +100,43 @@ function FavouritesScreen({navigation}){
             </View>
         )
     }; 
+   
+    // if (isLoading) {
+    //     return (
+    //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+    //             <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+    //         </View>
+    //     );
+    // } 
+         
     return(
-        <View style={{flex:1, backgroundColor:'white'}}>
+    <View style={{flex:1, backgroundColor:'white'}}>
+        {bookMarkListValue.length===0?
+       <View style={{ alignSelf: 'center', backgroundColor: 'white', top: 150 }}>
+       <Image
+           source={require('../../../assets/Images/favouritesEmpty.png')}
+           style={{ height: 150,alignSelf:'center' }}
+       />
+       <View style={{ marginTop: 20 }}>
+           <Text style={{ color: 'rgba(57, 57, 57, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', textAlign: 'center' }}>
+           No Favourites
+           </Text>
+           <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 13, fontFamily: 'Poppins-Regular', textAlign: 'center' }}>
+           Start adding Distributors to your favourites list.
+           </Text>
+       </View>
+   </View>
+         :
         <FlatList
-            data={data}
-            renderItem={requestData}
-            keyExtractor={(item) => item.name}
+          data={bookMarkListValue.map((item, index) => ({ ...item, index }))}
+          renderItem={({ item, index }) => requestData(item, index)}
+            keyExtractor={(item,index) => index.toString()}
             onScroll={Animated.event(
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                 { useNativeDriver: false }
-            )}/>
+            )}/>}
             <ReferLead isVisible={modalVisible} onClose={closeModal} onRefer={handleRefer}/>
-
+            {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'/>}
         </View>
     )
 }

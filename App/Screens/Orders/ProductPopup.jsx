@@ -19,11 +19,11 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
   const [name, setName] = useState('');
   const [editQuantity, setEditQuantity] = useState(quantity);
   const [quantityError, setQuantityError] = useState(false);
-  // console.log('quantityError',quantityError,name)
+   console.log('quantityError',onEdit,name,editQuantity)
   const { t } = useTranslation();
 
   const handleRef = () => {
-    if (name === '' || (onEdit === false && !editQuantity)) {
+    if ((onEdit && !editQuantity) || (!onEdit && !name)) {
       setQuantityError(true);
       return;
     }

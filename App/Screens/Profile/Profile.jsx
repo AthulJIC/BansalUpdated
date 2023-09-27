@@ -13,14 +13,18 @@ import { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ProfileApi } from '../../service/profile/profileservice'
 import { useTranslation } from 'react-i18next';
+import LoadingIndicator from '../../Components/LoadingIndicator'
 
-const Profile =()=>{
+const Profile =({route})=>{
     const [role, setRole] = useState();
     const [name, setName] = useState();
     const [emailid, setEmailId] = useState();
     const [ refreshToken, setRefreshToken] = useState()
+    const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     let navigation = useNavigation();
+    let updatedName = route.params?.onEdit
+    console.log("name",updatedName)
     let profileData=[
        
         {
@@ -89,48 +93,58 @@ const Profile =()=>{
     }
     useEffect(() => {
         const getValueFromStorage = async () => {
+        setIsLoading(true)
           try {
             const user = await AsyncStorage.getItem('role'); 
             const userName = await AsyncStorage.getItem('username');
+            console.log('username',userName)
             const userEmail = await AsyncStorage.getItem('email')
             const refresh = await AsyncStorage.getItem('refresh_token')
             setRole(user)
             setName(userName)
             setEmailId(userEmail)
             setRefreshToken(refresh)
+            setIsLoading(false)
           } catch (error) {
             console.error('Error fetching data from AsyncStorage:', error);
+            setIsLoading(false)
           }
         };
         getValueFromStorage();
       }, []);
 function loginHandler(){
-    // Alert.alert(
-    //     'Logout',
-    //     'Are you sure you want to exit?',
-    //     [
-    //       {
-    //         text: 'Cancel',
-    //         onPress: () => console.log('Cancel Pressed'),
-    //         style: 'cancel',
-    //       },
-    //       {
-    //         text: 'OK',
-    //         onPress: () => navigation.navigate('Login'),
-    //       },
-    //     ],
-    //     { cancelable: false }
-    //   );
-    const data = {
-        refresh : refreshToken
-    }
-    ProfileApi.logout(data).then(async(res) => {
-        // console.log('resss', res.data);
-        if(res.status === 200){
-            await AsyncStorage.setItem('isLoggedIn', "false");
-            navigation.navigate('Login')
-        }
-    })
+    Alert.alert(
+        'Logout',
+        'Are you sure you want to exit?',[
+        {
+            text: "No",
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+        },
+        {
+            text: "Yes", 
+            onPress:() => {
+                setIsLoading(true)
+                const data = {
+                    refresh : refreshToken
+                }
+                ProfileApi.logout(data).then(async(res) => {
+                    // console.log('resss', res.data);
+                    if(res.status === 200){
+                        await AsyncStorage.setItem('isLoggedIn', "false");
+                        setIsLoading(false)
+                        navigation.navigate('Login')
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+                  .finally(() => {
+                    setIsLoading(false);
+                });
+            }
+        },
+      ]);
+    
     
 }
     return (
@@ -162,6 +176,7 @@ function loginHandler(){
         <Pressable style={styles.logoutButton} onPress={loginHandler}>
             <Text style={styles.logoutText}>{t("logout")}</Text>
         </Pressable>
+        {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'></LoadingIndicator>}
     </ScrollView>
     )
 }

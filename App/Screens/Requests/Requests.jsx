@@ -6,6 +6,7 @@ import CustomAlert from '../../Components/alertBox';
 import { RequestApi } from '../../service/request/requestservice';
 import EmptyComponent from '../../Components/EmptyComponent';
 import { useTranslation } from 'react-i18next';
+import LoadingIndicator from '../../Components/LoadingIndicator';
 
 
 const Requests = () => {
@@ -19,7 +20,7 @@ const Requests = () => {
     const [requestList, setRequestList] = useState([]);
     const [requestId, setRequestId] = useState('');
     const [distributorItem, setDistributorItem] = useState({})
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     console.log('distributor', distributorItem)
     const searchPlaceholder = t('search');
@@ -38,31 +39,24 @@ const Requests = () => {
     };
     useEffect(() => {
        getRequestList();
-       setTimeout(() => {
-        setIsLoading(false);
-    }, 2000);
+       setSearchText('')
+    //    setTimeout(() => {
+    //     setIsLoading(false);
+    // }, 2000);
     }, []);
-    if (isLoading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-                <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-            </View>
-        );
-    }
     function getRequestList(){
+        setIsLoading(true);
         RequestApi.getRequest().then((res) => {
             // console.log('resss', res.data);
             if(res.status === 200){
                 setRequestList(res.data.results)
+                setIsLoading(false)
             }
+        }).catch((err) => {
+            console.log(err);
+            setIsLoading(false)
         })
     }
-    // const handleAccept = () => {
-    //     // Handle accept button press
-    //     hideAlert();
-    //     // Additional logic as needed
-    // };
-
     const handleReject = (status) => {
         // console.log('requestId',requestId)
         // console.log('status', status)
@@ -109,54 +103,82 @@ const Requests = () => {
     // console.log('distributor', distributorItem.name)
     const HEADER_HEIGHT = 200; // Define the height of your header
     const scrollY = new Animated.Value(0);
-    const requestData = ( itemData ) => {
-        return(
-            <View style={[styles.card, styles.shadowProp]}>
-                <Pressable onPress={() => {
-                    setModalVisible(!modalVisible);
-                    modalItem( itemData.item )
-                }} style={{ borderRadius: 8 , backgroundColor:'rgba(182, 182, 182, 1)',justifyContent:'center', alignItems:'center',height:90, width:'25%'}}>
-
-                    {/* <Image
-                        style={styles.tinyLogo}
-                        source={require('../../../assets/Images/Man.jpg')}
-                        resizeMode='cover'
-
-                    /> */}
-                    <Text style={{textAlign:'center',color:'rgba(57, 57, 57, 1)',fontSize:27,fontFamily:'Poppins-Medium',}}>{itemData.item.name.slice(0, 2).toUpperCase()}</Text>
-                </Pressable>
-
-                <View style={{ justifyContent: 'center' }}>
-                    <Text style={{ marginLeft: 14, fontFamily: 'Poppins-Medium', fontSize: 16, color: 'rgba(57, 57, 57, 1)' }}> {itemData.item.name}</Text>
-                    <View style={styles.subContainer}>
-                        <Text style={{
-                            fontFamily: 'Poppins-Medium', fontWeight: '200', fontSize: 13.33, color: '#B1292C', marginHorizontal: 5
-                        }}>{itemData.item.quantity}</Text>
-                        <Text style={{ fontWeight: '500', fontSize: 6, color: 'rgba(57, 57, 57, 1)', marginTop: 5 }}>{'\u2B24'}</Text>
-                        <Text style={{
-                            fontFamily: 'Poppins-Medium', fontWeight: '500', fontSize: 13, color: '#393939', marginLeft: 5, marginBottom: 4
-                        }}>{itemData.item.role}</Text>
-
-                    </View>
-                    <View style={styles.buttonsContainer}>
-                        <Pressable onPress={()=>showAlert(itemData.item.id)} style={styles.buttonReject}>
-                            <Text style={styles.buttonText}>{t("reject")}</Text>
+    const requestData = ( itemData ) => {   
+        const objectLength = Object.keys(itemData.item).length;
+        console.log('item====', objectLength);
+        if (objectLength === 0 || !itemData.item) {
+            return (
+              <View>
+                <EmptyComponent />
+              </View>
+            );
+          }
+        
+       
+                return(
+                    <View>
+                      {objectLength !== 0 ? (
+                    <View style={[styles.card, styles.shadowProp]}>
+                        <Pressable onPress={() => {
+                            setModalVisible(!modalVisible);
+                            modalItem( itemData.item )
+                        }} style={{ borderRadius: 8 , backgroundColor:'rgba(182, 182, 182, 1)',justifyContent:'center', alignItems:'center',height:90, width:'25%'}}>
+    
+                            {/* <Image
+                                style={styles.tinyLogo}
+                                source={require('../../../assets/Images/Man.jpg')}
+                                resizeMode='cover'
+    
+                            /> */}
+                            <Text style={{textAlign:'center',color:'rgba(57, 57, 57, 1)',fontSize:27,fontFamily:'Poppins-Medium',}}>{itemData.item.name.slice(0, 2).toUpperCase()}</Text>
                         </Pressable>
-                        <Pressable onPress={()=>showAcceptAlert(itemData.item.id)} style={styles.buttonAccept}>
-                            <Text style={styles.buttonText}>{t("accept")}</Text>
-                        </Pressable>
-                    </View>
-                </View>
-                {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-
-                </View> */}
+    
+                        <View style={{ justifyContent: 'center' }}>
+                            <Text style={{ marginLeft: 14, fontFamily: 'Poppins-Medium', fontSize: 16, color: 'rgba(57, 57, 57, 1)' }}> {itemData.item.name}</Text>
+                            <View style={styles.subContainer}>
+                                <Text style={{
+                                    fontFamily: 'Poppins-Medium', fontWeight: '200', fontSize: 13.33, color: '#B1292C', marginHorizontal: 5
+                                }}>{itemData.item.quantity}</Text>
+                                <Text style={{ fontWeight: '500', fontSize: 6, color: 'rgba(57, 57, 57, 1)', marginTop: 5 }}>{'\u2B24'}</Text>
+                                <Text style={{
+                                    fontFamily: 'Poppins-Medium', fontWeight: '500', fontSize: 13, color: '#393939', marginLeft: 5, marginBottom: 4
+                                }}>{itemData.item.role}</Text>
+    
+                            </View>
+                            <View style={styles.buttonsContainer}>
+                                <Pressable onPress={()=>showAlert(itemData.item.id)} style={styles.buttonReject}>
+                                    <Text style={styles.buttonText}>{t("reject")}</Text>
+                                </Pressable>
+                                <Pressable onPress={()=>showAcceptAlert(itemData.item.id)} style={styles.buttonAccept}>
+                                    <Text style={styles.buttonText}>{t("accept")}</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+                    </View> )
+                :
+                <EmptyComponent/>
+                            }
             </View>
-        )
+                )
+                            
     };
     return (
         <KeyboardAvoidingView style={styles.mainContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            { requestList.length !== 0 ? (
-
+           <View style={styles.container}>
+                <TextInput
+                    style={styles.input}
+                    placeholder={searchPlaceholder}
+                    placeholderTextColor={'rgba(132, 132, 132, 1)'}
+                    onChangeText={text => searchHandler(text)}
+                    value={searchText}
+                />
+                <TouchableOpacity onPress={searchHandler}>
+                    <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
+                </TouchableOpacity>
+            </View>
+            {isLoading ? (
+                <LoadingIndicator visible={isLoading} text='Loading...'></LoadingIndicator>
+            ) : requestList && requestList.length > 0 ? (
                 <FlatList
                     data={requestList}
                     renderItem={requestData}
@@ -165,25 +187,26 @@ const Requests = () => {
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                         { useNativeDriver: false }
                     )}
-                   ListHeaderComponent={
-                    <View
-                        style={styles.container}
-                    >
-                        <TextInput
-                            style={styles.input}
-                            placeholder={searchPlaceholder}
-                            placeholderTextColor={'rgba(132, 132, 132, 1)'}
-                            onChangeText={text => searchHandler(text)}
-                            value={searchText}
-                        />
-                        <TouchableOpacity onPress={searchHandler}>
-                            <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
-                        </TouchableOpacity>
-                    </View>
-                   }
+                //    ListHeaderComponent={
+                //     <View
+                //         style={styles.container}
+                //     >
+                //         <TextInput
+                //             style={styles.input}
+                //             placeholder={searchPlaceholder}
+                //             placeholderTextColor={'rgba(132, 132, 132, 1)'}
+                //             onChangeText={text => searchHandler(text)}
+                //             value={searchText}
+                //         />
+                //         <TouchableOpacity onPress={searchHandler}>
+                //             <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
+                //         </TouchableOpacity>
+                //     </View>
+                //    }
                 />
-            ): <EmptyComponent/>}
-
+                ) : (
+                    <EmptyComponent />
+                )}
             {/* Modal */}
             <Modal
                 animationIn="slideInUp"
@@ -312,7 +335,7 @@ const Requests = () => {
                     </View>
                 </View>
             </Modal>
-
+           <LoadingIndicator visible={isLoading} text='Loading...'></LoadingIndicator>
         </KeyboardAvoidingView>
     );
 };

@@ -4,26 +4,37 @@ import PendingRequest from './PendingRequest';
 import BarGraph from './BarGraph';
 import HeaderComponent from '../../Components/Header';
 import { HomeApi } from '../../service/home/homeservice';
+import { useRoute } from '@react-navigation/native';
+import { useNavigationState } from '@react-navigation/native';
+import LoadingIndicator from '../../Components/LoadingIndicator';
 
 const HomeScreen = () => {
     const [adImages, setAdImages] = useState([]);
-    // console.log('image', adImages)
-    // const backAction = () => {
-    //     BackHandler.exitApp(); // This will close the app
-    //     return true; // Prevent default back button behavior (navigation)
-    // };
+    const [isLoading, setIsLoading ] = useState(false); 
+    const route = useRoute();
+    const isHomeScreen = route.name === 'Home'; 
+    const navIndex = useNavigationState(state => state.index);
+    console.log('navIndex====', navIndex)
+    console.log('route=====', isHomeScreen)
       
     useEffect(() => {
        getAdImages();        
       }, []);
 
       function getAdImages(){
+        setIsLoading(true)
           HomeApi.getAds().then((res) => {
             // console.log('ress', res.data);
             if(res.status === 200){
                 setAdImages(res.data.results)
+                setIsLoading(false)
             }
+          }).catch((err) => {
+            console.log(err);
           })
+          .finally(() => {
+            setIsLoading(false);
+          });
       }
     return (
         <ScrollView>
@@ -39,7 +50,8 @@ const HomeScreen = () => {
                         </View>
                     )
                 })}
-            </View>
+                {isHomeScreen && <LoadingIndicator visible={isLoading} text="Loading..." />}
+                </View>
         </ScrollView>
     );
 };

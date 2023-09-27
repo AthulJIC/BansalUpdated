@@ -7,6 +7,7 @@ import ArrowDown from "../../../assets/Icon/Arrowdown";
 import { TransactionAPI } from "../../service/Points/TransactionService";
 import moment from 'moment';
 import { Image } from "react-native";
+import LoadingIndicator from "../../Components/LoadingIndicator";
 const filterTitle = [
     {
       id: 1,
@@ -32,12 +33,12 @@ const Transactions=()=>{
     const [isLoading,setIsLoading]=useState(false)
    
     useEffect(() => {
+      setIsLoading(true)
       transactions()
     }, []);
     const transactions=()=>{
       TransactionAPI().then((res) => {
         // console.log("res",res)
-        setIsLoading(true)
           if(res.status === 200){
               console.log('success',)
               setFilteredData(res.data.results)
@@ -136,13 +137,13 @@ const Transactions=()=>{
          </View>
         )
       }
-      if (isLoading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-                <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-            </View>
-        );
-    }
+    //   if (isLoading) {
+    //     return (
+    //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+    //             <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+    //         </View>
+    //     );
+    // }
  return(
     <View style={styles.mainContainer}>
         <Text style={styles.font}>
@@ -170,8 +171,11 @@ const Transactions=()=>{
           renderItem={requestData}
           keyExtractor={(item) => item.id.toString()}
       />}
+
+<LoadingIndicator visible={isLoading} text='Loading...'/>
       </View>
     </View>
+   
     </View>
  )
 }

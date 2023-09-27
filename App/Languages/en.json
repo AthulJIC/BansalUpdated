@@ -66,7 +66,7 @@
     "confirmation" : "Are you sure you want to Reject this request?",
     "transaction" : "Transaction ID",
     "notifications" : "Notifications",
-    "languages" : "Languages",
+    "languages" : "Language",
     "contact us": "Contact Us",
     "about us" : "About Us",
     "privacy policy": "Privacy Policy",
@@ -85,7 +85,7 @@
     "titleRewards":"Reward redemption Successful",
     "titleContent":"The product will be delivered to the shared address.",
     "Redeemed":"REDEEMED",
-    "Processing":"Proccesing",
+    "Processing":"Processing",
     "GoBackHome":"Go Back To Home",
     "Confirm Details":"Confirm Details"
   }

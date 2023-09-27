@@ -13,6 +13,7 @@ import { RewardslistService } from '../../service/RewardsService/RewardsListServ
 import { CommonAPI } from '../../service/common/Dbservice';
 import { confirmService } from '../../service/RewardsService/ConfirmService';
 import ErorrPopUp from './erorrRedeem';
+import LoadingIndicator from '../../Components/LoadingIndicator';
 
 const windowWidth = Dimensions.get('window').width;
 const cardWidth = (windowWidth - 32) / 2;
@@ -40,16 +41,26 @@ const RewardScreen = (r) => {
     getLoyaltyPoints()
     
   }, []);
-  const confirmValidator=()=>{
-    confirmService(redeemId).then((res) => {
+  const itemModal = (item) => {
+    updateSelectedProduct(item);
+    setItemName(item.title)
+    setItemPoints(item.points)
+    setDetails(item.description)
+    setImageDetails(item.thumbnail_image)
+    setRedeemId(item.id)
+  }
+  const confirmValidator=(item)=>{
+    confirmService(item.id).then((res) => {
       if(res.status === 200){
           console.log('success',res.data)
           setRedeemValue(res.data.error)
           seterorrVisible(true)
       }
-      
+      else{
+        setModalVisible(true)
+      }
     })
-    setModalVisible(false)
+    
   }
   const RewardsHandler = () => {
     RewardslistService().then((res) => {
@@ -60,14 +71,7 @@ const RewardScreen = (r) => {
       setProductsArray(res.data.results)
     })
   }
-  const itemModal = (item) => {
-    updateSelectedProduct(item);
-    setItemName(item.title)
-    setItemPoints(item.points)
-    setDetails(item.description)
-    setImageDetails(item.thumbnail_image)
-    setRedeemId(item.id)
-  }
+ 
   const getLoyaltyPoints=()=>{
     setIsLoading(true)
     CommonAPI.Points().then((res) => {
@@ -104,20 +108,20 @@ const RewardScreen = (r) => {
           <Text style={styles.cardPoints}>{item.points}  {t('points1')}</Text>
           <Text style={styles.cardDetails}>{item.description}</Text>
         </View>
-        <TouchableOpacity onPress={() => {confirmValidator(); itemModal(item) }} style={styles.button}>
+        <TouchableOpacity onPress={() => { itemModal(item) ;confirmValidator(item);}} style={styles.button}>
           <Text style={styles.buttonText}>{t('redeem')}</Text>
         </TouchableOpacity>
       </View>
   <ErorrPopUp isVisible={erorrVisible} onClose={() => seterorrVisible(false)}/>
     </View>
   );
-  if (isLoading) {
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-            <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-        </View>
-    );
-}
+//   if (isLoading) {
+//     return (
+//         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+//             <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+//         </View>
+//     );
+// }
   return (
     <View style={{ flex: 1 ,backgroundColor:'#ffffff'}}>
         <View style={[styles.container, styles.shadowProp]}>
@@ -189,6 +193,7 @@ const RewardScreen = (r) => {
             </Modal>
           </View>
         </View>
+        {isLoading && <LoadingIndicator visible={isLoading} text='Loading'></LoadingIndicator>}
     </View>
   )
 }

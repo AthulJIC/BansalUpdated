@@ -20,6 +20,7 @@ const LoginPage = ({navigation}) => {
   const [backPressCount, setBackPressCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
+  console.log('navIndex====', navIndex)
   // useEffect (() => {
     
   //   AddInputValues();
@@ -77,8 +78,13 @@ function loginHandler(){
       setIsLoading(false)
       navigation.navigate('Home screen')
     }
-
+     
+   
+  }).catch((err) => {
+      console.log(err);
+      setIsLoading(false)
   })
+ 
 }
 
 const handleBackPress = useCallback(() => {
@@ -93,7 +99,7 @@ const handleBackPress = useCallback(() => {
 }, [backPressCount]);
 
 useEffect(() => {
-  if (Platform.OS === 'android' && navIndex === 1) {
+  if (Platform.OS === 'android' || navIndex === 1) {
     const backListener = BackHandler.addEventListener(
       'hardwareBackPress',
       handleBackPress,
@@ -101,7 +107,9 @@ useEffect(() => {
     return () => backListener.remove();
   }       
 }, [handleBackPress]);
-
+useEffect(() => {
+ AddInputValues()
+},[])
 async function AddInputValues() {
   const savedloginId = await AsyncStorage.getItem('loginId');
   const savedPassword = await AsyncStorage.getItem('password');

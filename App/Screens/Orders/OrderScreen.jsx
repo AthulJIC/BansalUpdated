@@ -15,6 +15,7 @@ import { ReferService } from '../../service/Orders/ReferLeadsService';
 import { BookMarkService } from '../../service/Orders/BookMarkService';
 import { BookMarkDeleteService } from '../../service/Orders/BookMarkService';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LoadingIndicator from '../../Components/LoadingIndicator';
 const OrderScreen = ({ navigation }) => {
     const [ordersLists, setOrdersList] = useState([])
     const [searchText, setSearchText] = useState([0]);
@@ -168,13 +169,13 @@ const OrderScreen = ({ navigation }) => {
             referParams: params,
         });
     };
-    if (isLoading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-                <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-            </View>
-        );
-    } 
+    // if (isLoading) {
+    //     return (
+    //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+    //             <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
+    //         </View>
+    //     );
+    // } 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
 
@@ -233,7 +234,7 @@ const OrderScreen = ({ navigation }) => {
                     { useNativeDriver: false }
                 )} />
             <ReferLead isVisible={modalVisible} onClose={closeModal} onRefer={(params) => handleRefer(params)} />
-
+            {isLoading && <LoadingIndicator visible={isLoading} text=''/>}
         </View>
     )
 }

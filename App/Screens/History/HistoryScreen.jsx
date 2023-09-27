@@ -8,6 +8,7 @@ import moment from 'moment';
 import LeadAcceptedIcon from '../../../assets/Icon/LeadAcceptedIcon';
 import LeadProcessingIcon from '../../../assets/Icon/LeadProcessingIcon';
 import LeadRejectedIcon from '../../../assets/Icon/LeadRejectedIcon';
+import LoadingIndicator from '../../Components/LoadingIndicator';
 
 const HistoryScreen = () => {
   const filterTitle = [
@@ -35,19 +36,29 @@ const HistoryScreen = () => {
 
   const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
   const [filteredData, setFilteredData] = useState([]);
+  const [isLoading, setIsLoading ] = useState(false); 
+
 
   useEffect(() => {
     getHistoryList()
   }, []);
   function getHistoryList(){
+    setIsLoading(true);
      HistoryApi.getHistory().then((res) => {
       //  console.log('resssss', res.data)
        if(res.status === 200){
          setFilteredData(res.data.results)
+         setIsLoading(false)
       }
-     })
+     }).catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      setIsLoading(false);
+    });
   }
   const handlePress = (item) => {
+    setIsLoading(true)
     // console.log('itemmmmm===',item)
     setSelectedFilter(item);
     if(item.title === 'All Transactions'){
@@ -58,8 +69,14 @@ const HistoryScreen = () => {
         // console.log('resssss', res.data)
        if(res.status === 200){
          setFilteredData(res.data.results)
+         setIsLoading(false)
       }
+      }).catch((err) => {
+        console.log(err);
       })
+      .finally(() => {
+        setIsLoading(false);
+      });
     }
   };
   const requestData = (itemData) => {
@@ -199,6 +216,7 @@ const HistoryScreen = () => {
           keyExtractor={(item) => item.id.toString()}
       />
       </View>
+      {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'/>}
     </View>
   );
 };

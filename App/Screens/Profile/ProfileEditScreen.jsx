@@ -11,25 +11,9 @@ const ProfileEditScreen = ({navigation}) => {
     const [emailid, setEmailId] = useState();
     const [mobile, setMobile] = useState();
     const [userError, setUserError] = useState(false)
-  
-    useEffect(() => {
-        const getValueFromStorage = async () => {
-          try {
-            //const user = await AsyncStorage.getItem('role'); 
-            const name = await AsyncStorage.getItem('username');
-            const userEmail = await AsyncStorage.getItem('email')
-            const mobileNo = await AsyncStorage.getItem('mobile_no')
-            //console.log('role2344355', role)
-            //setRole(user)
-            setUserName(name)
-            setEmailId(userEmail)
-            setMobile(mobileNo)
-          } catch (error) {
-            console.error('Error fetching data from AsyncStorage:', error);
-          }
-        };
-        getValueFromStorage();
-      }, []);
+    const [edit,setEdit]=useState(false)
+    const [editName,setEditName]=useState('')
+    console.log('name===',editName)
     function saveHandler(){
         Keyboard.dismiss()
         let isValid = true;
@@ -42,14 +26,35 @@ const ProfileEditScreen = ({navigation}) => {
                 name: userName
             }
            ProfileApi.updateUserName(data).then(async(res) => {
-                // console.log('resss', res.data)
+                console.log('resss', res.data)
                 if(res.status === 200){
                     await AsyncStorage.setItem('username', res.data.name);
+                   // setUserName(res.data.name)
                     navigation.navigate('Profile')
+                    setEdit(true)
                 }
            })
         }
     }
+    useEffect(() => {
+        const getValueFromStorage = async () => {
+          try {
+            //const user = await AsyncStorage.getItem('role'); 
+            const name = await AsyncStorage.getItem('username');
+            const userEmail = await AsyncStorage.getItem('email')
+            const mobileNo = await AsyncStorage.getItem('mobile_no')
+             console.log('getValueFromStorage', name)
+            //setRole(user)
+            setUserName(name)
+            setEmailId(userEmail)
+            setMobile(mobileNo)
+          } catch (error) {
+            console.error('Error fetching data from AsyncStorage:', error);
+          }
+        };
+        getValueFromStorage();
+      }, []);
+   
     function onChangeHandler(){
         navigation.navigate('ForgetPassword',{ text : 'Make Changes'})
     }
@@ -60,6 +65,7 @@ const ProfileEditScreen = ({navigation}) => {
                 onChangeText={(value) => setUserName(value)}
                 value={userName}
                 onPressIn={() => setUserError(false)}
+                maxLength={20}
             />
             {
                 userError && (

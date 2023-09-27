@@ -7,7 +7,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 //Screens
 import SplashScreen from '../Screens/SplashScreen/SplashScreen';
 import HeaderComponent from '../Components/Header';
-// import RolesScreen from '../Screens/RolesPage/rolesPages';
 import LoginScreen from '../Screens/login/Login';
 import HomeScreen from '../Screens/Home/Home';
 import OrderScreen from '../Screens/Orders/OrderScreen';
@@ -27,7 +26,6 @@ import HistoryTabIcon from '../../assets/Icon/HistoryTabIcon';
 import HistoryInactiveIcon from '../../assets/Icon/HistoryInactiveIcon';
 import ProfileTabIcon from '../../assets/Icon/ProfileTabIcon';
 import ProfileInactiveIcon from '../../assets/Icon/ProfileInactiveIcon';
-import RolesScreen from '../Screens/RolesPage/rolesPages';
 import ForgetPasswordScreen from '../Screens/forgetpassword/ForgetPasswordScreen';
 import OrderTabIcon from '../../assets/Icon/OrderTabIcon';
 import OrderInactiveIcon from '../../assets/Icon/OrderInactiveIcon';
@@ -90,6 +88,7 @@ function MyTabs() {
     return <HomeScreen />
   }
   return (
+    
     <Tab.Navigator
       screenOptions={({ route }) => ({
       headerShown: false,
@@ -158,7 +157,7 @@ function MyTabs() {
       {
         role === 'Distributor' ? (
         <>
-        <Tab.Screen name="Home" component={HomeScreenTab} options={{
+        <Tab.Screen name="Home" component={HomeScreen} options={{
           tabBarLabel: t('home'),
         }}/>
         <Tab.Screen name="Requests" component={Requests} options={{
@@ -167,14 +166,14 @@ function MyTabs() {
         <Tab.Screen name="DistributorHistory" component={DistributorHistory} options={{
           tabBarLabel: t('history'),
         }}/>
-        <Tab.Screen name="Profile" component={ProfileScreen} 
+        <Tab.Screen name="Profile" component={Profile} 
         options={{
           tabBarLabel: t('profile'),
         }}/>
         </>
         ): (
           <>
-          <Tab.Screen name="Home" component={HomeScreenTab} options={{
+          <Tab.Screen name="Home" component={HomeScreen} options={{
           tabBarLabel: t('home'),
         }}/>
           <Tab.Screen name='Order' component={OrderScreen} options={{
@@ -186,7 +185,7 @@ function MyTabs() {
           <Tab.Screen name='Reward' component={RewardScreen} options={{
           tabBarLabel: t('rewards'),
         }}/>
-          <Tab.Screen name="Profile" component={ProfileScreen} options={{
+          <Tab.Screen name="Profile" component={Profile} options={{
           tabBarLabel: t('profile'),
         }}/>
 
@@ -228,7 +227,6 @@ const NavigationLinks = () => {
   // }
   return (
     <NavigationContainer>
-       
       <Stack.Navigator  
        initialRouteName="SplashScreen"
       

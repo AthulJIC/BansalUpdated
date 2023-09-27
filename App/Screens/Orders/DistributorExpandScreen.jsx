@@ -17,7 +17,10 @@ function DistributorExpandScreen({navigation, route}){
     const handleRefer = (quantity) => {
         navigation.navigate('ConfirmPurchase',{
              selectedItem:selectedItem,
-             quantity:quantity});
+             quantity:quantity,
+             page:'favourites'
+            });
+
        };
     //   console.log("selectedItem",selectedItem)
     return(

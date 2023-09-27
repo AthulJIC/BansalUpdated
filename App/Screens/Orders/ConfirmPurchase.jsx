@@ -33,8 +33,16 @@ function ConfirmPurchase({route,navigation}){
           };
         getValueFromStorage();
       }, []);
-   function successHandler(){
-    ConfirmPurchaseService(ton,item.selectedItem.id).then((res) => {
+   function successHandler(ton,id,distributorId){
+    let Id
+    if (item.page==='favourites')
+    {
+         Id=distributorId
+    }
+    else{
+        Id=id
+    }
+    ConfirmPurchaseService(ton,Id,).then((res) => {
         // console.log('Received data:', res.role);
         navigation.navigate('Success',{
             title : t('title'),
@@ -45,9 +53,10 @@ function ConfirmPurchase({route,navigation}){
             page:'orders',
             ton,
             // roles:res.roles
+      });
+     }) .catch((errr)=>{
+        console.log("errr",errr)
       })
-    })
-  
 }
     const ProductVisible=()=>{
         setModalVisible(true)
@@ -110,7 +119,7 @@ function ConfirmPurchase({route,navigation}){
                 <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:11, fontFamily:'Poppins-Regular',marginTop:5}}>{t('lines')}</Text>
             </View>
             <View style={styles.modalButtonContainer}>
-                <Pressable style={{ width: '90%', backgroundColor: 'rgba(177, 41, 44, 1)', borderRadius: 6, alignItems: 'center', height: 48, radius: 4, padding: 12 }} onPress={successHandler}>
+                <Pressable style={{ width: '90%', backgroundColor: 'rgba(177, 41, 44, 1)', borderRadius: 6, alignItems: 'center', height: 48, radius: 4, padding: 12 }} onPress={() => successHandler(ton,item.selectedItem.id,item.selectedItem.distributor)}>
                     <Text style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24,fontFamily:'Poppins-Regular' }}>
                   {t('confirm')}
                     </Text>
