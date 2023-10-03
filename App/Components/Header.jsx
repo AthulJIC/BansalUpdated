@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View, Image, Animated, Pressable } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Modal from 'react-native-modal';
 import BellIcon from "../../assets/Icon/Bell";
 import LanguageIcon from "../../assets/Icon/LanguageIcon";
@@ -10,65 +10,54 @@ import { useTranslation } from 'react-i18next';
 import i18n from "../Languages/i18";
 import { useAppContext } from "../context/AppContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLanguageContext } from "../context/LanguageContext";
 
 function HeaderComponent() {
   const [modalVisible, setModalVisible] = useState(false)
+  const { language, changeNewLanguage } = useLanguageContext();
   const [notificationMessage, setNotificationMessage] = useState('');
   const [sliderAnim] = useState(new Animated.Value(0));
   const [notificationVisible, setNotificationVisible] = useState(false);
-  const [isEnglishButtonRed, setIsEnglishButtonRed] = useState(false);
-  const [isHindiButtonRed, setIsHindiButtonRed] = useState(false);
-  const [activeButton, setActiveButton] = useState('English');
+  const [activeButton, setActiveButton] = useState('');
   const [newLanguage, setnewLanguage] = useState('')
   const { changeLanguage } = useAppContext();
   const[username, setUsername] = useState('') ;
-  useEffect(() => {
-    const getValueFromStorage = async () => {
-      try {
-        const value = await AsyncStorage.getItem('username'); 
-        // console.log('role2344355', username)
-        if (value !== null) {
-          setUsername(value);
+  const [lastSelectedLanguage, setLastSelectedLanguage] = useState('');
+  
+  useFocusEffect(
+    useCallback(() => {
+      const getValueFromStorage = async () => {
+        try {
+          const value = await AsyncStorage.getItem('username');
+          if (value !== null) {
+            setUsername(value);
+          }
+        } catch (error) {
+          console.error('Error fetching data from AsyncStorage:', error);
         }
-      } catch (error) {
-        console.error('Error fetching data from AsyncStorage:', error);
-      }
-    };
-    getValueFromStorage();
-  }, []);
+      };
+      getValueFromStorage();
+    }, [])
+  );
   const handleButtonPress = (buttonName) => {
     setActiveButton(buttonName);
+    setnewLanguage(buttonName);
   };
-
-  const toggleEnglishButtonColor = () => {
-    setIsEnglishButtonRed(true);
-    setIsHindiButtonRed(false);
-  };
-
-  const toggleHindiButtonColor = () => {
-    setIsHindiButtonRed(true);
-    setIsEnglishButtonRed(false);
-  };
-
-  const englishButtonColor = isEnglishButtonRed ? styles.redButton : styles.blackButton;
-  const hindiButtonColor = isHindiButtonRed ? styles.redButton : styles.blackButton;
 
   const navigation = useNavigation();
   const { t, i18n } = useTranslation();
 
-  const handleLanguageChange = (newLanguage) => {
-    changeLanguage(newLanguage);
-  };
   const englishLanguage = () => {
+    setActiveButton('English')
     setnewLanguage(i18n.language === 'hi' ? 'en' : 'en');
-
   }
   const hindiLanguage = () => {
-    setnewLanguage(i18n.language === 'en' ? 'hi' : 'en')
+    setActiveButton('Hindi')
+    setnewLanguage(i18n.language === 'en' ? 'hi' : 'hi')
   };
   const confirmLanguage = () => {
     i18n.changeLanguage(newLanguage);
-    changeLanguage(newLanguage)
+    changeNewLanguage(newLanguage === 'en' ? 'English' : 'Hindi');
   }
   const handleNotificationClick = () => {
     navigation.navigate('Notification')
@@ -76,19 +65,23 @@ function HeaderComponent() {
     setNotificationVisible(true);
   };
 
-  const handleCloseNotification = () => {
-    setNotificationVisible(false);
-  };
-  
+  function openModal() {
+    setActiveButton(language);
+    setModalVisible(true);
+  }
+
+  function handleClose(){
+     setModalVisible(!modalVisible)
+  }
   return (
     <View>
       <View style={{ flexDirection: 'row', alignItems:'center', margin:10,width:'100%', justifyContent:'flex-start' }}>
-        <View style={{marginLeft:7}}>
+        <View style={{marginLeft:7, width:'50%'}}>
           <Text style={{ fontFamily: 'Poppins-Regular', color: '#848484', fontSize: 13 }}>{t('greeting')}</Text>
           <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#393939', fontSize: 17 }}>{username}</Text>
         </View>
         <View style={{ flexDirection: 'row', marginLeft:'auto'}}>
-          <TouchableOpacity style={styles.iconContainer} onPress={() => setModalVisible(true)}>
+          <TouchableOpacity style={styles.iconContainer} onPress={openModal}>
             <LanguageIcon width={24} height={24} color='#F18C13' />
           </TouchableOpacity >
           <TouchableOpacity onPress={handleNotificationClick} style={styles.iconContainer} >
@@ -96,32 +89,6 @@ function HeaderComponent() {
           </TouchableOpacity>
         </View>
       </View>
-      {/* Modal */}
-      {/* <View style={styles.centeredView}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-        >
-          <View style={styles.centeredView}>
-          
-            <View style={styles.modalView}>
-            <TouchableOpacity
-                style={ { alignItems: 'flex-end', marginLeft: 302 }}
-                onPress={() => setModalVisible(!modalVisible)}>
-                <Icon name="x" size={20} color="#393939" backgroundColor='#ffffff'  />
-            
-            </TouchableOpacity>
-              <TouchableOpacity onPress={toggleEnglishButtonColor} style={[styles.button]} >
-                <Text style={[styles.buttonText,englishButtonColor]}>English</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={toggleHindiButtonColor} style={styles.button} >
-                <Text style={[styles.buttonText,hindiButtonColor]}>Hindi</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      </View> */}
       <Modal
         animationIn="slideInUp"
         animationOut="slideOutDown"
@@ -136,7 +103,7 @@ function HeaderComponent() {
         <View style={styles.centeredView}>
           <TouchableOpacity
             style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 15 }]}
-            onPress={() => setModalVisible(!modalVisible)}>
+            onPress={handleClose}>
             <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
 
           </TouchableOpacity>
@@ -145,7 +112,7 @@ function HeaderComponent() {
               styles.languageButton,
               activeButton === 'English' && styles.activeButton,
             ]}
-            onPress={() => { handleButtonPress('English'); englishLanguage(); }}
+            onPress={englishLanguage}
           >
             <Text style={[styles.languageButtonText, activeButton === 'English' && { color: 'rgba(177, 41, 44, 1)' }]}>English</Text>
           </Pressable>
@@ -154,13 +121,13 @@ function HeaderComponent() {
               styles.languageButton,
               activeButton === 'Hindi' && styles.activeButton,
             ]}
-            onPress={() => { handleButtonPress('Hindi'); hindiLanguage() }}
+            onPress={hindiLanguage}
           >
             <Text style={[styles.languageButtonText, activeButton === 'Hindi' && { color: 'rgba(177, 41, 44, 1)' }]}>Hindi</Text>
           </Pressable>
           <View style={styles.modalButtonContainer}>
-            <Pressable style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
-              <Text onPress={()=>{confirmLanguage();setModalVisible(false)}} style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
+            <Pressable style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} onPress={()=>{confirmLanguage();setModalVisible(false)}}>
+              <Text  style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
                 {t('confirmButton')}
               </Text>
             </Pressable>

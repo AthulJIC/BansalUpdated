@@ -5,12 +5,14 @@ import { useState } from "react";
 import Icon from 'react-native-vector-icons/Feather';
 import ProductPopup from "./ProductPopup";
 import { useTranslation } from 'react-i18next';
+import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
 function DistributorExpandScreen({navigation, route}){
 
     const { selectedItem } = route?.params;
     const [name, setName] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+    useBackButtonHandler(navigation, false);
     
     const { t } = useTranslation();
     const description = t('description')

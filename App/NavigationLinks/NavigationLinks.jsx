@@ -49,6 +49,7 @@ import IdConfirmationScreen from '../Screens/rewards/IdConfirmationScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HistoryScreen from '../Screens/History/HistoryScreen';
 import { useTranslation } from 'react-i18next';
+import { LanguageProvider } from '../context/LanguageContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -81,12 +82,12 @@ function MyTabs() {
   }, []);
   
 
-  function ProfileScreen() {
-    return <Profile />;
-  }
-  function HomeScreenTab(){
-    return <HomeScreen />
-  }
+  // function ProfileScreen() {
+  //   return <Profile />;
+  // }
+  // function HomeScreenTab(){
+  //   return <HomeScreen />
+  // }
   return (
     
     <Tab.Navigator
@@ -198,35 +199,10 @@ function MyTabs() {
 
 const NavigationLinks = () => {
   const { t } = useTranslation();
-  
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
-    const checkAuthentication = async () => {
-      try {
-        const userToken = await AsyncStorage.getItem('isLoggedIn');
-         console.log('access_token:', userToken);
-         if(userToken === "true")
-         setIsLoggedIn(true)
-        else setIsLoggedIn(false)
-        // const authenticated = !!userToken;
-        // console.log('Is user authenticated?', authenticated);
-        // setIsLoggedIn(authenticated);
-      } catch (error) {
-        console.error('Error checking authentication:', error);
-      }
-    };
-  
-    checkAuthentication();
-  }, []);
-  console.log('Rendering component:', isLoggedIn ? 'Login' : 'Home screen');
-
-  // if (isLoggedIn === null) {
-  //   // Loading state or some initial screen
-  //   return null;
-  // }
   return (
     <NavigationContainer>
+      <LanguageProvider>
       <Stack.Navigator  
        initialRouteName="SplashScreen"
       
@@ -236,16 +212,6 @@ const NavigationLinks = () => {
         ...customSlideFromLeft,
       }}>
         
-        {/* {isLoggedIn ? (
-          <Stack.Screen name="Home screen" component={MyTabs} options={{
-            headerShown: false
-          }}/>
-        ) : (
-          <Stack.Screen name="Login" component={LoginScreen} options={{
-            headerShown: false, 
-        }}/>
-        )} */}
-      
          <Stack.Screen name='SplashScreen' component={SplashScreen}
          options={{
           headerShown: false,
@@ -365,6 +331,7 @@ const NavigationLinks = () => {
         <Stack.Screen name='IdConfirmation' component={IdConfirmationScreen} options={{title:''}}/>
      
       </Stack.Navigator> 
+      </LanguageProvider>
     </NavigationContainer>
   )
 };

@@ -4,14 +4,16 @@ import CheckmarkIcon from '../../../assets/Icon/CheckMark';
 import { useAppContext } from '../../context/AppContext';
 import { HomeApi } from '../../service/home/homeservice';
 import moment from 'moment';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
-const Notification = () => {
+const Notification = ({navigation}) => {
      const [data, setData] = useState([]);
      const [isLoading, setIsLoading] = useState(true);
     // const handleButtonPress = () => {
     //     // Navigate to the specified route when the button is pressed
     //     navigation.navigate(label);
     // };
+    useBackButtonHandler(navigation, false);
     useEffect(() => {
         getNotificationHandler();
         setTimeout(() => {

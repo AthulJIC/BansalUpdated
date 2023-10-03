@@ -36,7 +36,7 @@ const PendingRequest = () => {
         HomeApi.getPoints().then((res) => {
             // console.log(res.data);
             if(res.status === 200){
-                console.log('success')
+                //console.log('success')
                 setProgress(res.data.total_points)
             }
         })
@@ -58,29 +58,15 @@ const PendingRequest = () => {
                     <Text style={styles.Text}>{t('pending')}</Text>
                     <Text style={styles.number} >{request}</Text>
                 </View>
-                <View></View>
                 <Image source={require('../../../assets/Images/Mask_group.png')} style={{width:'100%', height:110,position:'absolute',marginLeft:18  }}></Image>
             </View>) :
             (
-                <View style={{flexDirection:'row', marginTop:15}}>
-                    <View >
+                <View style={{flexDirection:'row'}}>
+                    <View style={{marginTop:10}}>
                         <Text style={styles.Text}>{t('bonus')}</Text>
                         <Text style={styles.number} >{progress} {t('points3')}</Text>
                         <Text style={styles.rewardText}>{t('PointsLoyality')}</Text>
                     </View>
-                    {/* <View style={{marginLeft:50}}>
-                        <Svg width={100} height={100}>
-                            <CircularProgress
-                            percentage={percentage}
-                            radius={20}
-                            strokeWidth={10}
-                            backgroundColor="rgba(177, 41, 44, 1)"
-                            fillColor='rgba(177, 41, 44, 1)'
-                            blankColor='rgba(255, 255, 255, 0.6)'
-                            donutColor='white'
-                            />
-                        </Svg>
-                    </View> */}
                     <Image source={require('../../../assets/Images/Mask_group.png')} style={{width:'100%', height:110,position:'absolute',marginLeft:18  }}></Image>
 
                 </View>

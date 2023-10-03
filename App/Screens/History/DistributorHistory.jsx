@@ -6,8 +6,11 @@ import RejectedIcon from '../../../assets/Icon/RejectedIcon';
 import { HistoryApi } from '../../service/history/historyservice';
 import moment from 'moment';
 import LoadingIndicator from '../../Components/LoadingIndicator';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
-const DistributorHistory = () => {
+const DistributorHistory = ({navigation}) => {
   const filterTitle = [
     {
       id: 1,
@@ -30,17 +33,14 @@ const DistributorHistory = () => {
   const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading ] = useState(false); 
+  useBackButtonHandler(navigation, false);
 
-
-  useEffect(() => {
-    // if (selectedFilter.title === 'All Requests') {
-    //   setFilteredData(data); // Show all data for 'All Requests'
-    // } else {
-    //   const filteredItems = data.filter(item => item.status === selectedFilter.title.toLocaleUpperCase());
-    //   setFilteredData(filteredItems);
-    // }
-    getHistoryList()
-  }, []);
+ useFocusEffect(
+    useCallback(() => {
+      setSelectedFilter(filterTitle[0])
+      getHistoryList()
+    }, [])
+  );
   function getHistoryList(){
     setIsLoading(true);
      HistoryApi.getDistributorHistory().then((res) => {
@@ -50,7 +50,7 @@ const DistributorHistory = () => {
          setIsLoading(false)
       }
      }).catch((err) => {
-      console.log(err);
+      //console.log(err);
     })
     .finally(() => {
       setIsLoading(false);
@@ -71,7 +71,7 @@ const DistributorHistory = () => {
          setIsLoading(false)
       }
       }).catch((err) => {
-        console.log(err);
+        //console.log(err);
       })
       .finally(() => {
         setIsLoading(false);

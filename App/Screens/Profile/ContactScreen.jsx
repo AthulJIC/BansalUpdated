@@ -1,9 +1,11 @@
 import { Text, View ,Pressable, StyleSheet} from "react-native";
 import RightArrowIcon from "../../../assets/Icon/RightArrowIcon";
 import { useTranslation } from 'react-i18next';
+import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
-const ContactScreen = () => {
+const ContactScreen = ({navigation}) => {
     const { t } = useTranslation();
+    useBackButtonHandler(navigation, false);
     const contactData=[
         {
             id:1,

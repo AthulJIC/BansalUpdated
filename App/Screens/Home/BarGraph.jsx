@@ -127,7 +127,7 @@ const BarGraph = () => {
                 HomeApi.getMonthlyOrder().then((res) => {
                     // console.log(res.data);
                     if(res.status === 200){
-                        console.log('success')
+                        //console.log('success')
                         setBarValue(res.data.order_counts_by_month[0].count)
                         setBarMonth(res.data.order_counts_by_month[0].month)
                         setTotalOrders(res.data.total_order_count_current_year)
@@ -139,7 +139,7 @@ const BarGraph = () => {
                 HomeApi.getMonthlyPoints().then((res) => {
                     // console.log(res.data);
                     if(res.status === 200){
-                        console.log('success')
+                        //console.log('success')
                         setBarValue(res.data.monthly_points_data[0].total_points)
                         setBarMonth(res.data.monthly_points_data[0].month)
                         setTotalOrders(res.data.total_points_current_year)
@@ -152,7 +152,7 @@ const BarGraph = () => {
             HomeApi.getDistributorMonthlyOrder().then((res) => {
                 // console.log(res.data);
                 if(res.status === 200){
-                    console.log('success')
+                    //console.log('success')
                     setBarValue(res.data.order_counts_by_month[0].count)
                     setBarMonth(res.data.order_counts_by_month[0].month)
                     setTotalOrders(res.data.total_order_count_current_year)
@@ -168,7 +168,7 @@ const BarGraph = () => {
                 HomeApi.getQuarterlyOrder().then((res) => {
                     // console.log(res.data);
                     if(res.status ===200){
-                        console.log('success');
+                        //console.log('success');
                         setBarValue(res.data.order_counts_by_quarter[0].count)
                         setBarQuarter(res.data.order_counts_by_quarter[0].quarter)
                         setTotalOrders(res.data.total_order_count_current_year)
@@ -180,7 +180,7 @@ const BarGraph = () => {
                 HomeApi.getQuarterlyPoints().then((res) => {
                     // console.log(res.data);
                     if(res.status ===200){
-                        console.log('success');
+                        //console.log('success');
                         setBarValue(res.data.quarterly_points_data[0].total_points)
                         setBarQuarter(res.data.quarterly_points_data[0].quarter)
                         setTotalOrders(res.data.total_points_current_year)
@@ -193,7 +193,7 @@ const BarGraph = () => {
             HomeApi.getDistributorQuarterlyOrder().then((res) => {
                 // console.log(res.data);
                 if(res.status ===200){
-                    console.log('success');
+                    //console.log('success');
                     setBarValue(res.data.order_counts_by_quarter[0].count)
                     setBarQuarter(res.data.order_counts_by_quarter[0].quarter)
                     setTotalOrders(res.data.total_order_count_current_year)
@@ -238,7 +238,7 @@ const BarGraph = () => {
     }
     
 
-    console.log('bardata', barWeekData)
+    //console.log('bardata', barWeekData)
     // const cvdata = cvpnodetails.map((item) => ({
     //     label: item.cvno.toString(),
     //     value: item.visitid.toString(),

@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { AddAddressService, deleteAddressService, updateAddressService } from '../../service/RewardsService/addAddressService';
 import { AddressListService } from '../../service/RewardsService/AddressListService';
 import LoadingIndicator from '../../Components/LoadingIndicator';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
 const AddressList = ({navigation,route}) => {
   const data = route?.params.fromProfile;
@@ -39,7 +40,7 @@ const AddressList = ({navigation,route}) => {
   const [townError, setTownError] = useState('');
   const [isLoading,setisLoading]=useState(false)
   const { t } = useTranslation();
-
+  useBackButtonHandler(navigation, false);
   const selectAddress = (addressId) => {
     setSelectedAddress(addressId);
   };

@@ -6,12 +6,15 @@ import { confirmService } from '../../service/RewardsService/ConfirmService';
 import ErorrPopUp from './erorrRedeem';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
+
 const ConfirmPage=({route,navigation})=>{
     const { selectedProduct } = useAppContext();
     const [visible,setVisible]=useState(false)
     const { t } = useTranslation();
     const {addressItem}=route.params
     // console.log("selectedProduct",selectedProduct)
+    useBackButtonHandler(navigation, false);
     const confirmHandler=(id)=>{
       
         // setVisible(true)

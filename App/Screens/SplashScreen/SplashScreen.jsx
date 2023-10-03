@@ -1,10 +1,30 @@
-import { ImageBackground, StatusBar, View, Image, Platform, StyleSheet } from "react-native";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
+import { View,Image,StyleSheet } from "react-native";
 
 function SplashScreen({ navigation }) {
-    setTimeout(() => {
-        navigation.navigate('Login');
-        }, 2000);
+    useFocusEffect(
+        useCallback(() => {
+          const timeoutId = setTimeout(async () => {
+            const updateScreen = await AsyncStorage.getItem('LastScreen');
+            //console.log('screen', updateScreen);
+            if (!updateScreen) {
+              navigation.navigate('Login');
+            } else {
+              if (updateScreen === 'Home') {
+                navigation.navigate('Home screen');
+              } else {
+                navigation.navigate('Login');
+              }
+            }
+          }, 2000);
+      
+          return () => {
+            clearTimeout(timeoutId);
+          };
+        }, [navigation]) 
+      );
     return (  
         <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
             <Image

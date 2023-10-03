@@ -5,8 +5,10 @@ import { useTranslation } from 'react-i18next';
 import {LoginApi}  from '../../service/login/loginservice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ErrorIcon from '../../../assets/Icon/ErrorIcon';
-import { useNavigationState } from '@react-navigation/native';
+import { useFocusEffect, useNavigationState } from '@react-navigation/native';
 import LoadingIndicator from '../../Components/LoadingIndicator';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { handleBackButton } from '../../Components/BackHandlerUtils';
 
 const LoginPage = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -16,15 +18,25 @@ const LoginPage = ({navigation}) => {
   const [isSelected, setSelection] = useState(false);
   const [rememberSelect,setrememberSelect]=useState(false);
   const [checkboxError, setCheckBoxError] = useState(false);
-  const navIndex = useNavigationState(state => state.index);
-  const [backPressCount, setBackPressCount] = useState(0);
+  //const navIndex = useNavigationState(state => state.index);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation();
-  console.log('navIndex====', navIndex)
-  // useEffect (() => {
-    
-  //   AddInputValues();
-  // },[])
+  useEffect(() => {
+    const backAction = async() => {
+      await AsyncStorage.setItem('LastScreen', 'Login')
+      // Exit the app when back button is pressed on the login page
+      BackHandler.exitApp();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
   const LoginAPI=()=>{
     Keyboard.dismiss();
     let isValid= true;
@@ -81,32 +93,32 @@ function loginHandler(){
      
    
   }).catch((err) => {
-      console.log(err);
+      //console.log(err);
       setIsLoading(false)
   })
  
 }
 
-const handleBackPress = useCallback(() => {
-  if (backPressCount === 0) {
-    setBackPressCount(prevCount => prevCount + 1);
-    // setTimeout(() => setBackPressCount(0), 2000);
-    // ToastAndroid.show(AlertMsg.AppExitToast, ToastAndroid.SHORT);
-  } else if (backPressCount === 1) {
-    BackHandler.exitApp();
-  }
-  return true;
-}, [backPressCount]);
+// const handleBackPress = useCallback(() => {
+//   if (backPressCount === 0) {
+//     setBackPressCount(prevCount => prevCount + 1);
+//     // setTimeout(() => setBackPressCount(0), 2000);
+//     // ToastAndroid.show(AlertMsg.AppExitToast, ToastAndroid.SHORT);
+//   } else if (backPressCount === 1) {
+//     BackHandler.exitApp();
+//   }
+//   return true;
+// }, [backPressCount]);
 
-useEffect(() => {
-  if (Platform.OS === 'android' || navIndex === 1) {
-    const backListener = BackHandler.addEventListener(
-      'hardwareBackPress',
-      handleBackPress,
-    );
-    return () => backListener.remove();
-  }       
-}, [handleBackPress]);
+// useEffect(() => {
+//   if (Platform.OS === 'android' || navIndex === 1) {
+//     const backListener = BackHandler.addEventListener(
+//       'hardwareBackPress',
+//       handleBackPress,
+//     );
+//     return () => backListener.remove();
+//   }       
+// }, [handleBackPress]);
 useEffect(() => {
  AddInputValues()
 },[])
@@ -132,6 +144,9 @@ async function AddInputValues() {
 //       </View>
 //   );
 // }
+const togglePasswordVisibility = () => {
+  setShowPassword(!showPassword);
+};
   return (
         <ImageBackground
         source={require('../../../assets/Images/Login.gif')} // Replace with your actual GIF path
@@ -154,7 +169,7 @@ async function AddInputValues() {
           </View>
         )
       }
-     <TextInput
+     {/* <TextInput
         placeholder={t('password')}
         value={password}
         onChangeText={setPassword}
@@ -162,7 +177,24 @@ async function AddInputValues() {
         secureTextEntry
         style={styles.input}
         onPressIn={() => setPasswordError(false)}
+      /> */}
+      <View>
+      <TextInput
+        placeholder={t('password')}
+        value={password}
+        onChangeText={setPassword}
+        placeholderTextColor="white"
+        secureTextEntry={!showPassword}
+        style={styles.input}
+        onPressIn={() => setPasswordError(false)}
       />
+      <TouchableOpacity
+        onPress={togglePasswordVisibility}
+        style={{ position: 'absolute', right: 25, top: 15 }}
+      >
+        <Icon name={showPassword ? 'eye' : 'eye-slash'} size={20} color="gray" />
+      </TouchableOpacity>
+    </View>
       {
         passwordError && (
           <View style={{flexDirection:'row',marginLeft:15}}>

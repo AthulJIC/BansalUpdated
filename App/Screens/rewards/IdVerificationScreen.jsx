@@ -3,6 +3,7 @@ import { Text, View,Pressable,StyleSheet,PermissionsAndroid,TextInput } from "re
 import {launchCamera} from 'react-native-image-picker'
 import LoadingIndicator from "../../Components/LoadingIndicator";
 import { Dropdown } from 'react-native-element-dropdown';
+import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
 function IdVerificationScreen({navigation}){
     const [activeButton, setActiveButton] = useState('Aadhar Card');
@@ -15,7 +16,7 @@ function IdVerificationScreen({navigation}){
   ]);
   const [name, setName] = useState('');
   const [mobileNo, setMobileNo] = useState('');
-
+  useBackButtonHandler(navigation, false);
     const handleButtonPress = (buttonName) => {
       setActiveButton(buttonName);
     };
@@ -38,7 +39,7 @@ function IdVerificationScreen({navigation}){
         }
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("Camera permission given");
+        //console.log("Camera permission given");
           const result = await launchCamera(options,(res) => {
                 // console.log('Response = ', res);
                 if (res.didCancel) {
@@ -64,7 +65,7 @@ function IdVerificationScreen({navigation}){
             navigation.navigate('IdConfirmation')
           }, 2000); 
         } else {
-        console.log("Camera permission denied");
+        //console.log("Camera permission denied");
         }
     } catch (err) {
         console.warn(err);

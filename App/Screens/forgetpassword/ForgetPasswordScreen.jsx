@@ -1,5 +1,21 @@
-import { View,Text, StyleSheet ,Pressable, Linking} from "react-native"
-function ForgetPasswordScreen({route}){
+import { useEffect } from "react";
+import { View,Text, StyleSheet ,Pressable, Linking,BackHandler} from "react-native"
+useEffect
+function ForgetPasswordScreen({route, navigation}){
+  useEffect(() => {
+    const backAction = () => {
+
+        // If not on the home screen, navigate to the home screen
+        navigation.goBack(); // Replace 'Home' with the name of your home screen component
+        return true;
+      }
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [navigation]);
     const text = route.params?.text;
     const makePhoneCall = (phoneNumber) => {
         const url = `tel:${phoneNumber}`;
@@ -18,7 +34,7 @@ function ForgetPasswordScreen({route}){
       };
     return(
         <View style={{flex:1, backgroundColor:'white'}}>
-            <Text style={{fontSize:19,textAlign:'justify',width:'93%',alignSelf:'center',color:'rgba(57, 57, 57, 1)', fontFamily:'Poppins-Regular'}}>Please Connect with the sales team to {text}</Text>
+            <Text style={{fontSize:19,textAlign:'justify',width:'93%',alignSelf:'center',color:'rgba(57, 57, 57, 1)', fontFamily:'Poppins-Regular'}}>Please Connect with the Sales team to {text}</Text>
             <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:16,width:'93%',alignSelf:'center',marginTop:5, fontFamily:'Poppins-Regular'}}>Click to call our sales representative.</Text>
             <View style={styles.modalButtonContainer}>
                 <Pressable style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} onPress={() => makePhoneCall('6380388906')}>

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ConfirmPurchaseService } from "../../service/Orders/ConfirmPurchaseService";
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
 function ConfirmPurchase({route,navigation}){
     const item = route?.params;
@@ -14,7 +15,8 @@ function ConfirmPurchase({route,navigation}){
     const [quantity, setQuantity] = useState(0)
     const[username, setUsername] = useState('') ;
     const { t } = useTranslation();
-    console.log("item=======", item)
+    useBackButtonHandler(navigation, false);
+    //console.log("item=======", item)
    const uiParams={
     Product:t('quantity'),
     Name:t('unique'),
@@ -55,7 +57,7 @@ function ConfirmPurchase({route,navigation}){
             // roles:res.roles
       });
      }) .catch((errr)=>{
-        console.log("errr",errr)
+        //console.log("errr",errr)
       })
 }
     const ProductVisible=()=>{

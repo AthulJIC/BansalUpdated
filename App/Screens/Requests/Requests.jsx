@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, FlatList, Pressable, Animated, Alert, ActivityIndicator,KeyboardAvoidingView } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, FlatList, Pressable, Animated, Alert, ActivityIndicator,KeyboardAvoidingView , ToastAndroid} from 'react-native'
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Feather';
 import CustomAlert from '../../Components/alertBox';
@@ -7,9 +7,10 @@ import { RequestApi } from '../../service/request/requestservice';
 import EmptyComponent from '../../Components/EmptyComponent';
 import { useTranslation } from 'react-i18next';
 import LoadingIndicator from '../../Components/LoadingIndicator';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
 
-const Requests = () => {
+const Requests = ({navigation}) => {
     const [searchText, setSearchText] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState('')
@@ -22,8 +23,9 @@ const Requests = () => {
     const [distributorItem, setDistributorItem] = useState({})
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
-    console.log('distributor', distributorItem)
+    //console.log('distributor', distributorItem)
     const searchPlaceholder = t('search');
+    useBackButtonHandler(navigation, false);
     const showAlert = (item) => {
 
         setRequestId(item)
@@ -53,32 +55,47 @@ const Requests = () => {
                 setIsLoading(false)
             }
         }).catch((err) => {
-            console.log(err);
+           // console.log(err);
             setIsLoading(false)
         })
     }
     const handleReject = (status) => {
         // console.log('requestId',requestId)
         // console.log('status', status)
+        setIsLoading(true);
         if(status === 'Reject'){
             RequestApi.rejectRequest(requestId).then((res) => {
                 // console.log('resss', res.data)
                 if(res.status === 200){
+                    setIsLoading(false)
                     hideAlert();
                     setModalVisible(false)
+                    ToastAndroid.show('Request is rejected successfully', ToastAndroid.SHORT);
                     getRequestList();
                 }
-            })
+            }).catch((err) => {
+                //console.log(err);
+              })
+              .finally(() => {
+                setIsLoading(false);
+              });
         }
         else{
             RequestApi.acceptRequest(requestId).then((res) => {
                 // console.log('resss', res.data)
                 if(res.status === 200){
+                    setIsLoading(false)
                     hideAlert();
                     setModalVisible(false)
+                    ToastAndroid.show('Request is accepted successfully', ToastAndroid.SHORT)
                     getRequestList();
                 }
-            })
+            }).catch((err) => {
+               // console.log(err);
+              })
+              .finally(() => {
+                setIsLoading(false);
+              });
         }
         // Handle reject button press
        // hideAlert();
@@ -105,7 +122,7 @@ const Requests = () => {
     const scrollY = new Animated.Value(0);
     const requestData = ( itemData ) => {   
         const objectLength = Object.keys(itemData.item).length;
-        console.log('item====', objectLength);
+        //console.log('item====', objectLength);
         if (objectLength === 0 || !itemData.item) {
             return (
               <View>

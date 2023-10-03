@@ -42,7 +42,7 @@ const orderPoints=(user)=>{
           setPoints(res.data.points)
       }
       else{
-        console.log('erorr',error)
+       // console.log('erorr',error)
       }
   })
 }

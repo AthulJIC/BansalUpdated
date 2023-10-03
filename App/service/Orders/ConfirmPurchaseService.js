@@ -7,7 +7,7 @@ export const ConfirmPurchaseService = async (quantity,id) => {
         distributor:id,
         transaction_id:'transaction_id',
     };
-    console.log("requestBody",requestBody)
+   //console.log("requestBody",requestBody)
     try {
         const response = await AxiosInstance.post('/purchase/order-create/',requestBody);
         // console.log("ConfirmPurchaseService response",response)

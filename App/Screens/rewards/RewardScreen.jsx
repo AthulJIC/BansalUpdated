@@ -14,6 +14,7 @@ import { CommonAPI } from '../../service/common/Dbservice';
 import { confirmService } from '../../service/RewardsService/ConfirmService';
 import ErorrPopUp from './erorrRedeem';
 import LoadingIndicator from '../../Components/LoadingIndicator';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
 const windowWidth = Dimensions.get('window').width;
 const cardWidth = (windowWidth - 32) / 2;
@@ -35,7 +36,7 @@ const RewardScreen = (r) => {
 
   const navigation = useNavigation();
   const { t } = useTranslation();
- 
+  useBackButtonHandler(navigation, false);
   useEffect(() => {
     RewardsHandler()
     getLoyaltyPoints()
@@ -50,16 +51,16 @@ const RewardScreen = (r) => {
     setRedeemId(item.id)
   }
   const confirmValidator=(item)=>{
-    confirmService(item.id).then((res) => {
-      if(res.status === 200){
-          console.log('success',res.data)
-          setRedeemValue(res.data.error)
-          seterorrVisible(true)
-      }
-      else{
+    // confirmService(item.id).then((res) => {
+    //   if(res.status === 200){
+    //       console.log('success',res.data)
+    //       setRedeemValue(res.data.error)
+    //       seterorrVisible(true)
+    //   }
+    //   else{
         setModalVisible(true)
-      }
-    })
+    //   }
+    // })
     
   }
   const RewardsHandler = () => {
@@ -76,7 +77,7 @@ const RewardScreen = (r) => {
     setIsLoading(true)
     CommonAPI.Points().then((res) => {
         if(res.status === 200){
-            console.log('success')
+           // console.log('success')
             setTotalPoints(res.data.total_points)
             setIsLoading(false)
         }
@@ -95,7 +96,6 @@ const RewardScreen = (r) => {
   const renderCard = ({ item }) => (
  
     <View style={{width:'50%'}}>
-        {console.log("item",item)}
       <View style={styles.card}>
         <View style={styles.imageView}>
           <Image

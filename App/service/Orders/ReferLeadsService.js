@@ -10,7 +10,7 @@ export const ReferService = async (mobileNumber,name,referral,quantity,location)
         order:quantity,
         referral_id:"referral_id"
     };
-    console.log("requestBody",requestBody)
+    //console.log("requestBody",requestBody)
     try {
         const response = await AxiosInstance.post('/purchase/leads/',requestBody);
         return response.data;

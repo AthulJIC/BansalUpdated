@@ -1,26 +1,37 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppContext } from "../../context/AppContext";
 import { useTranslation } from 'react-i18next';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLanguageContext } from '../../context/LanguageContext';
+import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
-const LanguageScreen = () => {
-    const [activeButton, setActiveButton] = useState('English');
+const LanguageScreen = ({navigation}) => {
+  const { language, changeNewLanguage } = useLanguageContext();
+  const [activeButton, setActiveButton] = useState(language); 
     const [newLanguage, setnewLanguage] = useState('')
+   
+
     const { changeLanguage } = useAppContext();
     const { t, i18n } = useTranslation();
+    useBackButtonHandler(navigation, false);
     const englishLanguage = () => {
-      setnewLanguage(i18n.language === 'hi' ? 'en' : 'en');
+      setActiveButton('English');
+      setnewLanguage(i18n.language === 'hi' ? 'en' : 'en' );
       i18n.changeLanguage(i18n.language === 'hi' ? 'en' : 'en');
-      changeLanguage(i18n.language === 'hi' ? 'en' : 'en')
+      changeLanguage(i18n.language === 'hi' ? 'en' : 'en');
+      changeNewLanguage('English');
     }
     const hindiLanguage = () => {
-      // setnewLanguage(i18n.language === 'en' ? 'hi' : 'en')
-      i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'en');
-      changeLanguage(i18n.language === 'en' ? 'hi' : 'en')
+      setActiveButton('Hindi');
+      setnewLanguage(i18n.language === 'en' ? 'hi' : 'hi')
+      i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'hi');
+      changeLanguage(i18n.language === 'en' ? 'hi':'hi' );
+      changeNewLanguage('Hindi');
     };
-  const handleButtonPress = (buttonName) => {
-    setActiveButton(buttonName);
-  };
+    useEffect(() => {
+      setActiveButton(language);
+    },[language])
     return(
         <View style={{flex:1, backgroundColor:'white'}}>
             <Pressable
@@ -28,7 +39,7 @@ const LanguageScreen = () => {
                 styles.button,
                 activeButton === 'English' && styles.activeButton,
                 ]}
-                onPress={() => {handleButtonPress('English');;englishLanguage()}}
+                onPress={englishLanguage}
             >
                <Text style={[styles.buttonText, activeButton === 'English' && {color:'rgba(177, 41, 44, 1)'}]}>English</Text>
             </Pressable>
@@ -37,7 +48,7 @@ const LanguageScreen = () => {
                 styles.button,
                 activeButton === 'Hindi' && styles.activeButton,
                 ]}
-                onPress={() => {handleButtonPress('Hindi');hindiLanguage()}}
+                onPress={hindiLanguage}
             >
                <Text style={[styles.buttonText, activeButton === 'Hindi' && {color:'rgba(177, 41, 44, 1)'}]}>Hindi</Text>
             </Pressable>

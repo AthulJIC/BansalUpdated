@@ -7,16 +7,18 @@ import { useRoute } from '@react-navigation/native';
 import { ReferService } from '../../service/Orders/ReferLeadsService';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
-function ConfirmDetailsScreen(){
+function ConfirmDetailsScreen({navigation}){
     const route = useRoute();
     const {  referParams } = route.params;
     const [modalVisible, setModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [details, setDetails] = useState(referParams);
     const[username, setUsername] = useState('') ;
-    console.log("username",username)
+    //console.log("username",username)
     const { t } = useTranslation(); 
+    useBackButtonHandler(navigation, false);
  const updateDetails = (newDetails) => {
    setDetails(newDetails)
   };

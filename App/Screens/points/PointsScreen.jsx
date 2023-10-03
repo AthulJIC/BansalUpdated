@@ -1,8 +1,10 @@
 import {View,Text, StyleSheet} from 'react-native'
 import LoyalityBonus from './LoyalityBonus';
 import Transactions from './Transactions';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
-function PointsScreen(){
+function PointsScreen({navigation}){
+    useBackButtonHandler(navigation, false);
     return(
         <View style={styles.container}>
             <LoyalityBonus/>

@@ -1,12 +1,14 @@
 import { View ,Text, Pressable, StyleSheet} from "react-native";
 import { useAppContext } from '../../context/AppContext';
 import { useState } from "react";
+import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
 function IdConfirmationScreen({navigation}){
     const [itemName,setItemName]=useState('')
     const [points,setItemPoints]=useState('')
     const [details,setDetails]=useState('')
     const { userDetails, updateUserDetails, updateSelectedProduct } = useAppContext();
+    useBackButtonHandler(navigation, false);
     const itemModal=(item)=>{
         updateSelectedProduct(item);
       setItemName(item.name)

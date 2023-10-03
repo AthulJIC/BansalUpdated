@@ -6,6 +6,7 @@ import BookmarkIcon from "../../../assets/Icon/BookmarkIcon";
 import { BookMarkListService } from "../../service/Orders/BookMarkService";
 import { BookMarkDeleteService } from "../../service/Orders/BookMarkService";
 import LoadingIndicator from "../../Components/LoadingIndicator";
+import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
 function FavouritesScreen({navigation}){
     const [modalVisible, setModalVisible] = useState(false);
@@ -13,7 +14,8 @@ function FavouritesScreen({navigation}){
     const [bookMarkListValue,setBookMarkListValue]=useState([])
     const [Bookmarked,setIsBookMarked]=useState(false)
     const [selectedIndices, setSelectedIndices] = useState([]);
-    const [isLoading,setisLoading]=useState(false)
+    const [isLoading,setisLoading]=useState(false);
+    useBackButtonHandler(navigation, false);
     const initialSelectedState = bookMarkListValue.reduce((acc, item, index) => {
         acc[item.id] = index < 2;
         return acc;
@@ -43,7 +45,7 @@ function FavouritesScreen({navigation}){
         navigation.navigate('ConfirmDetail');
       };
       const bookmarkHandler = (itemId,id,isSelected) => {
-     console.log("isSelected",isSelected)
+     //console.log("isSelected",isSelected)
         // setSelectedItems((prevState) => ({
         //   ...prevState,
         //   [itemId]: !prevState[itemId],
@@ -54,7 +56,7 @@ function FavouritesScreen({navigation}){
         //   const itemIndex = updatedIndices.indexOf(itemId);
         //   updatedIndices.splice(itemIndex, 1);
           BookMarkDeleteService(id).then((res) => {
-            console.log('Book Mark Delete Response:', res);
+            //console.log('Book Mark Delete Response:', res);
             BookMarkList()
         })
         } else {
@@ -67,7 +69,7 @@ function FavouritesScreen({navigation}){
         // const isBookmarked = selectedItems[item.user_id]
          isSelected = selectedIndices.includes(index);
         const isLoadingBookmark = isLoading && isSelected;
-        console.log("isSelected",isSelected)
+        //console.log("isSelected",isSelected)
         
         return(
 

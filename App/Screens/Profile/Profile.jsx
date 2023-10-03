@@ -8,12 +8,13 @@ import RightArrowIcon from '../../../assets/Icon/RightArrowIcon'
 import BookMarkActiveIcon from '../../../assets/Icon/BookmarkActiveIcon'
 import HistoryIcon from '../../../assets/Icon/HistoryIcon'
 import AddressIcon from '../../../assets/Icon/AddressIcon'
-import { useNavigation } from '@react-navigation/native'
-import { useEffect, useState } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useCallback, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ProfileApi } from '../../service/profile/profileservice'
 import { useTranslation } from 'react-i18next';
-import LoadingIndicator from '../../Components/LoadingIndicator'
+import LoadingIndicator from '../../Components/LoadingIndicator';
+import useBackButtonHandler from '../../Components/BackHandlerUtils'
 
 const Profile =({route})=>{
     const [role, setRole] = useState();
@@ -24,7 +25,8 @@ const Profile =({route})=>{
     const { t } = useTranslation();
     let navigation = useNavigation();
     let updatedName = route.params?.onEdit
-    console.log("name",updatedName)
+    //console.log("name",updatedName)
+    useBackButtonHandler(navigation, false);
     let profileData=[
        
         {
@@ -91,27 +93,45 @@ const Profile =({route})=>{
            
         ]
     }
-    useEffect(() => {
-        const getValueFromStorage = async () => {
-        setIsLoading(true)
-          try {
-            const user = await AsyncStorage.getItem('role'); 
-            const userName = await AsyncStorage.getItem('username');
-            console.log('username',userName)
-            const userEmail = await AsyncStorage.getItem('email')
-            const refresh = await AsyncStorage.getItem('refresh_token')
-            setRole(user)
-            setName(userName)
-            setEmailId(userEmail)
-            setRefreshToken(refresh)
-            setIsLoading(false)
-          } catch (error) {
-            console.error('Error fetching data from AsyncStorage:', error);
-            setIsLoading(false)
-          }
-        };
-        getValueFromStorage();
-      }, []);
+    useFocusEffect(
+        useCallback(() => {
+          const getValueFromStorage = async () => {
+            setIsLoading(true);
+            try {
+              const user = await AsyncStorage.getItem('role');
+              const userName = await AsyncStorage.getItem('username');
+              //console.log('username', userName);
+              const userEmail = await AsyncStorage.getItem('email');
+              const refresh = await AsyncStorage.getItem('refresh_token');
+      
+              // Use a local variable to hold the new state values
+              let newRole = user;
+              let newUserName = userName;
+              let newUserEmail = userEmail;
+              let newRefreshToken = refresh;
+      
+              // Check if the values have changed before setting state
+              if (
+                newRole !== role ||
+                newUserName !== name ||
+                newUserEmail !== emailid ||
+                newRefreshToken !== refreshToken
+              ) {
+                setRole(newRole);
+                setName(newUserName);
+                setEmailId(newUserEmail);
+                setRefreshToken(newRefreshToken);
+              }
+      
+              setIsLoading(false);
+            } catch (error) {
+              console.error('Error fetching data from AsyncStorage:', error);
+              setIsLoading(false);
+            }
+          };
+          getValueFromStorage();
+        }, [role, name, emailid, refreshToken])
+      );
 function loginHandler(){
     Alert.alert(
         'Logout',
@@ -136,7 +156,7 @@ function loginHandler(){
                         navigation.navigate('Login')
                     }
                 }).catch((err) => {
-                    console.log(err);
+                    //console.log(err);
                 })
                   .finally(() => {
                     setIsLoading(false);

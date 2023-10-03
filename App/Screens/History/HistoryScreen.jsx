@@ -9,8 +9,9 @@ import LeadAcceptedIcon from '../../../assets/Icon/LeadAcceptedIcon';
 import LeadProcessingIcon from '../../../assets/Icon/LeadProcessingIcon';
 import LeadRejectedIcon from '../../../assets/Icon/LeadRejectedIcon';
 import LoadingIndicator from '../../Components/LoadingIndicator';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
-const HistoryScreen = () => {
+const HistoryScreen = ({navigation}) => {
   const filterTitle = [
     {
       id: 1,
@@ -37,7 +38,7 @@ const HistoryScreen = () => {
   const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading ] = useState(false); 
-
+  useBackButtonHandler(navigation, false);
 
   useEffect(() => {
     getHistoryList()
@@ -51,7 +52,7 @@ const HistoryScreen = () => {
          setIsLoading(false)
       }
      }).catch((err) => {
-      console.log(err);
+      //console.log(err);
     })
     .finally(() => {
       setIsLoading(false);
@@ -72,7 +73,7 @@ const HistoryScreen = () => {
          setIsLoading(false)
       }
       }).catch((err) => {
-        console.log(err);
+        //console.log(err);
       })
       .finally(() => {
         setIsLoading(false);

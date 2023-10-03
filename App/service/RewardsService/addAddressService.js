@@ -12,12 +12,12 @@ export const AddAddressService = async (params) => {
         is_default:params.isDefault,
         state:params.states,
     };
-     console.log("requestBody",requestBody)
+    // console.log("requestBody",requestBody)
     try {
         const response = await AxiosInstance.post('/account/address/',requestBody);
         return response.data;
     } catch (error) {
-        console.error('ReferService Error:', error);
+      //  console.error('ReferService Error:', error);
         throw error;
     }
 };
@@ -33,13 +33,13 @@ export const updateAddressService = async (params,id) => {
         is_default:params.isDefault,
         state:params.states,
     };
-     console.log("requestBody update",requestBody,id)
+    // console.log("requestBody update",requestBody,id)
     try {
         const response = await AxiosInstance.put('/account/address-update/'+id+'/',requestBody);
-        console.log("response",response)
+       // console.log("response",response)
         return response.data;
     } catch (error) {
-        console.error('ReferService Error:', error);
+       // console.error('ReferService Error:', error);
         throw error;
     }
 };
@@ -49,7 +49,7 @@ export const deleteAddressService = async (id) => {
         const response = await AxiosInstance.delete('/account/address-delete/'+id+'/');
         return response.data;
     } catch (error) {
-        console.error('ReferService Error:', error);
+       // console.error('ReferService Error:', error);
         throw error;
     }
 };

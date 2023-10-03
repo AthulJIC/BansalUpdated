@@ -40,7 +40,7 @@ const Transactions=()=>{
       TransactionAPI().then((res) => {
         // console.log("res",res)
           if(res.status === 200){
-              console.log('success',)
+             // console.log('success',)
               setFilteredData(res.data.results)
             
               setIsLoading(false)
@@ -50,7 +50,7 @@ const Transactions=()=>{
   }
 
     const requestData = (itemData) => {
-      console.log("itemData",itemData.item.quantity)
+      //console.log("itemData",itemData.item.quantity)
         const createdAt = moment(itemData.item.created_at);
         const Date = createdAt.format('DD MMM YYYY');
         const Time = createdAt.format('h:mm A');

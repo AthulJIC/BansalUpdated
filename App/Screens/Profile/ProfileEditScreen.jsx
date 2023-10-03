@@ -1,20 +1,23 @@
-import {View,TextInput,StyleSheet, Text, Pressable, Keyboard} from 'react-native';
+import {View,TextInput,StyleSheet, Text, Pressable, Keyboard, ToastAndroid} from 'react-native';
 import { useEffect, useState } from 'react';
 import PenIcon from '../../../assets/Icon/PenIcon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ProfileApi } from '../../service/profile/profileservice';
 import ErrorIcon from '../../../assets/Icon/ErrorIcon';
+import LoadingIndicator from '../../Components/LoadingIndicator';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
 const ProfileEditScreen = ({navigation}) => {
    // const user = route.params?.name;
     const [userName, setUserName] = useState();
     const [emailid, setEmailId] = useState();
     const [mobile, setMobile] = useState();
-    const [userError, setUserError] = useState(false)
-    const [edit,setEdit]=useState(false)
-    const [editName,setEditName]=useState('')
-    console.log('name===',editName)
+    const [userError, setUserError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    //console.log('name===',userName)
+    useBackButtonHandler(navigation, false);
     function saveHandler(){
+        setIsLoading(true)
         Keyboard.dismiss()
         let isValid = true;
         if(userName === ''){
@@ -26,14 +29,20 @@ const ProfileEditScreen = ({navigation}) => {
                 name: userName
             }
            ProfileApi.updateUserName(data).then(async(res) => {
-                console.log('resss', res.data)
+                //console.log('resss', res.data)
                 if(res.status === 200){
                     await AsyncStorage.setItem('username', res.data.name);
                    // setUserName(res.data.name)
-                    navigation.navigate('Profile')
-                    setEdit(true)
+                   setIsLoading(false)
+                   ToastAndroid.show('Name updated successfully', ToastAndroid.SHORT);
+                   navigation.navigate('Profile')
                 }
-           })
+           }).catch((err) => {
+            //console.log(err);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
         }
     }
     useEffect(() => {
@@ -43,7 +52,7 @@ const ProfileEditScreen = ({navigation}) => {
             const name = await AsyncStorage.getItem('username');
             const userEmail = await AsyncStorage.getItem('email')
             const mobileNo = await AsyncStorage.getItem('mobile_no')
-             console.log('getValueFromStorage', name)
+            // console.log('getValueFromStorage', name)
             //setRole(user)
             setUserName(name)
             setEmailId(userEmail)
@@ -96,6 +105,7 @@ const ProfileEditScreen = ({navigation}) => {
                     </Text>
                 </Pressable>
             </View>
+            {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'/>}
         </View>
     )
 }

@@ -16,6 +16,8 @@ import { BookMarkService } from '../../service/Orders/BookMarkService';
 import { BookMarkDeleteService } from '../../service/Orders/BookMarkService';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingIndicator from '../../Components/LoadingIndicator';
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
+
 const OrderScreen = ({ navigation }) => {
     const [ordersLists, setOrdersList] = useState([])
     const [searchText, setSearchText] = useState([0]);
@@ -27,7 +29,8 @@ const OrderScreen = ({ navigation }) => {
     const [isLoading,setisLoading]=useState(false)
     const[username, setUsername] = useState('') ;
     const { t } = useTranslation();
-
+    useBackButtonHandler(navigation, false);
+    
     let orderData = locationList.map((dataPoint) => ({
         value: dataPoint.district_name,
         label: dataPoint.district_name,
@@ -91,7 +94,7 @@ const OrderScreen = ({ navigation }) => {
         navigation.navigate('DistributorExpand', { selectedItem: item })
     }
     function bookmarkHandler(itemId, userId) {
-        console.log("itemId", itemId, userId)
+       // console.log("itemId", itemId, userId)
         if (bookmarkedItems.includes(itemId)) {
             setBookmarkedItems(bookmarkedItems.filter(id => id !== itemId));
             BookMarkDeleteService(bookMarkId).then((res) => {
@@ -118,7 +121,7 @@ const OrderScreen = ({ navigation }) => {
     }
 
     const requestData = ({ item }) => {
-        console.log(item)
+        //console.log(item)
         const isBookmarked = bookmarkedItems.includes(item.id);
         const firstTwoChars = item.name ? item.name.slice(0, 2) : '';
         return (
