@@ -17,7 +17,8 @@ import { BookMarkDeleteService } from '../../service/Orders/BookMarkService';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingIndicator from '../../Components/LoadingIndicator';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
-import Icons  from 'react-native-vector-icons/MaterialIcons';
+import Icons from 'react-native-vector-icons/MaterialIcons';
+import SearchIcon from '../../../assets/Icon/SearchIcon';
 
 const OrderScreen = ({ navigation }) => {
     const [ordersLists, setOrdersList] = useState([])
@@ -27,13 +28,13 @@ const OrderScreen = ({ navigation }) => {
     const [bookmarkedItems, setBookmarkedItems] = useState([]);
     const [locationList, setLocationList] = useState([])
     const [bookMarkId, setBookmarkId] = useState('')
-    const [isLoading,setisLoading]=useState(false)
-    const[username, setUsername] = useState('') ;
+    const [isLoading, setisLoading] = useState(false)
+    const [username, setUsername] = useState('');
     const [isOpen, setIsOpen] = useState(false);
-    const [is_BookMarked,setis_BookMarked]=useState(false)
+    const [is_BookMarked, setis_BookMarked] = useState(false)
+    const [disable,setDisable]=useState(false)
     const { t } = useTranslation();
     useBackButtonHandler(navigation, false);
-
     let orderData = locationList.map((dataPoint) => ({
         value: dataPoint.district_name,
         label: dataPoint.district_name,
@@ -43,27 +44,16 @@ const OrderScreen = ({ navigation }) => {
         setQuantity(item.requestId)
     }
     useEffect(() => {
-        ordersList()
         locationHistory()
+        ordersList()
     }, []);
     useEffect(() => {
         ordersList()
-    }, [value, searchText,is_BookMarked])
-    const ordersList = () => {
-        if(searchText.length=='')
-        {
-            setisLoading(true)
-        }
-        OrderService(value, searchText).then((res) => {
-            // if(res.status === 200){
-            //     console.log('success',)
-            //     setOrdersList(res.data.results)
-            // }
-            // console.log('Received data:', res.data.results);
-            setOrdersList(res.data.results)
-            setisLoading(false)
-        })
-    }
+    }, [value, searchText])
+    useEffect(() => {
+        ordersList()
+    }, [is_BookMarked])
+
     const locationHistory = () => {
         LocationService().then((res) => {
 
@@ -77,20 +67,38 @@ const OrderScreen = ({ navigation }) => {
             }
         })
     }
+    const ordersList = () => {
+        if (searchText.length == '') {
+            setisLoading(true)
+        }
+        OrderService(value, searchText).then((res) => {
+            // if(res.status === 200){
+            //     console.log('success',)
+            //     setOrdersList(res.data.results)
+            // }
+            // console.log('Received data:', res.data.results);
+            if (value != null) {
+                setOrdersList(res.data.results)
+                setisLoading(false)
+            }
+
+        })
+    }
+
     useEffect(() => {
         const getValueFromStorage = async () => {
-          try {
-            const value = await AsyncStorage.getItem('role'); 
-            // console.log('role2344355', username)
-            if (value !== null) {
-              setUsername(value);
+            try {
+                const value = await AsyncStorage.getItem('role');
+                // console.log('role2344355', username)
+                if (value !== null) {
+                    setUsername(value);
+                }
+            } catch (error) {
+                console.error('Error fetching data from AsyncStorage:', error);
             }
-          } catch (error) {
-            console.error('Error fetching data from AsyncStorage:', error);
-          }
         };
         getValueFromStorage();
-      }, []);
+    }, []);
     const HEADER_HEIGHT = 200;
     const scrollY = new Animated.Value(0);
     function chooseHandler(item) {
@@ -126,13 +134,13 @@ const OrderScreen = ({ navigation }) => {
 
         if (item.is_bookmarked.is_bookmarked) {
             console.log("delete")
-            setBookmarkedItems(bookmarkedItems.filter(id => id !== item.id));
-            updateItemIsBookmarked(item.id, false)
+            // setBookmarkedItems(bookmarkedItems.filter(id => id !== item.id));
+            // updateItemIsBookmarked(item.id, false)
 
             const id = bookMarkId || item.id;
             console.log('bookmarId====', id)
             BookMarkApi.deleteBookMark(id).then((res) => {
-                if(res.status === 200){
+                if (res.status === 200) {
                     console.log('success',)
                     setOrdersList(res.data.results)
                 }
@@ -142,25 +150,27 @@ const OrderScreen = ({ navigation }) => {
 
         } else {
             console.log('add')
+            setDisable(true)
             setBookmarkedItems([...bookmarkedItems, item.id]);
             updateItemIsBookmarked(item.id, true)
             //console.log(itemId,bookMarkId)
-            const data ={
+            const data = {
                 distributor: item.id,
             }
             console.log('data====', data)
             BookMarkApi.addBookMark(data).then((res) => {
-                if(res.status === 200){
+                if (res.status === 200) {
                     console.log('success',)
                     setOrdersList(res.data.results)
                 }
+                setDisable(false)
                 //console.log('Received data Book Mark:', res);
                 setBookmarkId(res.id)
                 // setOrdersList(res.data.results)
             })
         }
     }
-    
+
     // function bookmarkHandler(item) {
     //     // Check if the item is already bookmarked
     //     console.log('item====', item)
@@ -194,7 +204,7 @@ const OrderScreen = ({ navigation }) => {
     //       });
     //     }
     //   }
-const updateItemIsBookmarked = (itemId, isBookmarked) => {
+    const updateItemIsBookmarked = (itemId, isBookmarked) => {
         // Create a copy of the ordersList array
         const updatedOrdersList = [...ordersLists];
         // Find the index of the item in the array
@@ -209,27 +219,30 @@ const updateItemIsBookmarked = (itemId, isBookmarked) => {
     const requestData = ({ item }) => {
         //console.log('item===',item)
         //const isBookmarked = bookmarkedItems.includes(item.id);
-       // const isBookmarked = item?.is_bookmarked?.is_bookmarked;
-        if(item?.is_bookmarked?.is_bookmarked==true)
-        {
+        // const isBookmarked = item?.is_bookmarked?.is_bookmarked;
+        if (item?.is_bookmarked?.is_bookmarked == true) {
             setBookmarkId(item?.is_bookmarked?.bookmark_id)
         }
-        const isBookmarked = bookmarkedItems.includes(item.id)||item.is_bookmarked ;
+        const isBookmarked = bookmarkedItems.includes(item.id) || item.is_bookmarked;
         //console.log('type====', isBookmarked?.is_bookmarked)
         setis_BookMarked(isBookmarked)
         const firstTwoChars = item.name ? item.name.slice(0, 2) : '';
         return (
-            item === 'noData' ? (
-                <View style={{flex:1,alignSelf:'center',marginTop:100}}>
-                     <Image
-                style={styles.tinyLogo}
-                source={require('../../../assets/Images/orderEmpty.png')}
-                resizeMode='cover'
-            />
-            <Text style={{fontFamily:'Poppins-Large',fontWeight:'500',fontSize:16,textAlign:'center',
-            margin:22,lineHeight:24,color:'#393939'}}>No Results Found</Text>
-            <Text  style={{fontFamily:'Poppins-Regular',fontWeight:'500',fontSize:16,textAlign:'center',
-              lineHeight:20,color:'#848484'}}>Please try again with a different keyword.</Text>
+            item === 'noData' || value === null ? (
+                <View style={{ flex: 1, alignSelf: 'center', marginTop: 100 }}>
+                    <Image
+                        style={styles.tinyLogo}
+                        source={require('../../../assets/Images/orderEmpty.png')}
+                        resizeMode='cover'
+                    />
+                    <Text style={{
+                        fontFamily: 'Poppins-Large', fontWeight: '500', fontSize: 16, textAlign: 'center',
+                        margin: 22, lineHeight: 24, color: '#393939'
+                    }}>No Results Found</Text>
+                    <Text style={{
+                        fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, textAlign: 'center',
+                        lineHeight: 20, color: '#848484'
+                    }}>Please try again with a different keyword.</Text>
                 </View>
 
             ) : (
@@ -238,10 +251,10 @@ const updateItemIsBookmarked = (itemId, isBookmarked) => {
                         <Text style={{ textAlign: 'center', color: 'rgba(57, 57, 57, 1)', fontSize: 27, fontFamily: 'Poppins-Medium', }}>{firstTwoChars.toUpperCase()}</Text>
                     </View>
 
-                    <View style={{ width: '67%', height: 100}}>
+                    <View style={{ width: '67%', height: 100 }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
-                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: 'rgba(177, 41, 44, 1)',marginTop:0 }}> {item.user_id}</Text>
-                            <Pressable style={{marginLeft:'auto'}} onPress={() => bookmarkHandler(item)}>
+                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: 'rgba(177, 41, 44, 1)', marginTop: 0 }}> {item.user_id}</Text>
+                            <Pressable disabled={disable} style={{ marginLeft: 'auto' }} onPress={() => bookmarkHandler(item)}>
                                 {!isBookmarked || !item?.is_bookmarked?.is_bookmarked ?
                                     (<BookmarkIcon height={16} width={16} color='#393939' />) :
                                     <BookMarkActiveIcon height={16} width={16} color='rgba(127, 176, 105, 1)' />
@@ -296,21 +309,21 @@ const updateItemIsBookmarked = (itemId, isBookmarked) => {
                                     setValue(item.value);
                                     setIsOpen(false);
                                 }}
-                                itemTextStyle = {{color:'black',fontSize:12,fontFamily:'Poppins-Regular'}}
+                                itemTextStyle={{ color: 'black', fontSize: 12, fontFamily: 'Poppins-Regular' }}
                                 containerStyle={styles.dropdownContainer}
                                 renderRightIcon={() => (
-                                    <Icons name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={27} color="rgba(57, 57, 57, 0.9)" style={{marginRight:77,bottom:2}}/>
+                                    <Icons name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={27} color="rgba(57, 57, 57, 0.9)" style={{ marginRight: 77, bottom: 2 }} />
                                 )}
                                 onFocus={() => setIsOpen(true)}
-                                onBlur={() => setIsOpen(false)} 
+                                onBlur={() => setIsOpen(false)}
                             />
-                            {username!='Contractor' ?
-                            <View style={{marginLeft:'auto', right:20, width:'30%'}}>
-                            <Pressable style={{ backgroundColor: 'rgba(43, 89, 195, 1)', height: 37, width: '100%', borderRadius: 4, justifyContent:'center',alignItems:'center'}}
-                                onPress={() => setModalVisible(true)}>
-                                <Text style={{ color: 'white', fontSize: 12, fontFamily: 'Poppins-Regular', padding:7 }}>Refer Leads</Text>
-                            </Pressable>
-                            </View>:''}
+                            {username != 'Contractor' ?
+                                <View style={{ marginLeft: 'auto', right: 20, width: '30%' }}>
+                                    <Pressable style={{ backgroundColor: 'rgba(43, 89, 195, 1)', height: 37, width: '100%', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}
+                                        onPress={() => setModalVisible(true)}>
+                                        <Text style={{ color: 'white', fontSize: 12, fontFamily: 'Poppins-Regular', padding: 7 }}>Refer Leads</Text>
+                                    </Pressable>
+                                </View> : ''}
                         </View>
                         <View style={styles.container}>
                             <TextInput
@@ -320,9 +333,14 @@ const updateItemIsBookmarked = (itemId, isBookmarked) => {
                                 onChangeText={text => setSearchText(text)}
                                 value={searchText}
                             />
-                            <TouchableOpacity>
-                                <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" />
-                            </TouchableOpacity>
+                           {searchText=== '' ?
+                            <SearchIcon/> :
+                            <Pressable onPress={()=>setSearchText('')}>
+                                 <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+                            </Pressable>
+                           }
+                                {/* <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" /> */}
+                               
                         </View>
                     </View>
                 }
@@ -331,7 +349,7 @@ const updateItemIsBookmarked = (itemId, isBookmarked) => {
                     { useNativeDriver: false }
                 )} />
             <ReferLead isVisible={modalVisible} onClose={closeModal} onRefer={(params) => handleRefer(params)} />
-            {isLoading && <LoadingIndicator visible={isLoading} text=''/>}
+            {isLoading && <LoadingIndicator visible={isLoading} text='' />}
         </View>
     )
 }
@@ -367,7 +385,7 @@ const styles = StyleSheet.create({
         marginRight: 8,
         color: '#848484',
         alignItems: 'flex-start',
-        width:'90%',
+        width: '90%',
     },
     inputContainer: {
         height: 45,
@@ -463,7 +481,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginLeft: 10,
         marginHorizontal: 20,
-        alignSelf:'center'
+        alignSelf: 'center'
     },
     dropdown: {
         // margin: 10,
@@ -487,7 +505,7 @@ const styles = StyleSheet.create({
     inputSearchStyle: {
         height: 40,
         fontSize: 13,
-        color:"#000000"
+        color: "#000000"
     },
     dropdownContainer: {
         marginLeft: 15,

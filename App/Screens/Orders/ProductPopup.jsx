@@ -18,24 +18,65 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
   const [name, setName] = useState();
   const [editQuantity, setEditQuantity] = useState(quantity);
   const [quantityError, setQuantityError] = useState(false);
+  const [erorrText,setErorrText] =useState('')
   const { t } = useTranslation();
 
   const handleRef = () => {
     console.log('type====', typeof editQuantity, typeof name)
    
-    if (
-      (onEdit && (parseFloat(editQuantity) < 1 || parseFloat(editQuantity) > 300)) ||
-      (!onEdit && (parseFloat(name) < 1 || parseFloat(name) > 300))
-    ) {
+    // if (
+    //   (onEdit && (parseFloat(editQuantity) < 1 || parseFloat(editQuantity) > 300)) ||
+    //   (!onEdit && (parseFloat(name) < 1 || parseFloat(name) > 300))
+    // ) {
+    //   setQuantityError(true);
+    //   return;
+    // }
+  
+    // const eQuantity = parseFloat(editQuantity) || 0; 
+    // const nQuantity = parseFloat(name) || 0; 
+  
+    // const updatedQuantity = onEdit ? eQuantity.toString() : nQuantity.toString();
+
+    
+    // if (onRefer) {
+    //   onRefer(updatedQuantity);
+    // }
+    
+    // if (onUpdateQuantity) {
+    //   onUpdateQuantity(updatedQuantity);
+    // }
+
+    // onClose();
+    if ((onEdit && !editQuantity) || (!onEdit && !name)) {
+      setQuantityError(true);
+      setErorrText('Please, enter valid quantity')
+      return;
+    }
+
+    const updatedQuantity = onEdit ? editQuantity : name;
+    const inputValue = "000"; // Replace with your actual input value
+
+    const isOnlyZeros = /^0+$/.test(name);
+    // const hasPattern = /000|00000/.test(name);
+    const hasSpecialCharacters = /[,.]/.test(name);
+    
+    if (isOnlyZeros) {
+      setErorrText("Input contains only zeros.");
       setQuantityError(true);
       return;
     }
-  
-    const eQuantity = parseFloat(editQuantity) || 0; // Parse editQuantity as float, default to 0 if not valid
-    const nQuantity = parseFloat(name) || 0; // Parse name as float, default to 0 if not valid
-  
-    const updatedQuantity = onEdit ? eQuantity.toString() : nQuantity.toString();
-
+    
+    // if (hasPattern) {
+    //   setErorrText("Input contains the specified pattern.");
+    //   setQuantityError(true);
+    //   return;
+    // }
+    
+    if (hasSpecialCharacters) {
+      setErorrText("Input contains special characters (, or .).");
+      setQuantityError(true);
+      return;
+    }
     
     if (onRefer) {
       onRefer(updatedQuantity);
@@ -90,14 +131,14 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
             {
               quantityError && (
                 <View style={{ flexDirection: 'row',marginTop:8 }}>
-                  <Text style={{ color: 'red', marginLeft: 5 }}>Please, enter valid quantity</Text>
+                  <Text style={{ color: 'red', marginLeft: 5 }}>{erorrText}</Text>
                 </View>
               )
             }
             <View style={styles.modalButtonContainer}>
               <Pressable style={styles.referButton} onPress={handleRef}>
                 <Text style={styles.referButtonText}>
-                  {t('purchase')}
+                  {t('purchase')} 
                 </Text>
               </Pressable>
             </View>
