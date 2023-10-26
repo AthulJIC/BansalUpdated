@@ -12,6 +12,7 @@ const PendingRequest = () => {
     const handleButtonPress = () => {
         navigation.navigate(label);
     };
+    console.log('poinst', request, progress)
     useEffect(() => {
         const getValueFromStorage = async () => {
             try {
@@ -28,14 +29,19 @@ const PendingRequest = () => {
     function getLoyaltyPoints(){
         HomeApi.getPoints().then((res) => {
             if(res.status === 200){
-                setProgress(res.data.total_points)
+                if(res.data.total_points !== null || res.data.total_points !== undefined)
+                setProgress(res.data.total_points);
+                else setProgress(0);
             }
         })
     }
     function getPendingRequest(){
         HomeApi.getRequest().then((res) => {
             if(res.status === 200){
-               setRequest(res.data.count)
+              // setRequest(res.data.count)
+               if(res.data.count !== null || res.data.count !== undefined)
+               setRequest(res.data.count);
+               else setRequest(0);
             }
         })
     }
@@ -83,20 +89,20 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         textAlign: 'left',
         fontFamily: 'Poppins-Medium',
-        fontSize: 16,
+        fontSize: 19,
     },
     number: {
         color: '#FFFFFF',
         textAlign: 'left',
         fontFamily: 'Poppins-Medium',
-        fontSize: 23,
+        fontSize: 20,
+        marginTop:5
     },
     rewardText: {
         color: '#FFFFFF',
         textAlign: 'left',
         fontFamily: 'Poppins-Regular',
         fontSize: 11,
-        marginTop:10
     }
 });
 

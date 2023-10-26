@@ -33,6 +33,11 @@ const HistoryScreen = ({navigation}) => {
       title: 'Rejected',
       value: 'Rejected'
     },
+    {
+      id : 5,
+      title:'Referral',
+      value: 'Referral'
+    }
   ];
 
   const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
@@ -151,13 +156,13 @@ const HistoryScreen = ({navigation}) => {
         )}
         <View style={{flexDirection:'column'}}>
           <View style={{flexDirection:'row', flexWrap: 'nowrap',  marginLeft: 25, alignItems: 'center'}}>
-                <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: 'black', width: itemData.item.lead !== null ? '0' : '27%',fontSize:14,fontFamily:'Poppins-Medium'}}>{itemData.item.name}</Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: 'black', width: itemData.item.lead !== null ? '0' : '25%',fontSize:14,fontFamily:'Poppins-Medium'}}>{itemData.item.name}</Text>
                 {
                     itemData.item.lead === null && 
                     (
                         <View style={{flexDirection:'row'}}>
                             <Text style={{  fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)',marginTop:5}}>{'\u2B24'}</Text>
-                            <Text style={{color: 'black', fontSize: 12, fontFamily: 'Poppins-Regular', marginLeft: 5}}>{displayText}</Text>
+                            <Text style={{color: 'black', fontSize: 12, fontFamily: 'Poppins-Regular'}}>{displayText}</Text>
                         </View>
                     )
                 }            

@@ -57,6 +57,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalName(text) : setName(text)}
                 value={onEdit ? localName : name}
+                maxLength={15}
               />
               <TextInput
                 style={styles.inputContainer}
@@ -65,6 +66,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalMobile(text) : setMobileNo(text)}
                 value={onEdit ? localMobile : mobileNo}
+                maxLength={10}
               />
               <TextInput
                 style={styles.inputContainer}

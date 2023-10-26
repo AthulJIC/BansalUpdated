@@ -69,6 +69,7 @@ const AddressList = ({navigation,route}) => {
     setLandMark("")
     setTown('')
     setArea("")
+    setEditPress(false)
 
   }
   const params={
@@ -178,24 +179,33 @@ const AddressList = ({navigation,route}) => {
 
     }
     if (isValid) {
-      // {editPress ?
-      //   updateAddressService(params,userId).then((res) => {
-      //      setVisible(false)
-      //   })
-      //   :
-      // //   AddAddressService(params).then((res) => {
-      // //     setVisible(false)
-      // //  })}
-      // RewardsApi.addAddress(data).then((res) => {
-
-      // })
-      // }
       addressHandler();
     }
 }
 function addressHandler(){
+  console.log('editPress', editPress)
    if(editPress){
-      
+    const data = {
+      mobile: mobileNo,
+      name:name,
+      address_1:location,
+      address_2:area,
+      land_mark:landMark,
+      pincode:pinCode,
+      city:Value,
+      is_default:rememberSelect,
+      state:value?.label
+   }
+   console.log('data====',data)
+   RewardsApi.updateAddress(data, userId).then((res) => {
+    console.log('success',res.status);
+         if(res.status === 200){
+          setVisible(false);
+          setisLoading(false)
+         }
+     }).catch((err) => {
+      setisLoading(false);
+   })
    }
    else{
      const data = {
@@ -223,9 +233,20 @@ function addressHandler(){
 }
 
 const deleteHandler=()=>{
-  deleteAddressService(userId).then((res) => {
-    setVisible(false)
- })}
+  if (isLoading) {
+    return;
+  }
+  setisLoading(true)
+  RewardsApi.deleteAddress(userId).then((res) => {
+    console.log(res.status)
+    if(res.status === 204){
+      setVisible(false)
+      setisLoading(false)
+    }
+ }).catch((err) => {
+  setisLoading(false);
+ })
+}
 
   const onEditPress = (item) => {
     setName(item.name)

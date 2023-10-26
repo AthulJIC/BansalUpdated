@@ -276,7 +276,7 @@ const updateItemIsBookmarked = (itemId, isBookmarked) => {
                 keyExtractor={(item) => item.user_id}
                 ListHeaderComponent={
                     <View>
-                        <View style={{ flexDirection: 'row', marginTop: 5, justifyContent: 'space-between' }}>
+                        <View style={{ flexDirection: 'row', marginTop: 5 }}>
                             <Dropdown
                                 style={styles.dropdown}
                                 placeholderStyle={styles.placeholderStyle}
@@ -305,10 +305,10 @@ const updateItemIsBookmarked = (itemId, isBookmarked) => {
                                 onBlur={() => setIsOpen(false)} 
                             />
                             {username!='Contractor' ?
-                            <View>
-                            <Pressable style={{ backgroundColor: 'rgba(43, 89, 195, 1)', height: 37, width: '30%', borderRadius: 5, alignItems: 'center', justifyContent: 'center', marginRight: 15, marginTop: 7 }}
+                            <View style={{marginLeft:'auto', right:20, width:'30%'}}>
+                            <Pressable style={{ backgroundColor: 'rgba(43, 89, 195, 1)', height: 37, width: '100%', borderRadius: 4, justifyContent:'center',alignItems:'center'}}
                                 onPress={() => setModalVisible(true)}>
-                                <Text style={{ color: 'white', fontSize: 13, fontFamily: 'Poppins-Regular' }}>Refer Leads</Text>
+                                <Text style={{ color: 'white', fontSize: 12, fontFamily: 'Poppins-Regular', padding:7 }}>Refer Leads</Text>
                             </Pressable>
                             </View>:''}
                         </View>

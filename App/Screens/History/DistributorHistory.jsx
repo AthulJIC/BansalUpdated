@@ -161,8 +161,8 @@ const DistributorHistory = ({navigation}) => {
     else getDistributorHistory(selectedFilter?.title)
   }
   const requestData = (itemData) => {
-    if (itemData.item && itemData.item.created_at) {
-      const dateTime = moment(itemData.item.created_at);
+    if (itemData.item && itemData.item.updated_at) {
+      const dateTime = moment(itemData.item.updated_at);
       const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
       const time = dateTime.format('hh:mm A').toLocaleString('en-US');
   
