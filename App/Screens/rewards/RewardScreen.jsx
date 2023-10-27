@@ -14,6 +14,7 @@ import LoadingIndicator from '../../Components/LoadingIndicator';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
 import { confirmService } from '../../service/RewardsService/ConfirmService';
 import { RewardsApi } from '../../service/rewards/rewardservice';
+import { Alert } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -29,9 +30,10 @@ const RewardScreen = (r) => {
   const [erorrVisible,seterorrVisible]=useState(false)
   const { userDetails, updateUserDetails, updateSelectedProduct, UserPoints } = useAppContext();
   const [isLoading,setIsLoading]=useState(false)
-
+  const [redeemValue,setRedeemValue]=useState('')
   const navigation = useNavigation();
   const { t } = useTranslation();
+  console.log(totalPoints,"hhhhhh")
   useBackButtonHandler(navigation, false);
   useEffect(() => {
     RewardsHandler()
@@ -47,7 +49,14 @@ const RewardScreen = (r) => {
     setRedeemId(item.id)
   }
   const confirmValidator=(item)=>{
-    console.log('item====',item)
+     if( totalPoints < item.points )
+     {
+     return (Alert.alert('Alert!', 'Not Enough Points !!', [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]));
+      
+     }
+    console.log('item====',item.points)
     // confirmService(item.id).then((res) => {
     //   if(res.status === 200){
     //       console.log('success',res.data)
@@ -58,14 +67,16 @@ const RewardScreen = (r) => {
     //     setModalVisible(true)
     //   }
     // })
-    RewardsApi.getRedeemtion(item?.id).then((res) => {
+    RewardsApi.purchaseRewards(item?.id).then((res) => {
       if(res.status === 200){
-          console.log('success',res.data)
+          console.log('success redeem',res)
+           
           setRedeemValue(res.data.error)
-          seterorrVisible(true)
+          setModalVisible(true)
+         
       }
       else{
-        setModalVisible(true)
+        seterorrVisible(true)
       }
     })
     
@@ -91,13 +102,16 @@ const RewardScreen = (r) => {
 }
 
   const redirect = () => {
+  
       const updatedUserDetails = {
       ...userDetails,
       redeemedProducts: [...(userDetails?.redeemedProducts || []), itemName],
     };
+    console.log('updatedUserDetails',updatedUserDetails)
     updateUserDetails(updatedUserDetails);
     navigation.navigate('IdVerification')
     setModalVisible(false)
+   
   }
   const renderCard = ({ item }) => (
  
@@ -111,7 +125,7 @@ const RewardScreen = (r) => {
         </View>
         <View style={{ alignItems: 'flex-start' }}>
           <Text style={styles.cardName}>{item.title}</Text>
-          <Text style={styles.cardPoints}>{item.points}  {t('points1')}</Text>
+          <Text style={styles.cardPoints}> {item.points}  {t('points1')}</Text>
           <Text style={styles.cardDetails}>{item.description}</Text>
         </View>
         <TouchableOpacity onPress={() => { itemModal(item) ;confirmValidator(item);}} style={styles.button}>

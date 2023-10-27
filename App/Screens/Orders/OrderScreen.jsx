@@ -19,6 +19,7 @@ import LoadingIndicator from '../../Components/LoadingIndicator';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import SearchIcon from '../../../assets/Icon/SearchIcon';
+import { useAppContext } from '../../context/AppContext';
 
 const OrderScreen = ({ navigation }) => {
     const [ordersLists, setOrdersList] = useState([])
@@ -32,8 +33,13 @@ const OrderScreen = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [is_BookMarked, setis_BookMarked] = useState(false)
-    const [disable,setDisable]=useState(false)
+    const [disable, setDisable] = useState(false)
     const { t } = useTranslation();
+    //  console.log("bookMarkId",bookMarkId)
+    const {
+        isBookmarkDeleted,
+      } = useAppContext(); 
+      console.log('Is Bookmark Deleted:', isBookmarkDeleted)
     useBackButtonHandler(navigation, false);
     let orderData = locationList.map((dataPoint) => ({
         value: dataPoint.district_name,
@@ -52,7 +58,7 @@ const OrderScreen = ({ navigation }) => {
     }, [value, searchText])
     useEffect(() => {
         ordersList()
-    }, [is_BookMarked])
+    }, [is_BookMarked,isBookmarkDeleted])
 
     const locationHistory = () => {
         LocationService().then((res) => {
@@ -130,26 +136,31 @@ const OrderScreen = ({ navigation }) => {
     //     }
     // }
     function bookmarkHandler(item) {
-        //console.log("itemId", bookMarkId,itemId,bookmark)
-
+        // console.log("itemId",item.is_bookmarked.bookmark_id)
+           
         if (item.is_bookmarked.is_bookmarked) {
             console.log("delete")
             // setBookmarkedItems(bookmarkedItems.filter(id => id !== item.id));
             // updateItemIsBookmarked(item.id, false)
 
-            const id = bookMarkId || item.id;
-            console.log('bookmarId====', id)
+            const id = item.is_bookmarked.bookmark_id ;
+            // console.log('bookmarId====', id)
+            setis_BookMarked(true)
             BookMarkApi.deleteBookMark(id).then((res) => {
                 if (res.status === 200) {
+
                     console.log('success',)
                     setOrdersList(res.data.results)
+                   
                 }
+                setis_BookMarked(false)
                 // console.log('Book Mark Delete Response:', res);
                 // setOrdersList(res.data.results)
             })
 
         } else {
             console.log('add')
+            setis_BookMarked(true)
             setDisable(true)
             setBookmarkedItems([...bookmarkedItems, item.id]);
             updateItemIsBookmarked(item.id, true)
@@ -157,12 +168,14 @@ const OrderScreen = ({ navigation }) => {
             const data = {
                 distributor: item.id,
             }
-            console.log('data====', data)
+            // console.log('data====', data)
             BookMarkApi.addBookMark(data).then((res) => {
                 if (res.status === 200) {
-                    console.log('success',)
+                    // console.log('success',)
                     setOrdersList(res.data.results)
+                   
                 }
+                setis_BookMarked(false)
                 setDisable(false)
                 //console.log('Received data Book Mark:', res);
                 setBookmarkId(res.id)
@@ -217,15 +230,16 @@ const OrderScreen = ({ navigation }) => {
         }
     };
     const requestData = ({ item }) => {
-        //console.log('item===',item)
+        // console.log('item===',item)
         //const isBookmarked = bookmarkedItems.includes(item.id);
-        // const isBookmarked = item?.is_bookmarked?.is_bookmarked;
+         const isBookmarkedTrue = item?.is_bookmarked?.is_bookmarked;
+         console.log('isBookmarkedTrue',isBookmarkedTrue)
         if (item?.is_bookmarked?.is_bookmarked == true) {
-            setBookmarkId(item?.is_bookmarked?.bookmark_id)
+            setBookmarkId(isBookmarkedTrue)
         }
         const isBookmarked = bookmarkedItems.includes(item.id) || item.is_bookmarked;
         //console.log('type====', isBookmarked?.is_bookmarked)
-        setis_BookMarked(isBookmarked)
+        // setis_BookMarked(item.is_bookmarked)
         const firstTwoChars = item.name ? item.name.slice(0, 2) : '';
         return (
             item === 'noData' || value === null ? (
@@ -255,7 +269,7 @@ const OrderScreen = ({ navigation }) => {
                         <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                             <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: 'rgba(177, 41, 44, 1)', marginTop: 0 }}> {item.user_id}</Text>
                             <Pressable disabled={disable} style={{ marginLeft: 'auto' }} onPress={() => bookmarkHandler(item)}>
-                                {!isBookmarked || !item?.is_bookmarked?.is_bookmarked ?
+                                { !item?.is_bookmarked?.is_bookmarked ?
                                     (<BookmarkIcon height={16} width={16} color='#393939' />) :
                                     <BookMarkActiveIcon height={16} width={16} color='rgba(127, 176, 105, 1)' />
                                 }
@@ -333,14 +347,14 @@ const OrderScreen = ({ navigation }) => {
                                 onChangeText={text => setSearchText(text)}
                                 value={searchText}
                             />
-                           {searchText=== '' ?
-                            <SearchIcon/> :
-                            <Pressable onPress={()=>setSearchText('')}>
-                                 <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
-                            </Pressable>
-                           }
-                                {/* <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" /> */}
-                               
+                            {searchText === '' ?
+                                <SearchIcon /> :
+                                <Pressable onPress={() => setSearchText('')}>
+                                    <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+                                </Pressable>
+                            }
+                            {/* <Icon name="search" size={23} color="rgba(57, 57, 57, 1)" /> */}
+
                         </View>
                     </View>
                 }

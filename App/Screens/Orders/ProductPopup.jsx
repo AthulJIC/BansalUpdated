@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TouchableOpacity,
@@ -13,13 +13,28 @@ import {
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
 import { useTranslation } from 'react-i18next';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQuantity }) {
   const [name, setName] = useState();
   const [editQuantity, setEditQuantity] = useState(quantity);
   const [quantityError, setQuantityError] = useState(false);
   const [erorrText,setErorrText] =useState('')
+  const [role, setRole] = useState('')
+  console.log('role',role)
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const getValueFromStorage = async () => {
+      try {
+        const user = await AsyncStorage.getItem('role'); 
+        setRole(user)
+      } catch (error) {
+        //console.error('Error fetching data from AsyncStorage:', error);
+      }
+    };
+    getValueFromStorage()
+  }, []);
 
   const handleRef = () => {
     console.log('type====', typeof editQuantity, typeof name)
@@ -47,6 +62,24 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
     // }
 
     // onClose();
+    if(editQuantity>300 || name>300 && role==='Contractor')
+    {
+      setQuantityError(true)
+      setErorrText('Maximum Limit exceeded. Your Limit is upto 300 in a single order')
+      return
+    }
+    if(editQuantity>500 || name>500 && role==='Engineer')
+    {
+      setQuantityError(true)
+      setErorrText('Maximum Limit exceeded. Your Limit is upto 300 in a single order')
+      return
+    }
+    if(editQuantity>500 || name>500 && role==='Architect')
+    {
+      setQuantityError(true)
+      setErorrText('Maximum Limit exceeded. Your Limit is upto 300 in a single order')
+      return
+    }
     if ((onEdit && !editQuantity) || (!onEdit && !name)) {
       setQuantityError(true);
       setErorrText('Please, enter valid quantity')
@@ -57,7 +90,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
     const inputValue = "000"; // Replace with your actual input value
 
     const isOnlyZeros = /^0+$/.test(name);
-    // const hasPattern = /000|00000/.test(name);
+    const hasPattern = /000|00000/.test(name);
     const hasSpecialCharacters = /[,.]/.test(name);
     
     if (isOnlyZeros) {

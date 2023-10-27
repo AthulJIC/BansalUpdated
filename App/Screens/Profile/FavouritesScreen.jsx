@@ -7,6 +7,7 @@ import { BookMarkApi, BookMarkListService } from "../../service/Orders/BookMarkS
 import { BookMarkDeleteService } from "../../service/Orders/BookMarkService";
 import LoadingIndicator from "../../Components/LoadingIndicator";
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
+import { useAppContext } from "../../context/AppContext";
 
 function FavouritesScreen({navigation}){
     const [modalVisible, setModalVisible] = useState(false);
@@ -14,6 +15,7 @@ function FavouritesScreen({navigation}){
     const [selectedIndices, setSelectedIndices] = useState([]);
     const [isLoading,setisLoading]=useState(false);
     const [IsSelected,setIsSelected]=useState(false)
+    const { markBookmarkDeleted } = useAppContext();
     // console.log("bookMarkListValue",bookMarkListValue)
     useBackButtonHandler(navigation, false);
       let isSelected
@@ -47,7 +49,7 @@ function FavouritesScreen({navigation}){
         navigation.navigate('ConfirmDetail');
       };
       const bookmarkHandler = (itemId,id,isSelected) => {
-        console.log('item===', itemId,id,isSelected)
+        // console.log('item===', itemId,id,isSelected)
         const updatedIndices = [...selectedIndices];
         if (!isSelected) {
           BookMarkApi.deleteBookMark(id).then((res) => {
@@ -55,10 +57,12 @@ function FavouritesScreen({navigation}){
             const newList = [...bookMarkListValue];
             newList.splice(itemId,1);
             setBookMarkListValue(newList);
+            markBookmarkDeleted(true);
         })
         } else {
           updatedIndices.push(itemId);
         }
+        markBookmarkDeleted(false)
         setSelectedIndices(updatedIndices);
       };
     const requestData = (item,index ) => {
