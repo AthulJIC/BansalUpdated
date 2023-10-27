@@ -2,7 +2,7 @@ import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react
 import SuccessIcon from "../../../assets/Icon/SuccessIcon";
 import { Pressable } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import { OrderPointsService } from "../../service/Orders/successPoints";
+import { OrderPointsService,OrderPointsServiceRedeem } from "../../service/Orders/successPoints";
 import { useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
@@ -32,13 +32,23 @@ useEffect(() => {
 }, [addressItem]);
 
 const orderPoints=(user)=>{
-  
-  OrderPointsService(user,ton).then((res) => {
+  if(page==='orders')
+  {
+    OrderPointsService(user,ton).then((res) => {
 
       if(res.status === 200){
           setPoints(res.data.points)
       }
   })
+  }
+  else{
+    OrderPointsServiceRedeem(user).then((res) => {
+
+      if(res.status === 200){
+          setPoints(res.data.points)
+      }
+  })
+  }
 }
   return(
     <ImageBackground source={require('../../../assets/Images/Success_bg.png')} style={{width:'98%', height:200,alignSelf:'center',backgroundColor:'white',flex:1}}>

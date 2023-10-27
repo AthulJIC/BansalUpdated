@@ -153,7 +153,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
               <TextInput
                 style={styles.inputContainer}
                 keyboardType="decimal-pad"
-                maxLength={10}
+                maxLength={3}
                 placeholder={t('Qinput')}
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setEditQuantity(text) : setName(text)}

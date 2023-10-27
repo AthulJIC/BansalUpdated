@@ -7,10 +7,10 @@ export const ConfirmPurchaseService = async (quantity,id) => {
         distributor:id,
         transaction_id:'transaction_id',
     };
-   //console.log("requestBody",requestBody)
+   console.log("ConfirmPurchaseService requestBody",requestBody)
     try {
         const response = await AxiosInstance.post('/purchase/order-create/',requestBody);
-        // console.log("ConfirmPurchaseService response",response)
+         console.log("ConfirmPurchaseService response",response)
         return response.data;
     } catch (error) {
         console.error('ReferService Error:', error);
