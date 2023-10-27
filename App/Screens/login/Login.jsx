@@ -124,7 +124,7 @@ async function loginHandler(){
       }
       console.log('data', data)
       LoginApi.userLogin(data).then(async(res) => {
-       
+       console.log('res', res.data);
         if(res.status === 200){
           await AsyncStorage.setItem('access_token', res.data.access);
           await AsyncStorage.setItem('refresh_token', res.data.refresh);

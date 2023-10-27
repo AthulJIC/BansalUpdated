@@ -46,6 +46,8 @@ const AddressList = ({navigation,route}) => {
   const [value, setValue] = useState('');
   const { t } = useTranslation();
   const[stateList, setStateList]= useState([]);
+  const [selectedStateName, setSelectedStateName] = useState('');
+  const [stateId, setStateId ] = useState();
   useBackButtonHandler(navigation, false);
   const selectAddress = (addressId) => {
     setSelectedAddress(addressId);
@@ -54,10 +56,19 @@ const AddressList = ({navigation,route}) => {
     value: item.id,
     label: item.state_name,
 }));
+function findStateNameById(stateId) {
+  const state = stateList.find(item => item.id === stateId);
+  return state ? state.state_name : '';
+}
   useEffect(() => {
     addressList();
     getStateList();
-}, [isVisible]);
+    if (stateId) {
+      const selectedStateName = findStateNameById(stateId);
+      console.log('StateName====', selectedStateName);
+      setValue(selectedStateName);
+    }
+}, [isVisible, stateId]);
 
   const onAddAddress=()=>{
     setName('')
@@ -65,7 +76,9 @@ const AddressList = ({navigation,route}) => {
     setLocation("")
     setPinCode("")
     setTown("")
-    setStates("")
+    //setSelectedStateName('');
+    setValue('')
+    setStateId('')
     setLandMark("")
     setTown('')
     setArea("")
@@ -110,8 +123,14 @@ const AddressList = ({navigation,route}) => {
   const addressList=()=>{
     setisLoading(true)
     AddressListService().then((res)=>{
-      
+      console.log('list', res.data.results)
       setaddresses(res.data.results)
+      const selectedAddress = addresses.find(address => address.state_name === stateId);
+      console.log('id===', selectedAddress);
+      if (selectedAddress) {
+        setValue(selectedAddress.state_name);
+      }
+      console.log("selectedStateName====", selectedStateName);
       setisLoading(false)
     })
   }
@@ -194,7 +213,7 @@ function addressHandler(){
       pincode:pinCode,
       city:Value,
       is_default:rememberSelect,
-      state:value?.label
+      state_name:value
    }
    console.log('data====',data)
    RewardsApi.updateAddress(data, userId).then((res) => {
@@ -217,7 +236,7 @@ function addressHandler(){
         pincode:pinCode,
         city:Value,
         is_default:rememberSelect,
-        state:value?.label
+        state_name:value
      }
      console.log('data====',data)
      RewardsApi.addAddress(data).then((res) => {
@@ -249,6 +268,7 @@ const deleteHandler=()=>{
 }
 
   const onEditPress = (item) => {
+    console.log('item=====', item)
     setName(item.name)
     setMobileNo(item.mobile)
     setLocation(item.address_1)
@@ -256,7 +276,8 @@ const deleteHandler=()=>{
     setPinCode(item.pincode)
     setLandMark(item.land_mark)
     setTown(item.city)
-    setStates(item.state)
+    //setValue(item.state_name);
+    setStateId(item.state_name)
     setrememberSelect(item.is_default)
     setUserId(item.id)
     setEditPress(true)
@@ -272,7 +293,9 @@ const deleteHandler=()=>{
  }
  function stateHandler(item){
     console.log(item);
-    setValue(item);
+    // const stateName = findStateNameById(item.value);
+    // setSelectedStateName(stateName);
+    setValue(item?.value);
     setIsOpen(true)
  }
  function closeHandler(){
@@ -285,6 +308,7 @@ const deleteHandler=()=>{
   setTownError('');
  }
  const renderItem = ({ item }) => {
+  //console.log('item1===', item)
 
     return (
       <Pressable
@@ -455,10 +479,8 @@ const deleteHandler=()=>{
                   <Dropdown
                       style={styles.dropdown}
                       selectedTextStyle={styles.selectedTextStyle}
-                      value={value?.value}
-                      //iconStyle={styles.iconStyle}
+                      value={value} 
                       data={stateData}
-                      //maxHeight={120}
                       mode='modal'
                       labelField="label"
                       valueField="value"

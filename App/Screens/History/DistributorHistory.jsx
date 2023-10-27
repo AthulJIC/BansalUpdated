@@ -37,7 +37,6 @@ const DistributorHistory = ({navigation}) => {
   const [isLoading, setIsLoading ] = useState(false); 
   const [isEndReachedLoading, setIsEndReachedLoading] = useState(false);
   const [page, setPage] =useState(1);
-  const [next, setNext] = useState(false);
   const [nextUrl, setNextUrl] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -68,7 +67,7 @@ const DistributorHistory = ({navigation}) => {
 
   function getHistoryList(){
     setIsLoading(true);
-    console.log('page', page)
+    console.log('getHistoryList page', page)
     //console.log('next===', next)
     HistoryApi.getDistributorHistory(page).then((res) => {
     if (res.status === 200) {
@@ -79,13 +78,13 @@ const DistributorHistory = ({navigation}) => {
         else {
           setFilteredData([...filteredData, ...res.data.results]);
         }
-        setPage(page + 1);
+        //setPage(page + 1);
         setIsLoading(false)
         setNextUrl(res.data.next)
       }
       else {
         if (page == 1) {
-          setData([]);
+          setFilteredData([]);
         }
       }
     setIsEndReachedLoading(false);
@@ -102,7 +101,9 @@ const DistributorHistory = ({navigation}) => {
   }
   const handlePress = useCallback(
     (item) => {
-     // setPage(1);
+      console.log('handlePress', item);
+      //setPage(page - 1);
+      //console.log('handlePress1', setPage(page - 1))
       setFilteredData([]);
       setIsLoading(true);
       setSelectedFilter(item);
@@ -127,13 +128,13 @@ const DistributorHistory = ({navigation}) => {
           else {
             setFilteredData([...filteredData, ...res.data.results]);
           }
-          setPage(page + 1);
+         // setPage(page + 1);
           setIsLoading(false)
           setNextUrl(res.data.next)
         }
         else {
           if (page == 1) {
-            setData([]);
+            setFilteredData([]);
           }
         }
       setIsEndReachedLoading(false);
@@ -152,8 +153,8 @@ const DistributorHistory = ({navigation}) => {
     if (isEndReachedLoading || !nextUrl) {
       setPage(1)
       return;
-    }
-  
+   }
+    setPage(page + 1)
     setIsEndReachedLoading(true);
     if(selectedFilter?.title === 'All Requests'){
       getHistoryList();
@@ -218,11 +219,11 @@ const DistributorHistory = ({navigation}) => {
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={{ color: 'black', width: '37%', fontSize: 14, fontFamily: 'Poppins-Medium' }}
+                style={{ color: 'black',fontSize: 14, fontFamily: 'Poppins-Medium', width:'45%' }}
               >
                 {itemData.item.name}
               </Text>
-              <Text style={{ fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)', marginTop: 5, marginHorizontal: 5 }}>
+              <Text style={{ fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)', marginTop:7.5,marginLeft:3 }}>
                 {'\u2B24'}
               </Text>
             </View>

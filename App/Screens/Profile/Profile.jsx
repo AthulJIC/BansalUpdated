@@ -143,14 +143,16 @@ function loginHandler(){
                 const data = {
                     refresh : refreshToken
                 }
+                console.log('data', data);
                 ProfileApi.logout(data).then(async(res) => {
+                    console.log('res', res.data);
                     if(res.status === 200){
+                        await AsyncStorage.removeItem('access_token')
                         await AsyncStorage.removeItem('isLoggedIn');
                         await AsyncStorage.removeItem('mobile_no');
                         await AsyncStorage.removeItem('role');
                         await AsyncStorage.removeItem('username');
                         await AsyncStorage.removeItem('email')
-
                         setIsLoading(false)
                         navigation.navigate('Login')
                     }

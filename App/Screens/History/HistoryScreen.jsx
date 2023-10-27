@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable, FlatList } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, FlatList,RefreshControl,Image } from 'react-native';
 import AcceptedIcon from '../../../assets/Icon/AcceptedIcon';
 import ProcessingIcon from '../../../assets/Icon/ProcessingIcon';
 import RejectedIcon from '../../../assets/Icon/RejectedIcon';
@@ -10,9 +10,20 @@ import LeadProcessingIcon from '../../../assets/Icon/LeadProcessingIcon';
 import LeadRejectedIcon from '../../../assets/Icon/LeadRejectedIcon';
 import LoadingIndicator from '../../Components/LoadingIndicator';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HistoryScreen = ({navigation}) => {
-  const filterTitle = [
+  const [filteredData, setFilteredData] = useState([]);
+  const [isLoading, setIsLoading ] = useState(false); 
+  const [isEndReachedLoading, setIsEndReachedLoading] = useState(false);
+  const [page, setPage] =useState(1);
+  const [nextUrl, setNextUrl] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [role, setRole] = useState();
+
+  let filterTitle = [
     {
       id: 1,
       title: 'All Transactions',
@@ -21,7 +32,7 @@ const HistoryScreen = ({navigation}) => {
     {
       id: 2,
       title: 'Processing',
-      value: 'Pending'
+      value: 'Processing'
     },
     {
       id: 3,
@@ -33,53 +44,182 @@ const HistoryScreen = ({navigation}) => {
       title: 'Rejected',
       value: 'Rejected'
     },
-    {
-      id : 5,
-      title:'Referral',
-      value: 'Referral'
-    }
+    
   ];
+  if(role === 'Contractor'){
+    filterTitle =[
+        ...filterTitle
+    ] ;
+}
+else{
+  filterTitle = [
+        ...filterTitle,
+        {
+          id: 5,
+          title: 'Referral',
+          value: 'Referral'
+        },
+    ]
+}
+  
+const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
 
-  const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [isLoading, setIsLoading ] = useState(false); 
   useBackButtonHandler(navigation, false);
 
-  useEffect(() => {
-    getHistoryList()
-  }, []);
-  function getHistoryList(){
-    setIsLoading(true);
-     HistoryApi.getHistory().then((res) => {
-       if(res.status === 200){
-         setFilteredData(res.data.results)
-         setIsLoading(false)
+  useFocusEffect(
+    useCallback(() => {
+      async function getRole(){
+        const user = await AsyncStorage.getItem('role');
+        console.log('role', user)
+        setRole(user)
       }
-     }).catch((err) => {
-    })
-    .finally(() => {
-      setIsLoading(false);
-    });
+      getRole();
+      setPage(1)
+      setSelectedFilter(filterTitle[0])
+      getHistoryList()
+    }, [])
+  );
+  const onRefresh = useCallback(() => {
+    if (isEndReachedLoading || !nextUrl) {
+      setPage(1)
+      return;
+    }
+    setRefreshing(true);
+
+    if (selectedFilter.title === 'All Transactions') {
+      getHistoryList();
+    } else {
+      getHistoryStatusList(selectedFilter.title);
+    }
+
+    setRefreshing(false);
+  }, [selectedFilter, getHistoryList, getHistoryStatusList]);
+  function getHistoryList(){
+   
+    console.log('page', page)
+    //console.log('next===', next)
+    HistoryApi.getHistory(page).then((res) => {
+    if (res.status === 200) {
+      if (res.data.results.length > 0) {
+        if (page == 1) {
+          setIsLoading(true);
+          setFilteredData(res.data.results);
+        }
+        else {
+          setFilteredData([...filteredData, ...res.data.results]);
+        }
+        //setPage(page + 1);
+        setIsLoading(false)
+        setNextUrl(res.data.next)
+      }
+      else {
+        if (page == 1) {
+          setFilteredData([]);
+          setIsLoading(false)
+        }
+      }
+    setIsEndReachedLoading(false);
+  }
+  else {
+    setIsEndReachedLoading(false);
+  }
+})
+  .catch(function (error) {
+    console.log(error);
+    setIsEndReachedLoading(false);
+    setIsLoading(false)
+  });
   }
   const handlePress = (item) => {
-    setIsLoading(true)
+    console.log("handlePress",item)
+    //setIsLoading(true)
     setSelectedFilter(item);
+    console.log('selected==', item)
     if(item.title === 'All Transactions'){
       getHistoryList();
     }
     else{
-      HistoryApi.getHistoryStatus(item.value).then((res) => {
-       if(res.status === 200){
-         setFilteredData(res.data.results)
-         setIsLoading(false)
-      }
-      }).catch((err) => {
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      getHistoryStatusList(item.value);
     }
   };
+  function getHistoryStatusList(item){
+    console.log('page3', item)
+    setIsLoading(true);
+    if(item === 'Referral'){
+      HistoryApi.getReferralHisytory(page, true).then((res) => {
+        if (res.status === 200) {
+          if (res.data.results.length > 0) {
+            if (page == 1) {
+              setFilteredData(res.data.results);
+            }
+            else {
+              setFilteredData([...filteredData, ...res.data.results]);
+            }
+            setIsLoading(false)
+            setNextUrl(res.data.next)
+          }
+          else {
+            if (page == 1) {
+              setFilteredData([]);
+              setIsLoading(false)
+            }
+          }
+        setIsEndReachedLoading(false);
+      }
+      else {
+        setIsEndReachedLoading(false);
+      }
+    })
+      .catch(function (error) {
+        console.log(error);
+        setIsEndReachedLoading(false);
+        setIsLoading(false)
+      })
+    }
+    else{
+      HistoryApi.getHistoryStatus(page,item).then((res) => {
+        if (res.status === 200) {
+          if (res.data.results.length > 0) {
+            if (page == 1) {
+              setFilteredData(res.data.results);
+            }
+            else {
+              setFilteredData([...filteredData, ...res.data.results]);
+            }
+            setIsLoading(false)
+            setNextUrl(res.data.next)
+          }
+          else {
+            if (page == 1) {
+              setFilteredData([]);
+              setIsLoading(false)
+            }
+          }
+        setIsEndReachedLoading(false);
+      }
+      else {
+        setIsEndReachedLoading(false);
+      }
+    }).catch(function (error) {
+      console.log(error);
+      setIsEndReachedLoading(false);
+      setIsLoading(false)
+    })
+    
+  }
+}
+  async function endReachedHandler() {
+    if (isEndReachedLoading || !nextUrl) {
+       setPage(1)
+      return;
+    }
+    setPage(page + 1)
+    setIsEndReachedLoading(true);
+    if(selectedFilter?.title === 'All Transactions'){
+      getHistoryList();
+    }
+    else getHistoryStatusList(selectedFilter?.value)
+  }
   const requestData = (itemData) => {
     const dateTime = moment(itemData.item.created_at);
     const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
@@ -89,7 +229,7 @@ const HistoryScreen = ({navigation}) => {
     let displayText = '';
     let textColor;
 
-  if (itemData.item.status === 'Pending') {
+  if (itemData.item.status === 'Processing') {
     statusText = 'Processing'; 
     pointsText = '500 Pts'; 
     displayText = itemData.item.quantity;
@@ -126,7 +266,7 @@ const HistoryScreen = ({navigation}) => {
             <AcceptedIcon/> 
             }
           </View>
-        ) : itemData.item.status === 'Pending' ? (
+        ) : itemData.item.status === 'Processing' ? (
           <View style={{backgroundColor: 'rgba(31, 134, 255, 0.2)',
           borderRadius: 8,
           padding: 8,
@@ -192,7 +332,7 @@ const HistoryScreen = ({navigation}) => {
                 styles.filterContainer,
                 selectedFilter.id === item.id && styles.selectedFilter,
               ]}
-              onPress={() => handlePress(item)}
+              onPress={() => {handlePress(item);setPage(1)}}
             >
               <Text
                 style={[
@@ -207,12 +347,42 @@ const HistoryScreen = ({navigation}) => {
         })}
       </ScrollView>
       </View>
-      <View style={styles.flatListSection}>        
-      <FlatList
+      <View style={styles.flatListSection}> 
+      {filteredData.length === 0 ? (
+        <View style={{flex:1,justifyContent:'center', alignItems:'center'}}>
+            <Image
+                style={styles.tinyLogo}
+                source={require('../../../assets/Images/TransactionsEmpty.png')}
+                resizeMode='cover'
+              />
+              <Text style={{fontFamily:'Poppins-Large',fontWeight:'500',fontSize:16,textAlign:'center',
+              margin:22,lineHeight:24,color:'#393939'}}>No Request History</Text>
+              <Text  style={{width:'90%',fontFamily:'Poppins-Regular',fontWeight:'500',fontSize:14,textAlign:'center',
+              lineHeight:20,color:'#848484',alignSelf:'center'}}>
+              We don’t see any records from your history.</Text>
+        </View>
+  
+      ) : (
+
+        <FlatList
+            data={filteredData}
+            renderItem={requestData}
+            keyExtractor={(item) => item.id.toString()}
+            onEndReached={endReachedHandler}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+        />
+      )}          
+      {/* <FlatList
           data={filteredData}
           renderItem={requestData}
           keyExtractor={(item) => item.id.toString()}
-      />
+          onEndReached={endReachedHandler}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+      /> */}
       </View>
       {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'/>}
     </View>

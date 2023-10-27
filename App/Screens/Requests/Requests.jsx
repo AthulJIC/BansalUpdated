@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, FlatList, Pressable, Animated, Alert, ActivityIndicator,KeyboardAvoidingView , ToastAndroid,RefreshControl} from 'react-native'
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Feather';
@@ -7,6 +7,7 @@ import EmptyComponent from '../../Components/EmptyComponent';
 import { useTranslation } from 'react-i18next';
 import LoadingIndicator from '../../Components/LoadingIndicator';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const Requests = ({navigation}) => {
@@ -43,11 +44,13 @@ const Requests = ({navigation}) => {
         setShowIcon(false);
         setRefreshing(false);
     };
-      
-    useEffect(() => {
-       getRequestList();
-       setSearchText('')
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+          getRequestList();
+          setSearchText('');
+          setShowIcon(false);
+        }, [])
+      );
     function getRequestList() {
         setIsLoading(true);
         RequestApi.getRequest()
@@ -102,6 +105,10 @@ const Requests = ({navigation}) => {
         setDistributorItem(item)
     }
     function searchHandler(text){
+        if(text !== ''){
+            setShowIcon(true)
+        }
+        else setShowIcon(false);
         setSearchText(text)
         RequestApi.searchRequest(text).then((res) => {
             if(res.status === 200){
@@ -171,7 +178,7 @@ const Requests = ({navigation}) => {
                     placeholderTextColor={'rgba(132, 132, 132, 1)'}
                     onChangeText={text => searchHandler(text)}
                     value={searchText}
-                    onPressIn={() => setShowIcon(true)}
+                    //onPressIn={() => setShowIcon(true)}
                 />
                 {showIcon ? (
                     <Pressable
@@ -299,7 +306,7 @@ const Requests = ({navigation}) => {
                         <TouchableOpacity style={styles.alertCancelButton} onPress={hideAlert}>
                             <Text style={styles.alertButtonText}>{t("cancel")}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.alertRejectButton} onPress={() => handleReject('Reject')}>
+                        <TouchableOpacity style={[styles.alertRejectButton, {backgroundColor: '#EB1C1C'}]} onPress={() => handleReject('Reject')}>
                             <Text style={styles.alertButton}>{t("reject")}</Text>
                         </TouchableOpacity>
                     </View>
@@ -322,7 +329,7 @@ const Requests = ({navigation}) => {
                         <TouchableOpacity style={styles.alertCancelButton} onPress={hideAlert}>
                             <Text style={styles.alertButtonText}>{t("cancel")}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.alertRejectButton} onPress={() =>handleReject('Accept')}>
+                        <TouchableOpacity style={[styles.alertRejectButton, {backgroundColor:'#18B758'}]} onPress={() =>handleReject('Accept')}>
                             <Text style={styles.alertButton}>{t("accept")}</Text>
                         </TouchableOpacity>
                     </View>
@@ -566,7 +573,7 @@ const styles = StyleSheet.create({
 
     },
     alertRejectButton: {
-        backgroundColor: '#B1292C',
+        //backgroundColor: '#18B758',
         paddingHorizontal: 16,
         paddingVertical: 8,
         borderRadius: 4,
