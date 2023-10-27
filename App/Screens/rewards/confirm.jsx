@@ -6,6 +6,7 @@ import ErorrPopUp from './erorrRedeem';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
+import { RewardsApi } from '../../service/rewards/rewardservice';
 
 const ConfirmPage=({route,navigation})=>{
     const { selectedProduct } = useAppContext();

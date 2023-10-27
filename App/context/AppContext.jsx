@@ -9,6 +9,8 @@ export const AppProvider = ({ children }) => {
   const [userDetails, setUserDetails] = useState(null);
   const [language, setLanguage] = useState(' '); 
   const [pointsValue,setPoints]=useState("")
+  const [orderData, setOrderData] = useState([]); 
+  const [isBookmarkDeleted, setIsBookmarkDeleted] = useState(false)
 
   const updateUserDetails = (userData) => {
     setUserDetails(userData);
@@ -23,7 +25,12 @@ export const AppProvider = ({ children }) => {
   const changeLanguage = (newLanguage) => {
     setLanguage(newLanguage);
   };
-
+  const updateOrderData = (newData) => {
+    setOrderData(newData);
+  };
+  const markBookmarkDeleted = (deleted) => {
+    setIsBookmarkDeleted(deleted);
+  }
   return (
     <AppContext.Provider
       value={{
@@ -34,6 +41,10 @@ export const AppProvider = ({ children }) => {
         language,
         changeLanguage,
         UserPoints,
+        orderData,
+        updateOrderData, 
+        isBookmarkDeleted, 
+        markBookmarkDeleted,
       }}
     >
       {children}

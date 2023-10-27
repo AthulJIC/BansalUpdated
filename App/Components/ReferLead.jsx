@@ -12,6 +12,12 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
   const [localMobile, setLocalMobile] = useState(editMobile)
   const [localLocation, setLocalLocation] = useState(editLocation)
   const [localName, setLocalName] = useState(editName)
+  const [erorrMessage,setErorr]=useState('')
+  const [erorrMessageName,seterorrMessageName]=useState('')
+  const [erorrMessageMobile,seterorrMessageMobile]=useState('')
+  const [validationError,setvalidationError]=useState(false)
+  const [erorrLocation,setErorrLocation]=useState('')
+  const [quantityErorr,setQuantityErorr]=useState('')
   function handleRef() {
     const params = {
       name: onEdit == true ? localName : name,
@@ -19,6 +25,51 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
       location: onEdit == true ? localLocation : location,
       quantity: onEdit == true ? localQuantity : quantity,
     };
+    const isOnlyZeros = /^0+$/.test(quantity);
+    const hasPattern = /000|00000/.test(name);
+    const hasSpecialCharacters = /[,.]/.test(quantity);
+    if(name==='')
+    {
+      setvalidationError(true)
+      seterorrMessageName('* Enter a Valid Name')
+      return
+    }
+  if(name==='')
+  {
+    setvalidationError(true)
+    seterorrMessageName('* Name Required')
+    return
+  }
+    if (mobileNo.length<10 || mobileNo.length > 10)
+    {
+      setvalidationError(true)
+      seterorrMessageMobile('* Please enter a valid mobile Number')
+      return
+    }
+    
+    
+    if(location==='')
+    {
+      setvalidationError(true)
+    setErorrLocation('* Location Field is empty')
+    return
+    }
+    if(quantity==='')
+    {
+      setvalidationError(true)
+      setQuantityErorr('* Quantity Required')
+      return
+    }
+    if (quantity === '') {
+      setvalidationError(true);
+      setQuantityErorr('* Quantity Required');
+      return
+    } else if (isOnlyZeros || hasSpecialCharacters) {
+      setvalidationError(true);
+      setQuantityErorr('* Enter a valid number');
+      return
+    }
+
     if (onRefer) {
       onRefer(params);
     }
@@ -26,9 +77,17 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
     {
       onUpdateDetails(params)
     }
+    setName('')
+    setMobileNo('')
+    setLocation('')
+    setQuantity('')
     onClose(); 
    
   }
+  // if(name || mobileNo || location || quantity)
+  // {
+  //   setvalidationError(true)
+  // }
   return (
     <View>
       <Modal
@@ -54,13 +113,28 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
               <TextInput
                 style={styles.inputContainer}
                 placeholder="Name"
+                onFocus={() => {
+                  seterorrMessageName(''); 
+                  setvalidationError(false); 
+                }}
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalName(text) : setName(text)}
                 value={onEdit ? localName : name}
                 maxLength={15}
               />
+               {
+              validationError && (
+                <View style={{ flexDirection: 'row',marginTop:8 }}>
+                  <Text style={{ color: 'red', marginLeft: 5 }}>{erorrMessageName}</Text>
+                </View>
+              )
+            }
               <TextInput
                 style={styles.inputContainer}
+                onFocus={() => {
+                  seterorrMessageName(''); 
+                  seterorrMessageMobile(false); 
+                }}
                 placeholder="Mobile Number"
                 keyboardType="phone-pad"
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
@@ -68,21 +142,51 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 value={onEdit ? localMobile : mobileNo}
                 maxLength={10}
               />
+               {
+              validationError && (
+                <View style={{ flexDirection: 'row',marginTop:8 }}>
+                  <Text style={{ color: 'red', marginLeft: 5 }}>{erorrMessageMobile}</Text>
+                </View>
+              )
+            }
               <TextInput
                 style={styles.inputContainer}
+                onFocus={() => {
+                  seterorrMessageName(''); 
+                  setErorrLocation(false); 
+                }}
                 placeholder="Site Location"
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalLocation(text) : setLocation(text)}
                 value={onEdit ? localLocation : location}
               />
+
+               {
+              validationError && (
+                <View style={{ flexDirection: 'row',marginTop:8 }}>
+                  <Text style={{ color: 'red', marginLeft: 5 }}>{erorrLocation}</Text>
+                </View>
+              )
+            }
               <TextInput
                 style={styles.inputContainer}
+                onFocus={() => {
+                  seterorrMessageName(''); 
+                  setQuantityErorr(false); 
+                }}
                 placeholder="Required Quantity in Ton"
                 keyboardType="numeric"
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalQuantity(text) : setQuantity(text)}
                 value={onEdit ? localQuantity : quantity}
               />
+               {
+              validationError && (
+                <View style={{ flexDirection: 'row',marginTop:8 }}>
+                  <Text style={{ color: 'red', marginLeft: 5 }}>{quantityErorr}</Text>
+                </View>
+              )
+            }
               <View style={styles.modalButtonContainer}>
                 <Pressable style={styles.referButton}
                   onPress={handleRef} >

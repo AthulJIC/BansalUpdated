@@ -51,6 +51,7 @@ export const BookMarkApi = {
         return await AxiosInstance.post('account/bookmark/',data)
     },
     deleteBookMark: async function(params){
+        console.log("delete params",params)
         return await AxiosInstance.delete('account/bookmark-delete/'+params+'/')
     },
 }
