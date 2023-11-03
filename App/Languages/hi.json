@@ -64,6 +64,7 @@
    "cancel" : "कैंसिल",
    "confirmationTitle" : "अपनी कार्रवाई की पुष्टि करें",
    "confirmation" : "क्या आप वाकई इस अनुरोध को अस्वीकार करना चाहते हैं?",
+   "successConfirmation" : "क्या आप वाकई यह अनुरोध स्वीकार करना चाहते हैं?",
    "transaction" : "ट्रांजैक्शन आईडी",
    "notifications" : "नोटफकैशन",
    "languages" : "भाषा",
@@ -77,7 +78,7 @@
    "favourites" : "पसंदीदा",
    "addresses" : "पतों",
    "rewards" : "इनाम",
-   "PointsLoyality":"आपके अगले इनाम तक 500 अंक",
+   "PointsLoyality":"अंक अर्जित करते रहें और विशेष पुरस्कार अनलॉक करें",
    "Rewards":"पुरस्कार",
    "AddressLabel":"पता",
    "Change":"परिवर्तन",
@@ -88,6 +89,7 @@
    "Redeemed":"छुड़ाया",
    "Processing":"प्रसंस्करण",
    "GoBackHome":"घर वापस जाओ",
-   "Confirm Details":"विवरण की पुष्टि करें"
+   "Confirm Details":"विवरण की पुष्टि करें",
+   "Terms&Conditions" : "नियम और शर्तें"
   }
   

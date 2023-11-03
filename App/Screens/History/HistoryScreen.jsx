@@ -80,7 +80,7 @@ const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
     }, [])
   );
   const onRefresh = useCallback(() => {
-    if (isEndReachedLoading || !nextUrl) {
+    if (!isEndReachedLoading || !nextUrl) {
       setPage(1)
       return;
     }
@@ -89,137 +89,115 @@ const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
     if (selectedFilter.title === 'All Transactions') {
       getHistoryList();
     } else {
-      getHistoryStatusList(selectedFilter.title);
+      getHistoryStatusList(selectedFilter?.value);
     }
 
     setRefreshing(false);
   }, [selectedFilter, getHistoryList, getHistoryStatusList]);
-  function getHistoryList(){
-   
-    console.log('page', page)
-    //console.log('next===', next)
-    HistoryApi.getHistory(page).then((res) => {
-    if (res.status === 200) {
-      if (res.data.results.length > 0) {
-        if (page == 1) {
-          setIsLoading(true);
-          setFilteredData(res.data.results);
-        }
-        else {
-          setFilteredData([...filteredData, ...res.data.results]);
-        }
-        //setPage(page + 1);
-        setIsLoading(false)
-        setNextUrl(res.data.next)
-      }
-      else {
-        if (page == 1) {
-          setFilteredData([]);
-          setIsLoading(false)
-        }
-      }
-    setIsEndReachedLoading(false);
-  }
-  else {
-    setIsEndReachedLoading(false);
-  }
-})
-  .catch(function (error) {
-    console.log(error);
-    setIsEndReachedLoading(false);
-    setIsLoading(false)
-  });
-  }
-  const handlePress = (item) => {
-    console.log("handlePress",item)
-    //setIsLoading(true)
-    setSelectedFilter(item);
-    console.log('selected==', item)
-    if(item.title === 'All Transactions'){
-      getHistoryList();
-    }
-    else{
-      getHistoryStatusList(item.value);
-    }
-  };
-  function getHistoryStatusList(item){
-    console.log('page3', item)
+  function getHistoryList() {
     setIsLoading(true);
-    if(item === 'Referral'){
-      HistoryApi.getReferralHisytory(page, true).then((res) => {
+    
+    console.log('page', page);
+  
+    HistoryApi.getHistory(page)
+      .then((res) => {
         if (res.status === 200) {
-          if (res.data.results.length > 0) {
-            if (page == 1) {
-              setFilteredData(res.data.results);
-            }
-            else {
-              setFilteredData([...filteredData, ...res.data.results]);
-            }
-            setIsLoading(false)
-            setNextUrl(res.data.next)
+          const newData = res.data.results;
+          if (page === 1) {
+            setFilteredData(newData);
+          } else {
+            setFilteredData((prevData) => {
+              const newData = new Set([...prevData, ...res.data.results]);
+              return Array.from(newData);
+            });
           }
-          else {
-            if (page == 1) {
-              setFilteredData([]);
-              setIsLoading(false)
-            }
-          }
-        setIsEndReachedLoading(false);
-      }
-      else {
-        setIsEndReachedLoading(false);
-      }
-    })
+          setIsLoading(false);
+          setNextUrl(res.data.next);
+          setIsEndReachedLoading(false);
+        } else {
+          setIsLoading(false);
+          setIsEndReachedLoading(false);
+        }
+      })
       .catch(function (error) {
         console.log(error);
         setIsEndReachedLoading(false);
-        setIsLoading(false)
-      })
+        setIsLoading(false);
+      });
+  }
+  
+  function getHistoryStatusList(item) {
+    setIsLoading(true);  
+    let apiCall;
+    if (item === 'Referral') {
+      apiCall = HistoryApi.getReferralHistory(page, true);
+    } else {
+      apiCall = HistoryApi.getHistoryStatus(page, item);
     }
-    else{
-      HistoryApi.getHistoryStatus(page,item).then((res) => {
+  
+    apiCall
+      .then((res) => {
         if (res.status === 200) {
-          if (res.data.results.length > 0) {
-            if (page == 1) {
-              setFilteredData(res.data.results);
-            }
-            else {
-              setFilteredData([...filteredData, ...res.data.results]);
-            }
-            setIsLoading(false)
-            setNextUrl(res.data.next)
+          const newData = res.data.results;
+          if (page === 1) {
+            setFilteredData(newData);
+          } else {
+            setFilteredData((prevData) => {
+              const newData = new Set([...prevData, ...res.data.results]);
+              return Array.from(newData);
+            });
           }
-          else {
-            if (page == 1) {
-              setFilteredData([]);
-              setIsLoading(false)
-            }
-          }
+          setIsLoading(false);
+          setIsEndReachedLoading(false);
+          setNextUrl(res.data.next);
+        } else {
+          setIsLoading(false);
+          setIsEndReachedLoading(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
         setIsEndReachedLoading(false);
-      }
-      else {
-        setIsEndReachedLoading(false);
-      }
-    }).catch(function (error) {
-      console.log(error);
-      setIsEndReachedLoading(false);
-      setIsLoading(false)
-    })
-    
+        setIsLoading(false);
+      });
   }
+const handlePress = (item) => {
+  console.log("handlePress",item)
+  //setIsLoading(true)
+  setSelectedFilter(item);
+  console.log('selected==', item)
+  if(item.title === 'All Transactions'){
+    getHistoryList();
+  }
+  else{
+    getHistoryStatusList(item.value);
+  }
+};
+async function endReachedHandler() {
+  console.log('end', isEndReachedLoading)
+  if (isEndReachedLoading || !nextUrl) {
+    setPage(1)
+    return;
+ }
+  setPage(page + 1);
+  setIsEndReachedLoading(true);
+  if(selectedFilter?.title === 'All Transactions'){
+    getHistoryList();
+  }
+  else getHistoryStatusList(selectedFilter?.value)
 }
-  async function endReachedHandler() {
-    if (isEndReachedLoading || !nextUrl) {
-       setPage(1)
-      return;
-    }
-    setPage(page + 1)
-    setIsEndReachedLoading(true);
-    if(selectedFilter?.title === 'All Transactions'){
-      getHistoryList();
-    }
-    else getHistoryStatusList(selectedFilter?.value)
-  }
+  // async function endReachedHandler() {
+  //   if (isEndReachedLoading || !nextUrl) {
+  //      setPage(1)
+  //     return;
+  //   }
+  //   setPage(page + 1)
+    
+  //   if(selectedFilter?.title === 'All Transactions'){
+  //     getHistoryList();
+  //   }
+  //   else getHistoryStatusList(selectedFilter?.value)
+  // }
   const requestData = (itemData) => {
     const dateTime = moment(itemData.item.created_at);
     const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');

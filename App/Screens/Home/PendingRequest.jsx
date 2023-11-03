@@ -1,47 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {  Text, StyleSheet, View, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { HomeApi } from '../../service/home/homeservice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
-const PendingRequest = () => {
+const PendingRequest = ({refresh}) => {
     const [progress, setProgress] = useState(0);
     const [role, setRole] = useState('');
     const [request, setRequest] = useState(0);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
     const { t } = useTranslation();
+    console.log('refresh', refresh)
     const handleButtonPress = () => {
         navigation.navigate(label);
     };
     console.log('poinst', request, progress)
-    useEffect(() => {
-        const getValueFromStorage = async () => {
+    useFocusEffect(
+        useCallback(() => {
+          const fetchData = async () => {
             try {
-              const user = await AsyncStorage.getItem('role'); 
-              setRole(user)
+              const user = await AsyncStorage.getItem('role');
+              setRole(user);
+              getLoyaltyPoints();
+              getPendingRequest();
             } catch (error) {
               console.error('Error fetching data from AsyncStorage:', error);
             }
           };
-        getValueFromStorage();
+      
+          fetchData();
+        }, [])
+      );
+      if(refresh){
         getLoyaltyPoints();
         getPendingRequest();
-      }, []);
+      }
+      useEffect(() => {
+        if (refresh && !isRefreshing) {
+          setIsRefreshing(true);
+          getLoyaltyPoints();
+          getPendingRequest();
+          setIsRefreshing(false);
+        }
+      }, [refresh]);
+    
     function getLoyaltyPoints(){
         HomeApi.getPoints().then((res) => {
             if(res.status === 200){
-                if(res.data.total_points !== null || res.data.total_points !== undefined)
-                setProgress(res.data.total_points);
-                else setProgress(0);
+                if(res.data.total_points !== null){
+                    setProgress(res.data.total_points);
+                }
+                else {
+                    setProgress(0);
+                }
             }
         })
     }
     function getPendingRequest(){
         HomeApi.getRequest().then((res) => {
+            //console.log('request====', res.data)
             if(res.status === 200){
+                
               // setRequest(res.data.count)
-               if(res.data.count !== null || res.data.count !== undefined)
-               setRequest(res.data.count);
-               else setRequest(0);
+               if(res.data.count !== null){
+                   setRequest(res.data.count);
+               }
+               else {
+                setRequest(0);
+               }
             }
         })
     }

@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState , useEffect, useCallback} from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Picker,Dimensions } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { BarChart } from 'react-native-gifted-charts';
@@ -7,18 +7,19 @@ import { HomeApi } from '../../service/home/homeservice';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon  from 'react-native-vector-icons/MaterialIcons';
+import { useFocusEffect } from '@react-navigation/native';
 
-const BarGraph = () => {
+const BarGraph = ({refresh}) => {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState('Monthly');
     const [barWeekData, setBarWeekData] = useState([]);
     const [barValue,setBarValue]=useState()
-    const [barMonth,setBarMonth]=useState('')
+    const [barMonth,setBarMonth]=useState([])
     const[barQuarter, setBarQuarter] = useState('')
     const [barSpacing, setBarSpacing] = useState(11);
     const [barWidth, setBarWidth] = useState(12);
-    const [totalOrders, setTotalOrders] = useState(50);
+    const [totalOrders, setTotalOrders] = useState(0.5);
     const [total, setTotal] = useState('');
     const [role, setRole] = useState('')
     const [isOpen, setIsOpen] = useState(false);
@@ -29,11 +30,25 @@ const BarGraph = () => {
         
     ]);
     const [activeButton, setActiveButton] = useState('Orders');
+    const [isRefreshing, setIsRefreshing] = useState(false);
     let barData;
     const referenceLine1Position = totalOrders * 0.3; 
     const referenceLine2Position = totalOrders * 0.65;
     const referenceLine3Position = totalOrders;
-   
+   console.log("barValue",barValue)
+   useEffect(() => {
+    if (refresh && !isRefreshing) {
+      setIsRefreshing(true);
+      setValue('Monthly');
+      setBarSpacing(11);
+      setBarWidth(12)
+      setActiveButton('Orders');
+      getMonthlyOrders();
+      distributorOrder();
+      setIsRefreshing(false);
+    }
+  }, [refresh]);
+
     function barHandler(item){
         setValue(item.value);
         setIsOpen(false);
@@ -53,23 +68,48 @@ const BarGraph = () => {
                 getWeeklyOrders();
             }
     }
-        if(value === 'Monthly'){
-    
-            barData = [
-                {value: barMonth===1?barValue:'0', label: 'Jan'},
-                {value: barMonth===2?barValue:'0', label: 'Feb'},
-                {value: barMonth===3?barValue:'0', label: 'Mar'},
-                {value: barMonth===4?barValue:'0', label: 'Apr'},
-                {value: barMonth===5?barValue:'0', label: 'May'},
-                {value: barMonth===6?barValue:'0', label: 'Jun'},
-                {value: barMonth===7?barValue:'0', label: 'Jul'},
-                {value: barMonth===8?barValue:'0', label: 'Aug'},
-                {value: barMonth===9?barValue:'0', label: 'Sep'},
-                {value: barMonth===10?barValue:'0', label: 'Oct'},
-                {value: barMonth===11?barValue:'0', label: 'Nov'},
-                {value: barMonth===12?barValue:'0', label: 'Dec'},
-            ]
-        }
+    if(value==='Monthly')
+    {
+        const monthNames = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
+          ];
+        barData = barMonth?.map((dataPoint) => ({
+            value :activeButton === 'Orders' ?dataPoint.count:dataPoint.total_points,
+            label :monthNames[dataPoint.month-1]
+        }))
+        // if (Array.isArray(barMonth)) {
+        //     const allMonths = [
+        //       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        //       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        //     ];
+          
+        //     const barData = barMonth.reduce((result, dataPoint) => {
+        //       const monthLabel = allMonths[dataPoint.month - 1];
+          
+        //       // Check if the month data already exists in barData
+        //       const existingData = result.find(item => item.label === monthLabel);
+              
+        //       if (existingData) {
+        //         // If the data for this month already exists, update the count
+        //         existingData.value += dataPoint.count;
+        //       } else {
+        //         // If the data doesn't exist, create a new entry with a value of 0
+        //         result.push({
+        //           value: dataPoint.count,
+        //           label: monthLabel
+        //         });
+        //       }
+          
+        //       return result;
+        //     }, allMonths.map(monthLabel => ({ value: 0, label: monthLabel }))); // Initialize with default values
+        //     // ...
+        //   } else {
+        //     console.log("barMonth is not an array. Please make sure it's an array before using reduce.");
+        //   }
+          
+         
+    }
         else if(value === 'Quarterly'){
     
             barData = [
@@ -92,21 +132,28 @@ const BarGraph = () => {
                 label : moment(dataPoint.date).format('ddd').toLocaleString('en-US')
             }))
         }
-    useEffect(() => {
-        const getValueFromStorage = async () => {
-            try {
-              const user = await AsyncStorage.getItem('role'); 
-              setRole(user)
-            } catch (error) {
-             // console.error('Error fetching data from AsyncStorage:', error);
-            }
-          };
-          
-        getValueFromStorage();
+useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          const user = await AsyncStorage.getItem('role');
+          setRole(user);
+        } catch (error) {
+          // Handle error if needed
+          console.error('Error fetching data from AsyncStorage:', error);
+        }
+  
+        // Call your functions here
         getMonthlyOrders();
-        
-        
-      }, [activeButton]);
+        distributorOrder();
+      };
+  
+      fetchData();
+  
+
+
+    }, [activeButton])
+  );
   
     function getMonthlyOrders(){
         if(role !== 'Distributor'){
@@ -114,7 +161,7 @@ const BarGraph = () => {
                 HomeApi.getMonthlyOrder().then((res) => {
                     if(res.status === 200){
                         setBarValue(res.data.order_counts_by_month[0].count)
-                        setBarMonth(res.data.order_counts_by_month[0].month)
+                        setBarMonth(res.data.order_counts_by_month)
                         setTotalOrders(res.data.total_order_count_current_year)
                         setTotal(res.data.total_order_count_current_year)
                     }
@@ -124,24 +171,36 @@ const BarGraph = () => {
                 HomeApi.getMonthlyPoints().then((res) => {
                     if(res.status === 200){
                         setBarValue(res.data.monthly_points_data[0].total_points)
-                        setBarMonth(res.data.monthly_points_data[0].month)
+                        setBarMonth(res.data.monthly_points_data)
                         setTotalOrders(res.data.total_points_current_year)
                         setTotal(res.data.total_points_current_year)
                     }
                 })
             }
         }
-        else{
+       
+        
+    }
+    function distributorOrder(){
+        // if(role==='Distributor') 
+        // {
             HomeApi.getDistributorMonthlyOrder().then((res) => {
                 if(res.status === 200){
                     setBarValue(res.data.order_counts_by_month[0].count)
-                    setBarMonth(res.data.order_counts_by_month[0].month)
-                    setTotalOrders(res.data.total_order_count_current_year)
+                    setBarMonth(res.data.order_counts_by_month)
+                    // setTotalOrders(res.data.total_order_count_current_year)
+                    // setTotal(res.data.total_order_count_current_year)
+                    if(res.data.total_order_count_current_year===0)
+                    {
+                        setTotalOrders(0.5)
+                    }
+                    else{
+                        setTotalOrders(res.data.total_order_count_current_year)
+                    }
                     setTotal(res.data.total_order_count_current_year)
                 }
             })
-        }
-        
+        // }
     }
     function getQuarterlyOrders(){
         if(role !== 'Distributor'){
@@ -192,7 +251,14 @@ const BarGraph = () => {
                 HomeApi.getWeeklyPoints().then((res) => {
                     if(res.status === 200){
                         setBarWeekData(res.data.daily_points);
-                        setTotalOrders(res.data.total_points)
+                       
+                        if(res.data.total_points===0)
+                        {
+                            setTotalOrders(0.5)
+                        }
+                        else{
+                            setTotalOrders(res.data.total_points)
+                        }
                         setTotal(res.data.total_points)
                     }
                 })
@@ -215,14 +281,14 @@ const BarGraph = () => {
         setBarSpacing(11);
         setBarWidth(12)
         setBarWeekData([])
-        if(buttonName === 'Orders'){
-            setTotalOrders(50);
+        // if(buttonName === 'Orders'){
+        //     setTotalOrders(50);
             
-        }
-        else{
-            setTotalOrders(750);
+        // }
+        // else{
+        //     setTotalOrders(750);
             
-        }
+        // }
       };
     return (
         <View style={styles.mainView}>
@@ -295,9 +361,9 @@ const BarGraph = () => {
             </Text>
             <Text style={styles.number} >{total}</Text>
             { total === 0 ?
-                    <View>
-                        <Text>--</Text>
-                        <Text>Complete your first order to view insights</Text>
+                    <View style={{justifyContent:'center', alignItems:'center',marginTop:30}}>
+                        <Text style={{color:'white',fontSize:40}}>--</Text>
+                        <Text style={{color:'white', fontSize:14, fontFamily:'Poppins-Regular'}}>Complete your first order to view insights</Text>
                     </View>
                     :
             <View>
@@ -311,7 +377,7 @@ const BarGraph = () => {
                 data={barData}
                 spacing={barSpacing}
                 maxValue={totalOrders}
-                initialSpacing={0}
+                initialSpacing={0.5}
                 dashGap={2}
                 labelWidth={40}
                 xAxisLabelTextStyle={{color: 'white', textAlign:'center',marginRight:value === 'Quarterly' ? 0 :19, fontSize:10}}

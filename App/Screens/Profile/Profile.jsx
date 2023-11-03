@@ -8,13 +8,13 @@ import RightArrowIcon from '../../../assets/Icon/RightArrowIcon'
 import BookMarkActiveIcon from '../../../assets/Icon/BookmarkActiveIcon'
 import HistoryIcon from '../../../assets/Icon/HistoryIcon'
 import AddressIcon from '../../../assets/Icon/AddressIcon'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useCallback, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ProfileApi } from '../../service/profile/profileservice'
 import { useTranslation } from 'react-i18next';
 import LoadingIndicator from '../../Components/LoadingIndicator';
-import useBackButtonHandler from '../../Components/BackHandlerUtils'
+import useBackButtonHandler from '../../Components/BackHandlerUtils';
 
 const Profile =({route})=>{
     const [role, setRole] = useState();
@@ -24,7 +24,7 @@ const Profile =({route})=>{
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     let navigation = useNavigation();
-    useBackButtonHandler(navigation, false);
+   // useBackButtonHandler(navigation, false);
     let profileData=[
        
         {
@@ -154,7 +154,14 @@ function loginHandler(){
                         await AsyncStorage.removeItem('username');
                         await AsyncStorage.removeItem('email')
                         setIsLoading(false)
-                        navigation.navigate('Login')
+                        navigation.dispatch(
+                            CommonActions.reset({
+                              index: 0,
+                              routes: [
+                                { name: 'Login' }, // Navigate to the login screen
+                              ],
+                            })
+                          );
                     }
                 }).catch((err) => {
                 })

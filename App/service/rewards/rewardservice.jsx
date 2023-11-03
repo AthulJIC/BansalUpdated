@@ -18,8 +18,12 @@ export const RewardsApi = {
                 return await AxiosInstance.delete('account/address-delete/'+id+'/')
         },
         purchaseRewards: async function(id){
-                return await AxiosInstance.get('https://tmt.ainosaur.com/purchase/rewards/'+id)   
-        }
+                return await AxiosInstance.get('purchase/rewards/'+id)   
+        },
+        postIdVerification: async function(data){
+                // console.log("postIdVerification",data)
+                return await AxiosInstance.postForm('purchase/verify_id/', data)
+         }
 }
 
 

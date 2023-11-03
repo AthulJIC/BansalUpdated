@@ -54,7 +54,7 @@ const AddressList = ({navigation,route}) => {
   };
   let stateData = stateList.map((item) => ({
     value: item.id,
-    label: item.state_name,
+    label: item.state,
 }));
 function findStateNameById(stateId) {
   const state = stateList.find(item => item.id === stateId);
@@ -312,7 +312,7 @@ const deleteHandler=()=>{
 
     return (
       <Pressable
-        disabled={data}
+        //disabled={data}
         onPress={() => {
           selectAddress(item.id);
           setadressItem(item);
@@ -320,8 +320,10 @@ const deleteHandler=()=>{
         }}
         style={[
           styles.addressItem,
-          selectedAddress === item.id && { borderColor: '#B1292C', borderWidth: 1 },
-        ]}
+          (selectedAddress === item.id || (item.is_default && selectedAddress === null)) && {
+            borderColor: '#B1292C',
+            borderWidth: 1,
+          },]}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text style={[styles.name, selectedAddress === item.id && { color: '#B1292C' }]}>{item.name}</Text>

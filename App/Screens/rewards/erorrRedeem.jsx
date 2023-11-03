@@ -44,7 +44,7 @@ function ErrorPopup({ isVisible,onClose}) {
             <Text style={{ fontSize: 16, color: 'rgba(57, 57, 57, 1)',fontWeight:'500', fontFamily: 'Poppins-Medium', marginLeft: 5, marginTop: 17 }}>Wait Till Aprill For Redeeming Your Points</Text>
             <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 13, fontFamily: 'Poppins-Regular', marginLeft: 5 }}>{description}</Text>
             <View style={styles.modalButtonContainer}>
-              <Pressable style={styles.referButton} onPress={()=>{navigation.navigate('Home')}}>
+              <Pressable style={styles.referButton} onPress={()=>{navigation.navigate('Home');onClose()}}>
                 <Text style={styles.referButtonText}>
                 Go Back To Home
                 </Text>

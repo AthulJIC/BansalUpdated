@@ -35,9 +35,16 @@ export const HomeApi = {
         return await AxiosInstance.get('purchase/distributor-quarterly/')
     },
     getRequest : async function(){
-        return await AxiosInstance.get('purchase/request-list/')
+        return await AxiosInstance.get('purchase/distributor-requests/')
     },
     getNotification : async function(){
         return await AxiosInstance.get('purchase/notification/');
+    },
+    getNotificationAlert: async function (){
+        return await AxiosInstance.get('purchase/notification-unread/');
+    },
+    getNotificationUnread: async function(){
+        return await AxiosInstance.post('purchase/notification-read/');
+       
     }
 }

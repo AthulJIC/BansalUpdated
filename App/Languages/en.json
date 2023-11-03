@@ -64,6 +64,7 @@
     "cancel" : "Cancel",
     "confirmationTitle" : "Confirm your Action",
     "confirmation" : "Are you sure you want to Reject this request?",
+    "successConfirmation" : "Are you sure you want to Accept this request?",
     "transaction" : "Transaction ID",
     "notifications" : "Notifications",
     "languages" : "Language",
@@ -76,7 +77,7 @@
     "call" : "Call",
     "addresses" : "Addresses",
     "rewards" : "Reward",
-    "PointsLoyality":"500 Pts till your next reward",
+    "PointsLoyality":"Keep earning points and unlock exclusive rewards",
     "Rewards":"Rewards",
     "AddressLabel":"Address",
     "Change":"Change",
@@ -87,6 +88,7 @@
     "Redeemed":"REDEEMED",
     "Processing":"Processing",
     "GoBackHome":"Go Back To Home",
-    "Confirm Details":"Confirm Details"
+    "Confirm Details":"Confirm Details",
+    "Terms&Conditions" : "Terms and Conditions"
   }
   

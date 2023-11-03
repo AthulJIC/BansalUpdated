@@ -4,18 +4,20 @@ import {launchCamera} from 'react-native-image-picker'
 import LoadingIndicator from "../../Components/LoadingIndicator";
 import { Dropdown } from 'react-native-element-dropdown';
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
+import { RewardsApi } from "../../service/rewards/rewardservice";
 
 function IdVerificationScreen({navigation}){
     const [activeButton, setActiveButton] = useState('Aadhar Card');
     const [selectedImage, setSelectedImage] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [value, setValue] = useState("1");
+    const [value, setValue] = useState("aadhar");
     const [items, setItems] = useState([
-      { label: 'Aadhar Card', value: "1" },
-      { label: 'Pan Card', value: '2' },
-  ]);
-  const [name, setName] = useState('');
-  const [mobileNo, setMobileNo] = useState('');
+      { label: 'Aadhar Card', value: "aadhar" },
+      { label: 'Pan Card', value: 'pancard' },
+      { label: 'Voter ID', value: 'voter_id' }
+    ]);
+    const [name, setName] = useState('');
+    const [mobileNo, setMobileNo] = useState('');
   useBackButtonHandler(navigation, false);
     const handleButtonPress = (buttonName) => {
       setActiveButton(buttonName);
@@ -55,15 +57,50 @@ function IdVerificationScreen({navigation}){
                 const source = { uri: res.uri };
                 // console.log('response', JSON.stringify(res));
                 setSelectedImage(res)
-                }
+
+                const imageUri = res.assets[0].uri;
+                // const source = { uri: res.uri };
+                console.log('source response', imageUri);
+                //setSelectedImage(res);
+                // const config = {
+                //   headers: {
+                //     'Content-Type': 'multipart/form-data',
+                //     'Authorization': `Bearer ${token}`
+                //   }
+                // }
+                var bodyFormData =  new FormData();
+                bodyFormData.append('name', name);
+                bodyFormData.append('id_number', mobileNo);
+                bodyFormData.append('id_type',value);
+                bodyFormData.append('image', {
+                  uri: imageUri,
+                  type: 'image/jpeg', // Adjust the type based on your image format
+                  name: 'photo.jpeg', // Adjust the name as needed
+                });
+                console.log('formData', bodyFormData);
+                // axios.postForm('https://tmt.ainosaur.com/purchase/verify_id/', bodyFormData, config).then((res) => {
+                //    console.log('res====', res)
+                // }).catch((err) => {
+                //   console.error(err)
+                // })
+                setLoading(true)
+                RewardsApi.postIdVerification(bodyFormData).then((res) => {
+
+                  console.log('res====', res)
+                  setLoading(false)
+                }).catch((err)=>{
+                  console.log(err)
+                  setLoading(false)
+                })
+          }
                 // console.log('imageee',selectedImage)
         })
           setLoading(true)
-          setTimeout(() => {
-            // After data is loaded, hide the activity indicator
-            setLoading(false);
-            navigation.navigate('IdConfirmation')
-          }, 2000); 
+          // setTimeout(() => {
+          //   // After data is loaded, hide the activity indicator
+          //   setLoading(false);
+          //   navigation.navigate('IdConfirmation')
+          // }, 2000); 
         } else {
         //console.log("Camera permission denied");
         }

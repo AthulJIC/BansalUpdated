@@ -91,7 +91,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
 
     const isOnlyZeros = /^0+$/.test(name);
     const hasPattern = /000|00000/.test(name);
-    const hasSpecialCharacters = /[,.]/.test(name);
+    const hasSpecialCharacters = /[,. -]/.test(name);
     
     if (isOnlyZeros) {
       setErorrText("Input contains only zeros.");

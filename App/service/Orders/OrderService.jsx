@@ -3,7 +3,7 @@ export const OrderService=async (districtName, name)=>{
         try{
         const response= await AxiosInstance.get('purchase/list_distributors/',{
                 params:{
-                        district_name: districtName,
+                        district: districtName,
                         search:name
                 }
         })

@@ -1,9 +1,9 @@
-import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, Pressable,RefreshControl } from 'react-native';
 import CustomIcon from '../../../assets/Icon/startIcon';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../context/AppContext';
@@ -31,15 +31,22 @@ const RewardScreen = (r) => {
   const { userDetails, updateUserDetails, updateSelectedProduct, UserPoints } = useAppContext();
   const [isLoading,setIsLoading]=useState(false)
   const [redeemValue,setRedeemValue]=useState('')
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const { t } = useTranslation();
   console.log(totalPoints,"hhhhhh")
   useBackButtonHandler(navigation, false);
-  useEffect(() => {
-    RewardsHandler()
-    getLoyaltyPoints()
-    
-  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        RewardsHandler();
+        getLoyaltyPoints();
+      };
+  
+      fetchData();
+    }, [])
+  );
   const itemModal = (item) => {
     updateSelectedProduct(item);
     setItemName(item.title)
@@ -81,6 +88,12 @@ const RewardScreen = (r) => {
     })
     
   }
+  const onRefresh = () => {
+    setRefreshing(true);
+    RewardsHandler();
+    getLoyaltyPoints();
+    setRefreshing(false)
+  };
   const RewardsHandler = () => {
     RewardslistService().then((res) => {
       // if(res.status === 200){
@@ -95,8 +108,14 @@ const RewardScreen = (r) => {
     setIsLoading(true)
     CommonAPI.Points().then((res) => {
         if(res.status === 200){
-            setTotalPoints(res.data.total_points)
-            setIsLoading(false)
+          if(res.data.total_points !== null){
+            setTotalPoints(res.data.total_points);
+        }
+        else {
+          setTotalPoints(0);
+        }
+            // setTotalPoints(res.data.total_points)
+             setIsLoading(false)
         }
     })
 }
@@ -145,6 +164,9 @@ const RewardScreen = (r) => {
             numColumns={2}
             contentContainerStyle={styles.flatListContent}
             style={styles.flatListStyle}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             ListHeaderComponent={
               <View style={{ flexDirection: 'row', justifyContent:'flex-start', width: '100%', alignItems: 'center' }}>
                 <Text style={styles.rewardText}>{t('Rewards')}</Text>

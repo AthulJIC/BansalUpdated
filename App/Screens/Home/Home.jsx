@@ -14,7 +14,7 @@ const HomeScreen = ({navigation}) => {
     const [refreshing, setRefreshing] = useState(false);
     useEffect(() => {
       const backAction = async() => {
-        await AsyncStorage.setItem('LastScreen', 'Home');
+        //await AsyncStorage.setItem('LastScreen', 'Home');
        // await AsyncStorage.setItem('isSelected', 'false');
         BackHandler.exitApp();
         return true;
@@ -30,7 +30,7 @@ const HomeScreen = ({navigation}) => {
     useFocusEffect(
       useCallback(() => {
         const fetchData = async () => {
-          await AsyncStorage.setItem('LastScreen', 'Home');
+         // await AsyncStorage.setItem('LastScreen', 'Home');
           getAdImages();
         };
   
@@ -73,9 +73,9 @@ const HomeScreen = ({navigation}) => {
       }
     >
             <View style={styles.scrollViewContent}>
-                <HeaderComponent />
-                <PendingRequest />
-                <BarGraph/>
+                <HeaderComponent refresh={refreshing}/>
+                <PendingRequest refresh={refreshing}/>
+                {/* <BarGraph refresh={refreshing}/> */}
                 {adImages.map((item,index) => {
                     return(
                         <View key={index} style={{width:'100%'}}>

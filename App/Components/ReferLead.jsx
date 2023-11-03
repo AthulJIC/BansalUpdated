@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import { View, TouchableOpacity, TextInput, Pressable, Text, StyleSheet, KeyboardAvoidingView, ScrollView } from "react-native";
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
@@ -18,6 +19,22 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
   const [validationError,setvalidationError]=useState(false)
   const [erorrLocation,setErorrLocation]=useState('')
   const [quantityErorr,setQuantityErorr]=useState('')
+  // const resetState = () => {
+  //   setName('');
+  //   setMobileNo('');
+  //   setLocation('');
+  //   setQuantity('');
+  //   setLocalQuantity(editquantity);
+  //   setLocalMobile(editMobile);
+  //   setLocalLocation(editLocation);
+  //   setLocalName(editName);
+  //   // setErorrMessage('');
+  //   // seterorrMessageName('');
+  //   // seterorrMessageMobile('');
+  //   // setvalidationError(false);
+  //   // setErorrLocation('');
+  //   // setQuantityErorr('');
+  // };
   function handleRef() {
     const params = {
       name: onEdit == true ? localName : name,
@@ -28,39 +45,25 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
     const isOnlyZeros = /^0+$/.test(quantity);
     const hasPattern = /000|00000/.test(name);
     const hasSpecialCharacters = /[,.]/.test(quantity);
-    if(name==='')
+    if(params.name==='')
     {
       setvalidationError(true)
-      seterorrMessageName('* Enter a Valid Name')
+      seterorrMessageName('* Name Required')
       return
     }
-  if(name==='')
-  {
-    setvalidationError(true)
-    seterorrMessageName('* Name Required')
-    return
-  }
-    if (mobileNo.length<10 || mobileNo.length > 10)
+    if (params.mobileNo.length<10 || params.mobileNo.length > 10)
     {
       setvalidationError(true)
       seterorrMessageMobile('* Please enter a valid mobile Number')
       return
     }
-    
-    
-    if(location==='')
+    if(params.location==='')
     {
       setvalidationError(true)
     setErorrLocation('* Location Field is empty')
     return
     }
-    if(quantity==='')
-    {
-      setvalidationError(true)
-      setQuantityErorr('* Quantity Required')
-      return
-    }
-    if (quantity === '') {
+    if (params.quantity === '' ) {
       setvalidationError(true);
       setQuantityErorr('* Quantity Required');
       return
@@ -69,25 +72,21 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
       setQuantityErorr('* Enter a valid number');
       return
     }
-
-    if (onRefer) {
+    if(params.quantity>500)
+    {
+      setvalidationError(true);
+      setQuantityErorr('* Limit Exceeded');
+      return
+    }
+   if (onRefer) {
       onRefer(params);
     }
     if(onUpdateDetails)
     {
       onUpdateDetails(params)
     }
-    setName('')
-    setMobileNo('')
-    setLocation('')
-    setQuantity('')
-    onClose(); 
-   
-  }
-  // if(name || mobileNo || location || quantity)
-  // {
-  //   setvalidationError(true)
-  // }
+    onClose(params); 
+   }
   return (
     <View>
       <Modal
@@ -159,6 +158,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalLocation(text) : setLocation(text)}
                 value={onEdit ? localLocation : location}
+               
               />
 
                {
@@ -179,6 +179,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalQuantity(text) : setQuantity(text)}
                 value={onEdit ? localQuantity : quantity}
+                maxLength={3}
               />
                {
               validationError && (

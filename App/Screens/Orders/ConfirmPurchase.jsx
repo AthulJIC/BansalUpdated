@@ -17,6 +17,7 @@ function ConfirmPurchase({route,navigation}){
     const { t } = useTranslation();
     const [isLoading,setIsLoading] = useState(false);
     useBackButtonHandler(navigation, false);
+    console.log('item====', item);
    const uiParams={
     Product:t('quantity'),
     Name:t('unique'),

@@ -1,5 +1,5 @@
 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { createStackNavigator,TransitionPresets } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -39,7 +39,7 @@ import SuccessScreen from '../Screens/sucess/SucessScreen';
 import AddressList from '../Screens/rewards/Address';
 import ConfirmPage from '../Screens/rewards/confirm';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import FavouritesScreen from '../Screens/Profile/FavouritesScreen';
 import IdVerificationScreen from '../Screens/rewards/IdVerificationScreen';
 import IdConfirmationScreen from '../Screens/rewards/IdConfirmationScreen';
@@ -47,6 +47,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import HistoryScreen from '../Screens/History/HistoryScreen';
 import { useTranslation } from 'react-i18next';
 import { LanguageProvider } from '../context/LanguageContext';
+import TermsScreen from '../Screens/login/TermsConditions';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -66,22 +67,34 @@ const customSlideFromLeft = {
 function MyTabs() {
   const [role, setRole] = useState('')
   const { t } = useTranslation();
-  useEffect(() => {
-    const getValueFromStorage = async () => {
-      try {
-        const user = await AsyncStorage.getItem('role'); 
-        setRole(user)
-      } catch (error) {
-        //console.error('Error fetching data from AsyncStorage:', error);
-      }
-    };
-    getValueFromStorage();
-  }, []);
+  const isFocused = useIsFocused();
+  const [initialRoute, setInitialRouteName] = useState('Home')
+  useFocusEffect(
+    useCallback(() => {
+      const getValueFromStorage = async () => {
+        try {
+          const user = await AsyncStorage.getItem('role');
+          console.log('user===============', user,initialRoute);
+          setRole(user);
+          setInitialRouteName('Home')
+        } catch (error) {
+          //console.error('Error fetching data from AsyncStorage:', error);
+        }
+      };
+  
+      getValueFromStorage();
+  
+      // Cleanup function if needed
+      return () => {
+        // Cleanup code here (if any)
+      };
+    }, [])
+  );
 
   return (
     
     <Tab.Navigator
-      initialRouteName='Home'
+      initialRouteName={initialRoute}
       screenOptions={({ route }) => ({
       headerShown: false,
       tabBarActiveTintColor: '#B1292C',
@@ -148,10 +161,11 @@ function MyTabs() {
       },
     })}>
       {
-        role === 'Distributor' ? (
+        isFocused && role === 'Distributor' ? (
         <>
         <Tab.Screen name="Home" component={HomeScreen} options={{
           tabBarLabel: t('home'),
+          initialRouteName:{initialRoute}
         }}
         initialParams={{ initialRoute: true }}  />
         <Tab.Screen name="Requests" component={Requests} options={{
@@ -169,6 +183,7 @@ function MyTabs() {
           <>
           <Tab.Screen name="Home" component={HomeScreen} options={{
           tabBarLabel: t('home'),
+          initialRouteName:{initialRoute}
         }}
         initialParams={{ initialRoute: true }} />
           <Tab.Screen name='Order' component={OrderScreen} options={{
@@ -211,6 +226,15 @@ const NavigationLinks = () => {
         <Stack.Screen name="Login" component={LoginScreen} 
             options={{
             headerShown: false,
+        }}/>
+         <Stack.Screen name='Terms' component={TermsScreen} options={{
+          title: t('Terms&Conditions'),
+          headerTitleAlign: 'center',
+          headerTitleStyle:{
+            fontSize: 18,
+            fontFamily: 'Poppins-SemiBold',
+            fontWeight:'700'
+          }
         }}/>
         <Stack.Screen  name='ForgetPassword' component={ForgetPasswordScreen} options={{title: ''}}/>
        

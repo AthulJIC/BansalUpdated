@@ -13,13 +13,14 @@ const ProfileEditScreen = ({navigation}) => {
     const [mobile, setMobile] = useState();
     const [userError, setUserError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    useBackButtonHandler(navigation, false);
+    //useBackButtonHandler(navigation, false);
     function saveHandler(){
         setIsLoading(true)
         Keyboard.dismiss()
         let isValid = true;
-        const regex = /^[a-zA-Z]+$/;
-        if(userName === '' || !regex.test(userName)){
+        console.log('user', userName);
+        const regex = /^[a-zA-Z][a-zA-Z ]*$/;
+        if(userName === ' ' || !regex.test(userName) || !userName){
             setUserError(true)
            isValid = false;
            setIsLoading(false)
@@ -75,7 +76,7 @@ const ProfileEditScreen = ({navigation}) => {
                 userError && (
                 <View style={{flexDirection:'row',marginLeft:15}}>
                     <ErrorIcon/>
-                    <Text style={{color:'red',marginLeft:5}}>This field is required</Text>
+                    <Text style={{color:'red',marginLeft:5}}>Please enter valid name!</Text>
                 </View>
                 )
             }

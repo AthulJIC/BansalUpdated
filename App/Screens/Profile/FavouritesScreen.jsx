@@ -17,7 +17,7 @@ function FavouritesScreen({navigation}){
     const [IsSelected,setIsSelected]=useState(false)
     const { markBookmarkDeleted } = useAppContext();
     // console.log("bookMarkListValue",bookMarkListValue)
-    useBackButtonHandler(navigation, false);
+   // useBackButtonHandler(navigation, false);
       let isSelected
       console.log("IsSelected",IsSelected)
     const scrollY = new Animated.Value(0);

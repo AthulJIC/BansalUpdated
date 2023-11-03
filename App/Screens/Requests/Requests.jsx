@@ -21,11 +21,14 @@ const Requests = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [showIcon, setShowIcon] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [isEndReachedLoading, setIsEndReachedLoading] = useState(false);
+    const [page, setPage] =useState(1);
+    const [nextUrl, setNextUrl] = useState(null);
     const { t } = useTranslation();
     const searchPlaceholder = t('search');
     useBackButtonHandler(navigation, false);
     const showAlert = (item) => {
-
+        console.log('item===', item)
         setRequestId(item)
         setAlertVisible(true);
     };
@@ -38,12 +41,29 @@ const Requests = ({navigation}) => {
         setAlertAcceptVisible(false)
     };
     const onRefresh = () => {
+       if (isEndReachedLoading || !nextUrl) {
+          setPage(1)
+          return;
+        }
+        setPage(page + 1)
         setRefreshing(true);
+        setRequestList([]);
         getRequestList()
         setSearchText('')
         setShowIcon(false);
         setRefreshing(false);
     };
+    // const onRefresh = useCallback(() => {
+    //     if (isEndReachedLoading || !nextUrl) {
+    //       setPage(1)
+    //       return;
+    //     }
+    //     setRefreshing(true);
+    //     setSearchText('')
+    //     setShowIcon(false);
+    //     getRequestList();
+    //     setRefreshing(false);
+    //   }, [searchText, getRequestList]);
     useFocusEffect(
         useCallback(() => {
           getRequestList();
@@ -51,19 +71,54 @@ const Requests = ({navigation}) => {
           setShowIcon(false);
         }, [])
       );
+      async function endReachedHandler(text) {
+        console.log('end', isEndReachedLoading)
+        if (isEndReachedLoading || !nextUrl) {
+          setPage(1)
+          return;
+       }
+        setPage(page + 1)
+        if(text === ''){
+            getRequestList();
+        }
+        else{
+            searchHandler(text)
+        }
+      }
+
     function getRequestList() {
         setIsLoading(true);
-        RequestApi.getRequest()
+        setIsEndReachedLoading(true);
+        RequestApi.getRequest(page)
           .then(res => {
             if (res.status === 200) {
-              setRequestList(res.data.results);
+                if (res.data.results.length > 0) {
+                  if (page == 1) {
+                    setRequestList(res.data.results);
+                  }
+                  else {
+                    setRequestList([...requestList, ...res.data.results]);
+                  }
+                  //setPage(page + 1);
+                  setIsLoading(false)
+                  setNextUrl(res.data.next)
+                }
+                else {
+                  if (page == 1) {
+                    setRequestList([]);
+                    setIsLoading(false)
+                  }
+                }
+              setIsEndReachedLoading(false);
+            }
+            else {
+              setIsEndReachedLoading(false);
             }
           })
-          .catch(err => {
-            // Handle error if necessary
-          })
-          .finally(() => {
-            setIsLoading(false);
+          .catch(function (error) {
+            console.log(error);
+            setIsEndReachedLoading(false);
+            setIsLoading(false)
           });
       }
       
@@ -72,34 +127,45 @@ const Requests = ({navigation}) => {
         if (status === 'Reject') {
           RequestApi.rejectRequest(requestId)
             .then(res => {
+                console.log('res',res);
+                if(res.status === 200){
+                    setIsLoading(false);
+                    hideAlert();
+                    setModalVisible(false);
+                    ToastAndroid.show('Request is rejected successfully', ToastAndroid.SHORT);
+                    getRequestList();
+                    navigation.navigate('DistributorHistory');
+                }
               // Handle response
+              
             })
             .catch(err => {
-              // Handle error if necessary
+                setIsLoading(false);
+                hideAlert();
+                setModalVisible(false);
+                ToastAndroid.show('Failed to reject the request', ToastAndroid.SHORT);
             })
-            .finally(() => {
-              setIsLoading(false);
-              hideAlert();
-              setModalVisible(false);
-              ToastAndroid.show('Request is rejected successfully', ToastAndroid.SHORT);
-              getRequestList();
-            });
         } else {
           RequestApi.acceptRequest(requestId)
             .then(res => {
-              // Handle response
+                if(res.status === 200){
+                    setIsLoading(false);
+                    hideAlert();
+                    setModalVisible(false);
+                    ToastAndroid.show('Request is accepted successfully', ToastAndroid.SHORT);
+                    getRequestList();
+                    navigation.navigate('DistributorHistory');
+                }
             })
             .catch(err => {
-              // Handle error if necessary
+                setIsLoading(false);
+                hideAlert();
+                setModalVisible(false);
+                ToastAndroid.show('Failed to accept the request', ToastAndroid.SHORT);
             })
-            .finally(() => {
-              setIsLoading(false);
-              hideAlert();
-              setModalVisible(false);
-              ToastAndroid.show('Request is accepted successfully', ToastAndroid.SHORT)
-              getRequestList();
-            });
+            
         }
+       
       };
     const modalItem = ( item ) => {
         setDistributorItem(item)
@@ -110,11 +176,50 @@ const Requests = ({navigation}) => {
         }
         else setShowIcon(false);
         setSearchText(text)
-        RequestApi.searchRequest(text).then((res) => {
-            if(res.status === 200){
-                setRequestList(res.data.results)
+        //setIsLoading(true);
+        setIsEndReachedLoading(true);
+        RequestApi.searchRequest(page,text).then((res) => {
+            if (res.status === 200) {
+                if (res.data.results.length > 0) {
+                  if (page == 1) {
+                    setRequestList(res.data.results);
+                  }
+                  else {
+                    setRequestList([...requestList, ...res.data.results]);
+                  }
+                  //setPage(page + 1);
+                  //setIsLoading(false)
+                  setNextUrl(res.data.next)
+                }
+                else {
+                  if (page == 1) {
+                    setRequestList([]);
+                   // setIsLoading(false)
+                  }
+                }
+              setIsEndReachedLoading(false);
+            }
+            else {
+              setIsEndReachedLoading(false);
             }
         })
+        .catch(function (error) {
+            console.log(error);
+            setIsEndReachedLoading(false);
+           //setIsLoading(false)
+          });
+    }
+    function clearHandler() {
+        if (isEndReachedLoading || !nextUrl) {
+            setPage(1)
+            return;
+        }
+        setPage(page + 1)
+        setSearchText('')
+        setShowIcon(false)
+        searchHandler('')
+        getRequestList()
+        
     }
     const HEADER_HEIGHT = 200;
     const scrollY = new Animated.Value(0);
@@ -182,11 +287,7 @@ const Requests = ({navigation}) => {
                 />
                 {showIcon ? (
                     <Pressable
-                        onPress={() => {
-                            setSearchText('')
-                            setShowIcon(false)
-                            searchHandler('')
-                        }}>
+                        onPress={clearHandler}>
                         <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
                    </Pressable>
                 ) : (
@@ -207,6 +308,7 @@ const Requests = ({navigation}) => {
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                         { useNativeDriver: false }
                     )}
+                    onEndReached={() => endReachedHandler(searchText)}
                     refreshControl={
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                       }
@@ -323,8 +425,8 @@ const Requests = ({navigation}) => {
                 isVisible={alertAcceptVisible}
             >
                 <View style={styles.alertModal}>
-                    <Text style={styles.alertTitle}>Confirm your Action</Text>
-                    <Text style={styles.alertText}>Are you sure you want to Accept this request?</Text>
+                    <Text style={styles.alertTitle}>{t('confirmationTitle')}</Text>
+                    <Text style={styles.alertText}>{t('successConfirmation')}</Text>
                     <View style={styles.alertButtonsContainer}>
                         <TouchableOpacity style={styles.alertCancelButton} onPress={hideAlert}>
                             <Text style={styles.alertButtonText}>{t("cancel")}</Text>

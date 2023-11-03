@@ -14,7 +14,7 @@ const LanguageScreen = ({navigation}) => {
 
     const { changeLanguage } = useAppContext();
     const { t, i18n } = useTranslation();
-    useBackButtonHandler(navigation, false);
+   //useBackButtonHandler(navigation, false);
     const englishLanguage = () => {
       setActiveButton('English');
       setnewLanguage(i18n.language === 'hi' ? 'en' : 'en' );

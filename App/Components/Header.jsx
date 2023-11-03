@@ -10,6 +10,7 @@ import i18n from "../Languages/i18";
 import { useAppContext } from "../context/AppContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLanguageContext } from "../context/LanguageContext";
+import { HomeApi } from "../service/home/homeservice";
 
 function HeaderComponent() {
   const [modalVisible, setModalVisible] = useState(false)
@@ -18,8 +19,18 @@ function HeaderComponent() {
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [activeButton, setActiveButton] = useState('');
   const [newLanguage, setnewLanguage] = useState('')
+  const [notiAlert,setNotiAlert]=useState('')
   const { changeLanguage } = useAppContext();
   const[username, setUsername] = useState('') ;
+  // const notificationAlert=()=>{
+  //   HomeApi.getNotificationAlert().then((res) => {
+  //     console.log("notificationAlert",res.data)
+  //     setNotiAlert(res.data.unread_count)
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error,"Notification alert error");
+  //   });
+  // }
   
   useFocusEffect(
     useCallback(() => {
@@ -34,6 +45,7 @@ function HeaderComponent() {
         }
       };
       getValueFromStorage();
+      //notificationAlert()
     }, [])
   );
   const handleButtonPress = (buttonName) => {
@@ -57,11 +69,17 @@ function HeaderComponent() {
     changeNewLanguage(newLanguage === 'en' ? 'English' : 'Hindi');
     //await AsyncStorage.setItem('Language', (newLanguage === 'en' ? 'English' : 'Hindi'))
   }
-  const handleNotificationClick = () => {
-    navigation.navigate('Notification')
-    setNotificationMessage('New notification message here');
-    setNotificationVisible(true);
-  };
+  // const handleNotificationClick = () => {
+  //   HomeApi.getNotificationUnread().then((res) => {
+  //     console.log("notificationAlert handleNotificationClick",res)
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error,"Notification alert error");
+  //   });
+  //   navigation.navigate('Notification')
+  //   setNotificationMessage('New notification message here');
+  //   setNotificationVisible(true);
+  // };
 
   function openModal() {
     setActiveButton(language);
@@ -82,8 +100,15 @@ function HeaderComponent() {
           <TouchableOpacity style={styles.iconContainer} onPress={openModal}>
             <LanguageIcon width={24} height={24} color='#F18C13' />
           </TouchableOpacity >
-          <TouchableOpacity onPress={handleNotificationClick} style={styles.iconContainer} >
+          <TouchableOpacity onPress={() =>  navigation.navigate('Notification')} style={styles.iconContainer} >
             <BellIcon width={24} height={24} />
+            <View style={[styles.notific,]}>
+            {notiAlert!=0 ?
+            <Text style={{color:'rgba(177, 41, 44, 1)',fontFamily:'Poppins-Regular',fontSize:16}}>{notiAlert}</Text> : ''
+            }
+            
+            </View>
+           
           </TouchableOpacity>
         </View>
       </View>
@@ -268,6 +293,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     alignSelf: 'center',
+  },
+  notific:{
+    position:'absolute',
+    top:17,
+    right:9
   }
 });
 

@@ -39,6 +39,7 @@ const LoginPage = ({navigation}) => {
         if(savedRememberMe === 'true'){
           setrememberSelect(true);
           setUsername(savedloginId);
+          setPassword('')
         }
         else{
           setrememberSelect(false);
@@ -163,6 +164,7 @@ const togglePasswordVisibility = () => {
   setShowPassword(!showPassword);
 };
 async function toggleCheckbox () {
+  setCheckBoxError(false);
   setSelection(!isSelected);
   await AsyncStorage.setItem('isSelected', (!isSelected).toString());
 };
@@ -191,6 +193,7 @@ async function handleUsername(text){
        onChangeText={text => {handleUsername(text)}}
        style={styles.input}
        onPressIn={() => setNameError(false)}
+       maxLength={20}
       />
       {
         nameError && (
@@ -209,6 +212,7 @@ async function handleUsername(text){
         secureTextEntry={!showPassword}
         style={styles.input}
         onPressIn={() => setPasswordError(false)}
+        maxLength={15}
       />
       <TouchableOpacity
         onPress={togglePasswordVisibility}
@@ -233,7 +237,10 @@ async function handleUsername(text){
           boxType='square'
           tintColors={{ true: 'rgba(43, 89, 195, 1)', false: !checkboxError ? 'gray' :  'red'}}
         />
-        <Text style={styles.label}>{t('agree')} <Text style={{textDecorationLine: 'underline',fontFamily:'Poppins-Regular'}}>{t('terms')}</Text></Text>
+        <Text style={styles.label}>{t('agree')}</Text>
+        <Pressable onPress={() => navigation.navigate('Terms')}>
+           <Text style={{textDecorationLine: 'underline',fontFamily:'Poppins-Regular',color:'white', marginTop:10}}>{t('terms')}</Text>
+        </Pressable>
       </View>
       <View style={styles.checkboxContainer}>
         <CheckBox

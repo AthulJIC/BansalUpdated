@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import {  FlatList, StyleSheet, Text, View } from "react-native";
+import {  FlatList, StyleSheet, Text, View, RefreshControl } from "react-native";
 import AcceptedIcon from "../../../assets/Icon/AcceptedIcon";
 import ProcessingIcon from "../../../assets/Icon/ProcessingIcon";
 import RejectedIcon from "../../../assets/Icon/RejectedIcon";
@@ -9,11 +9,16 @@ import moment from 'moment';
 import { Image } from "react-native";
 import LoadingIndicator from "../../Components/LoadingIndicator";
 import { useFocusEffect } from "@react-navigation/native";
+import { HistoryApi } from "../../service/history/historyservice";
 
 const Transactions=()=>{
     const [filteredData, setFilteredData] = useState([]);
     const [dateTime,setDateTime]=useState('')
-    const [isLoading,setIsLoading]=useState(false)
+    const [isLoading,setIsLoading]=useState(false);
+    const [isEndReachedLoading, setIsEndReachedLoading] = useState(false);
+    const [page, setPage] =useState(1);
+    const [nextUrl, setNextUrl] = useState(null);
+    const [refreshing, setRefreshing] = useState(false);
    
     useFocusEffect(
       useCallback(() => {
@@ -24,18 +29,64 @@ const Transactions=()=>{
         fetchData();
       }, [])
     );
+    const onRefresh = useCallback(() => {
+      if (isEndReachedLoading || !nextUrl) {
+        setPage(1)
+        return;
+      }
+      setRefreshing(true);
+  
+      setIsEndReachedLoading(true); 
+     // setPage(page + 1)
+      transactions();
+  
+      setRefreshing(false);
+    }, [ transactions]);
     const transactions=()=>{
       setIsLoading(true);
-      TransactionAPI.getTransactions().then((res) => {
-          if(res.status === 200){
-              setFilteredData(res.data.results)
-            
-              setIsLoading(false)
-              setDateTime(res.data.results.item.created_at)
-            }
+      HistoryApi.getHistory(page).then((res) => {
+       // console.log('data', res.data.results)
+            if (res.status === 200) {
+              if (res.data.results.length > 0) {
+                setDateTime(res.data.results.updated_at)
+                if (page == 1) {
+                  setFilteredData(res.data.results);
+                }
+                else {
+                  setFilteredData([...filteredData, ...res.data.results]);
+                }
+                //setPage(page + 1);
+                setIsLoading(false)
+                setNextUrl(res.data.next)
+              }
+              else {
+                if (page == 1) {
+                  setFilteredData([]);
+                  setIsLoading(false)
+                }
+              }
+            setIsEndReachedLoading(false);
+          }
+          else {
+            setIsEndReachedLoading(false);
+          }
       })
+      .catch(function (error) {
+        console.log(error);
+        setIsEndReachedLoading(false);
+        setIsLoading(false);
+      });
   }
-
+  async function endReachedHandler() {
+    console.log('end', isEndReachedLoading)
+    if (isEndReachedLoading || !nextUrl) {
+      setPage(1)
+      return;
+   }
+    setIsEndReachedLoading(true); 
+    setPage(page + 1)
+    transactions();
+  }
     const requestData = (itemData) => {
         const createdAt = moment(itemData.item.created_at);
         const Date = createdAt.format('DD MMM YYYY');
@@ -45,7 +96,7 @@ const Transactions=()=>{
         let pointsText = ''; 
         let displayText = '';
 
-        if (itemData.item.status === 'Pending') {
+        if (itemData.item.status === 'Processing') {
           statusText = 'Processing'; 
           displayText = itemData.item.quantity;
         }
@@ -77,7 +128,7 @@ const Transactions=()=>{
               height:47}}>
                 <ArrowDown width={32} height={32} color="#18B758"/> 
               </View>
-            ) : itemData.item.status === 'Pending' ? (
+            ) : itemData.item.status === 'Processing' ? (
               <View style={{backgroundColor: 'rgba(31, 134, 255, 0.2)',
               borderRadius: 8,
               padding: 8,
@@ -118,7 +169,7 @@ const Transactions=()=>{
               </View>
             </View>
             <View style={{marginLeft:'auto',justifyContent:'flex-end'}}>
-              <Text style={{color : itemData.item.status === 'Pending' ? '#1F86FF' : itemData.item.status === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)',
+              <Text style={{color : itemData.item.status === 'Processing' ? '#1F86FF' : itemData.item.status === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)',
               fontFamily:'Poppins-Regular',textAlign:'right'}}>{pointsText}Pts</Text>
               <Text style={{fontSize:11.11,lineHeight:16,fontFamily:'Poppins-Regular',textAlign:'right',color:'#393939'}}>{statusText.toLocaleUpperCase()}</Text>
             </View>
@@ -151,6 +202,10 @@ const Transactions=()=>{
           data={filteredData}
           renderItem={requestData}
           keyExtractor={(item) => item.id.toString()}
+          onEndReached={endReachedHandler}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
       />}
 
 <LoadingIndicator visible={isLoading} text='Loading...'/>

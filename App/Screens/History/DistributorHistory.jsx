@@ -17,18 +17,22 @@ const DistributorHistory = ({navigation}) => {
     {
       id: 1,
       title: 'All Requests',
+      value : 'AllRequests '
     },
     {
       id: 2,
       title: 'Pending',
+      value : 'Processing'
     },
     {
       id: 3,
       title: 'Accepted',
+      value : 'Accepted '
     },
     {
       id: 4,
       title: 'Rejected',
+      value : 'Rejected '
     },
   ];
 
@@ -59,7 +63,7 @@ const DistributorHistory = ({navigation}) => {
     if (selectedFilter.title === 'All Requests') {
       getHistoryList();
     } else {
-      getDistributorHistory(selectedFilter.title);
+      getDistributorHistory(selectedFilter.value);
     }
 
     setRefreshing(false);
@@ -67,6 +71,7 @@ const DistributorHistory = ({navigation}) => {
 
   function getHistoryList(){
     setIsLoading(true);
+    // setIsEndReachedLoading(true);
     console.log('getHistoryList page', page)
     //console.log('next===', next)
     HistoryApi.getDistributorHistory(page).then((res) => {
@@ -85,6 +90,7 @@ const DistributorHistory = ({navigation}) => {
       else {
         if (page == 1) {
           setFilteredData([]);
+          setIsLoading(false)
         }
       }
     setIsEndReachedLoading(false);
@@ -102,8 +108,8 @@ const DistributorHistory = ({navigation}) => {
   const handlePress = useCallback(
     (item) => {
       console.log('handlePress', item);
-      //setPage(page - 1);
-      //console.log('handlePress1', setPage(page - 1))
+      setPage(1);
+      console.log('handlePress1', page)
       setFilteredData([]);
       setIsLoading(true);
       setSelectedFilter(item);
@@ -111,14 +117,15 @@ const DistributorHistory = ({navigation}) => {
         getHistoryList();
       } else {
        // alert('test');
-        getDistributorHistory(item.title);
+        getDistributorHistory(item.value);
       }
     },
     [getHistoryList, getDistributorHistory]
   );
   function getDistributorHistory(item){
-    console.log('page3', page)
+    console.log('page3', item)
     setIsLoading(true);
+    
     HistoryApi.getDistributorStatus(page,item).then((res) => {
       if (res.status === 200) {
         if (res.data.results.length > 0) {
@@ -135,6 +142,7 @@ const DistributorHistory = ({navigation}) => {
         else {
           if (page == 1) {
             setFilteredData([]);
+            setIsLoading(false)
           }
         }
       setIsEndReachedLoading(false);
@@ -150,23 +158,27 @@ const DistributorHistory = ({navigation}) => {
     });
   }
   async function endReachedHandler() {
+    console.log('end', isEndReachedLoading)
     if (isEndReachedLoading || !nextUrl) {
       setPage(1)
       return;
    }
     setPage(page + 1)
-    setIsEndReachedLoading(true);
+    setIsEndReachedLoading(true); 
     if(selectedFilter?.title === 'All Requests'){
       getHistoryList();
     }
-    else getDistributorHistory(selectedFilter?.title)
+    else getDistributorHistory(selectedFilter?.value)
   }
   const requestData = (itemData) => {
     if (itemData.item && itemData.item.updated_at) {
       const dateTime = moment(itemData.item.updated_at);
       const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
       const time = dateTime.format('hh:mm A').toLocaleString('en-US');
-  
+      let statusText = itemData.item.user_approval;
+      if (itemData.item.user_approval === 'Processing') {
+        statusText = 'Pending'
+      }
       return (
         <View
           style={{
@@ -189,7 +201,7 @@ const DistributorHistory = ({navigation}) => {
             >
               <AcceptedIcon />
             </View>
-          ) : itemData.item.user_approval === 'Pending' ? (
+          ) : itemData.item.user_approval === 'Processing' ? (
             <View
               style={{
                 backgroundColor: 'rgba(31, 134, 255, 0.2)',
@@ -236,8 +248,8 @@ const DistributorHistory = ({navigation}) => {
             </View>
           </View>
           <View style={{ marginLeft: 'auto', marginRight: 15 }}>
-            <Text style={{ color: itemData.item.user_approval === 'Pending' ? 'rgba(31, 134, 255, 1)' : itemData.item.user_approval === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)', fontFamily: 'Poppins-Medium', marginRight: 5 }}>
-              {itemData.item.user_approval.toLocaleUpperCase()}
+            <Text style={{ color: itemData.item.user_approval === 'Processing' ? 'rgba(31, 134, 255, 1)' : itemData.item.user_approval === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)', fontFamily: 'Poppins-Medium', marginRight: 5 }}>
+              {statusText.toLocaleUpperCase()}
             </Text>
           </View>
         </View>

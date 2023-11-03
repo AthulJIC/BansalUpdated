@@ -1,5 +1,5 @@
 import React, {  useEffect, useState } from 'react';
-import {  Text, StyleSheet, View, Image, ActivityIndicator } from 'react-native';
+import {  Text, StyleSheet, View, Image, ActivityIndicator, ScrollView ,RefreshControl} from 'react-native';
 import CheckmarkIcon from '../../../assets/Icon/CheckMark';
 import { HomeApi } from '../../service/home/homeservice';
 import moment from 'moment';
@@ -9,21 +9,29 @@ import LoadingIndicator from '../../Components/LoadingIndicator';
 const Notification = ({navigation}) => {
      const [data, setData] = useState([]);
      const [isLoading, setIsLoading] = useState(true);
+     const [refreshing, setRefreshing] = useState(false);
     useBackButtonHandler(navigation, false);
     useEffect(() => {
         getNotificationHandler();
-        // setTimeout(() => {
-        //     setIsLoading(false);
-        // }, 3000);
     }, []);
     function getNotificationHandler(){
         HomeApi.getNotification().then((res) => {
+            console.log('resss=====', res.data);
             if(res.status === 200){
                 setIsLoading(false)
-               setData(res.data.results)
+                setRefreshing(false)
+                setData(res.data.results)
             }
+        }).catch((err) => {
+            setIsLoading(false)
+            setRefreshing(false)
         })
     }
+    const onRefresh = () => {
+        setRefreshing(true);
+       getNotificationHandler();
+       setRefreshing(false)
+      };
     // if (isLoading) {
     //     return (
     //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
@@ -32,7 +40,10 @@ const Notification = ({navigation}) => {
     //     );
     // }
     return (
-        <View style={{ flex: 1, backgroundColor: 'white' }}>
+        <ScrollView style={{ flex: 1, backgroundColor: 'white' }}
+        refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
          { data.length !== 0 ? (
             data.map((item, index) => {
                 const dateTime = moment(item.created_at);
@@ -68,7 +79,7 @@ const Notification = ({navigation}) => {
             </View>
         )}
         {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'></LoadingIndicator>}
-    </View>
+    </ScrollView>
     );
 };
 
@@ -76,7 +87,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#FFFFFF',
         width: '92%',
-        marginTop: 12,
+        marginTop: 5,
         paddingHorizontal: 16,
         height: 84,
         borderRadius: 10,
@@ -91,6 +102,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
+        marginBottom:15
     },
     contentContainer: {
         flex: 1,
