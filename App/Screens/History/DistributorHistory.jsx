@@ -231,12 +231,15 @@ const DistributorHistory = ({navigation}) => {
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={{ color: 'black',fontSize: 14, fontFamily: 'Poppins-Medium', width:'45%' }}
+                style={{ color: 'black',fontSize: 14, fontFamily: 'Poppins-Medium', width:'30%' }}
               >
                 {itemData.item.name}
               </Text>
-              <Text style={{ fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)', marginTop:7.5,marginLeft:3 }}>
+              <Text style={{ fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)', marginTop:7, marginLeft:2 }}>
                 {'\u2B24'}
+              </Text>
+              <Text style={{ fontWeight: '500', fontSize: 13, color: 'rgba(57, 57, 57, 1)' ,fontFamily: 'Poppins-Regular',marginLeft:3}}>
+                {itemData.item.transaction_id}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', flexWrap: 'nowrap', marginLeft: 25 }}>
