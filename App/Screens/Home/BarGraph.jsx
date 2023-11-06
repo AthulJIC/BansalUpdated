@@ -38,28 +38,36 @@ const BarGraph = ({refresh}) => {
     const referenceLine2Position = totalOrders * 0.65;
     const referenceLine3Position = totalOrders;
    console.log("barValue",barMonth)
-   useEffect(() => {
-    if (refresh && !isRefreshing) {
-      setIsRefreshing(true);
-      setIsLoading(true)
-      setValue('Monthly');
-      setBarMonth([])
-      setBarSpacing(11);
-      setBarWidth(12)
-      setActiveButton('Orders');
-      if(role === 'Distributor'){
+   useFocusEffect(
+     useCallback(() => {
+      const fetchData = async () => {
+        if (refresh && !isRefreshing) {
+          setIsRefreshing(true);
+          setIsLoading(true);
+          setValue('Monthly');
+          setBarMonth([]);
+          setBarSpacing(11);
+          setBarWidth(12);
+          setActiveButton('Orders');
+  
+          if (role === 'Distributor') {
+            distributorOrder();
+          } else {
+            getMonthlyOrders();
+          }
+  
+          setIsRefreshing(false);
+          setTotalOrders(0);
+        }
+      };
+  
+      fetchData();
+  
+    }, [refresh, isRefreshing, role])
+  );
+    useEffect(() => {
         distributorOrder();
-      }
-      else{
-        getMonthlyOrders();
-      }
-     
-      
-      setIsRefreshing(false);
-      setTotalOrders(0)
-    }
-  }, [refresh, isRefreshing]);
-
+    },[])
     function barHandler(item){
         setIsLoading(true)
         setValue(item.value);
@@ -155,7 +163,7 @@ useFocusEffect(
       fetchData();
 
 
-    }, [activeButton])
+    }, [activeButton,role])
   );
   
     function getMonthlyOrders(){
@@ -165,7 +173,7 @@ useFocusEffect(
                 setBarMonth(res.data.order_counts_by_month)
                 setTotalOrders(res.data.total_order_count_current_year)
                 setTotal(res.data.total_order_count_current_year)
-                
+                console.log('con===', res.data)
             }
             setIsLoading(false)
         }).catch((err) => {
@@ -194,7 +202,7 @@ useFocusEffect(
                     setBarMonth(res.data.order_counts_by_month)
                     setTotalOrders(res.data.total_order_count_current_year)
                     setTotal(res.data.total_order_count_current_year)
-
+                    console.log('dis===', res.data)
                 }
                 setIsLoading(false)
             }).catch((err) =>{

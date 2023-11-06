@@ -63,11 +63,11 @@ function ConfirmDetailsScreen() {
     }, []);
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 16, color: 'rgba(57, 57, 57, 1)', marginLeft: 7, fontFamily: 'Poppins-Regular' }}>Details</Text>
-                <Pressable style={{ flexDirection: 'row', justifyContent: 'flex-end', marginRight: 7 }} onPress={() => setModalVisible(true)}>
+            <View style={{ flexDirection: 'row', }}>
+                <Text style={{ fontSize: 16, color: 'rgba(57, 57, 57, 1)', marginLeft: 20, fontFamily: 'Poppins-Medium' }}>Details</Text>
+                <Pressable style={{ flexDirection: 'row', justifyContent: 'flex-end', marginRight: 27, marginLeft:'auto' }} onPress={() => setModalVisible(true)}>
                     <PenIcon width={18} height={18} color='#2B59C3' />
-                    <Text style={{ color: '#2B59C3', fontSize: 14, marginLeft: 4, fontFamily: 'Poppins-Regular' }}>{t('Change')}</Text>
+                    <Text style={{ color: '#2B59C3', fontSize: 14, marginLeft: 4, fontFamily: 'Poppins-Medium' }}>{t('Change')}</Text>
                 </Pressable>
 
             </View>
