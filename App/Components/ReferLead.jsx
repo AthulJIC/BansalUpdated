@@ -35,6 +35,13 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
   //   // setErorrLocation('');
   //   // setQuantityErorr('');
   // };
+  const oNclose=()=>{
+    setName('');
+    setMobileNo('');
+    setLocation('');
+    setQuantity('');
+    onClose(); 
+  }
   function handleRef() {
     const params = {
       name: onEdit == true ? localName : name,
@@ -90,7 +97,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
     setMobileNo('');
     setLocation('');
     setQuantity('');
-    onClose(params); 
+    onClose(); 
    }
   return (
     <View>
@@ -111,7 +118,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
             <View style={styles.centeredView}>
               <TouchableOpacity
                 style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 15 }]}
-                onPress={onClose}>
+                onPress={()=>{oNclose()}}>
                 <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
               </TouchableOpacity>
               <TextInput
