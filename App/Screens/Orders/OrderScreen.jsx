@@ -84,7 +84,11 @@ const OrderScreen = ({ navigation }) => {
         })
     }
     const ordersList = () => {
-        setisLoading(true)
+        if(searchText!='')
+        {
+            setisLoading(false)
+          
+        }
         OrderService(value, searchText).then((res) => {
             // if(res.status === 200){
             //     console.log('success',)

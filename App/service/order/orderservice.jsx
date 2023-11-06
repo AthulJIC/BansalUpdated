@@ -7,5 +7,8 @@ export const OrderApi = {
     },
     getLocation : async function (){
         return await AxiosInstance.get('core/location/')
-    }
+    },
+    // createOrder : async function (data){
+    //     return await AxiosInstance.post('purchase/order-create/', data)
+    // }
 }

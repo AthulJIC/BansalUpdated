@@ -210,13 +210,13 @@ const Requests = ({navigation}) => {
           });
     }
     function clearHandler() {
+        setSearchText('')
+        setShowIcon(false)
         if (isEndReachedLoading || !nextUrl) {
             setPage(1)
             return;
         }
         setPage(page + 1)
-        setSearchText('')
-        setShowIcon(false)
         searchHandler('')
         getRequestList()
         

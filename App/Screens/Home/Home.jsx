@@ -75,7 +75,7 @@ const HomeScreen = ({navigation}) => {
             <View style={styles.scrollViewContent}>
                 <HeaderComponent refresh={refreshing}/>
                 <PendingRequest refresh={refreshing}/>
-                {/* <BarGraph refresh={refreshing}/> */}
+                <BarGraph refresh={refreshing}/>
                 {adImages.map((item,index) => {
                     return(
                         <View key={index} style={{width:'100%'}}>

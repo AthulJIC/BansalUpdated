@@ -57,7 +57,7 @@ function IdVerificationScreen({navigation}){
                 const source = { uri: res.uri };
                 // console.log('response', JSON.stringify(res));
                 setSelectedImage(res)
-
+                console.log('res=====',res);
                 const imageUri = res.assets[0].uri;
                 // const source = { uri: res.uri };
                 console.log('source response', imageUri);

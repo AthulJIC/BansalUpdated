@@ -45,6 +45,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
     const isOnlyZeros = /^0+$/.test(quantity);
     const hasPattern = /000|00000/.test(name);
     const hasSpecialCharacters = /[,.]/.test(quantity);
+    const hasQuantityPattern = /000|00/.test(quantity);
     if(params.name==='')
     {
       setvalidationError(true)
@@ -67,7 +68,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
       setvalidationError(true);
       setQuantityErorr('* Quantity Required');
       return
-    } else if (isOnlyZeros || hasSpecialCharacters) {
+    } else if (isOnlyZeros || hasSpecialCharacters || hasQuantityPattern) {
       setvalidationError(true);
       setQuantityErorr('* Enter a valid number');
       return
@@ -85,6 +86,10 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
     {
       onUpdateDetails(params)
     }
+    setName('');
+    setMobileNo('');
+    setLocation('');
+    setQuantity('');
     onClose(params); 
    }
   return (

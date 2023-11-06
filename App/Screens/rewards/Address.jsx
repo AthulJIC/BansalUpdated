@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Pressable, KeyboardAvoidingView, ScrollView, TextInput,Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Pressable, KeyboardAvoidingView, ScrollView, TextInput,Image, ActivityIndicator ,Alert} from 'react-native';
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
 import ArrowIcon from '../../../assets/Icon/Arrow';
@@ -48,6 +48,7 @@ const AddressList = ({navigation,route}) => {
   const[stateList, setStateList]= useState([]);
   const [selectedStateName, setSelectedStateName] = useState('');
   const [stateId, setStateId ] = useState();
+  console.log(addresses.length)
   useBackButtonHandler(navigation, false);
   const selectAddress = (addressId) => {
     setSelectedAddress(addressId);
@@ -71,6 +72,18 @@ function findStateNameById(stateId) {
 }, [isVisible, stateId]);
 
   const onAddAddress=()=>{
+    if(addresses.length===5)
+    {
+     Alert.alert('Alert', 'Address Limit Exceeded 5', [
+       {
+         text: 'OK',
+         onPress: () => console.log('Cancel Pressed'),
+         style: 'cancel',
+       },
+     ]);
+     return
+    }
+    setVisible(true);
     setName('')
     setMobileNo('')
     setLocation("")
@@ -320,13 +333,13 @@ const deleteHandler=()=>{
         }}
         style={[
           styles.addressItem,
-          (selectedAddress === item.id || (item.is_default && selectedAddress === null)) && {
+          (selectedAddress === item?.id || (item?.is_default && selectedAddress === null)) && {
             borderColor: '#B1292C',
             borderWidth: 1,
           },]}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={[styles.name, selectedAddress === item.id && { color: '#B1292C' }]}>{item.name}</Text>
+          <Text style={[styles?.name, selectedAddress === item?.id && { color: '#B1292C' }]}>{item.name}</Text>
           <TouchableOpacity
             onPress={() => {
               onEditPress(item);
@@ -347,7 +360,7 @@ const deleteHandler=()=>{
   }
   return (
     <View style={{ backgroundColor: '#ffffff', height: '100%', borderRadius: 8 }}>
-      <TouchableOpacity onPress={() => {onAddAddress(); setVisible(true); setRemoveButton(false) }} style={styles.addaddressItem}>
+      <TouchableOpacity onPress={() => {onAddAddress(); setRemoveButton(false) }} style={styles.addaddressItem}>
         <Text style={{color:"#393939",fontFamily:"Poppins-Medium",fontSize:16,fontWeight:500,lineHeight:24}}>{t('address')}</Text>
         <ArrowIcon width={24} height={24} color="#393939" />
       </TouchableOpacity>
@@ -358,7 +371,7 @@ const deleteHandler=()=>{
       <FlatList
         data={addresses}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item?.id}
         contentContainerStyle={{ paddingBottom: 20 }} 
       />
       {textVisible ?

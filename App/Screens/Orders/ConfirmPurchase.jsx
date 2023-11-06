@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
 import LoadingIndicator from "../../Components/LoadingIndicator";
+import { OrderApi } from "../../service/order/orderservice";
 
 function ConfirmPurchase({route,navigation}){
     const item = route?.params;
@@ -51,6 +52,27 @@ function ConfirmPurchase({route,navigation}){
         console.log("id===", id,distributorId)
         Id=id
     }
+    const data = {
+        quantity : ton,
+        distributor : Id
+    }
+    // OrderApi.createOrder(data).then((res) => {
+    //     if(res.status === 200){
+    //         navigation.navigate('Success',{
+    //                     title : t('title'),
+    //                     content: t('content'),
+    //                     addressItem:item,
+    //                     selectedProduct:null,
+    //                     uiParams,
+    //                     page:'orders',
+    //                     ton,
+    //               });
+    //               setIsLoading(false)
+    //     }
+    // }).catch((err) => {
+    //     console.log('error', err);
+    //      setIsLoading(false)
+    // })
     ConfirmPurchaseService(ton,Id,).then((res) => {
         navigation.navigate('Success',{
             title : t('title'),
@@ -65,6 +87,7 @@ function ConfirmPurchase({route,navigation}){
      }) .catch((errr)=>{
         setIsLoading(false)
       })
+
 }
     const ProductVisible=()=>{
         setModalVisible(true)

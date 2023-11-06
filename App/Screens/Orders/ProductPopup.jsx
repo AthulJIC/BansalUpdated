@@ -92,6 +92,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
     const isOnlyZeros = /^0+$/.test(name);
     const hasPattern = /000|00000/.test(name);
     const hasSpecialCharacters = /[,. -]/.test(name);
+    const hasQuantityPattern = /000|00/.test(name);
     
     if (isOnlyZeros) {
       setErorrText("Input contains only zeros.");
@@ -105,7 +106,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
     //   return;
     // }
     
-    if (hasSpecialCharacters) {
+    if (hasSpecialCharacters || hasQuantityPattern) {
       setErorrText("Input contains special characters (, or .).");
       setQuantityError(true);
       return;
