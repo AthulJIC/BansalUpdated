@@ -30,14 +30,21 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
         const user = await AsyncStorage.getItem('role'); 
         setRole(user)
       } catch (error) {
-        //console.error('Error fetching data from AsyncStorage:', error);
+        console.error('Error fetching data from AsyncStorage:', error);
       }
     };
     getValueFromStorage()
   }, []);
-
+  useEffect(() => {
+   setEditQuantity(quantity)
+  }, [isVisible]);
+  const onButton=()=>{
+    setName('')
+    setEditQuantity('')
+    onClose()
+  }
   const handleRef = () => {
-    console.log('type====', typeof editQuantity, typeof name)
+    console.log('type====', role)
    
     // if (
     //   (onEdit && (parseFloat(editQuantity) < 1 || parseFloat(editQuantity) > 300)) ||
@@ -71,13 +78,13 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
     if(editQuantity>500 || name>500 && role==='Engineer')
     {
       setQuantityError(true)
-      setErorrText('Maximum Limit exceeded. Your Limit is upto 300 in a single order')
+      setErorrText('Maximum Limit exceeded. Your Limit is upto 500 in a single order')
       return
     }
     if(editQuantity>500 || name>500 && role==='Architect')
     {
       setQuantityError(true)
-      setErorrText('Maximum Limit exceeded. Your Limit is upto 300 in a single order')
+      setErorrText('Maximum Limit exceeded. Your Limit is upto 500 in a single order')
       return
     }
     if ((onEdit && !editQuantity) || (!onEdit && !name)) {
@@ -88,11 +95,11 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
 
     const updatedQuantity = onEdit ? editQuantity : name;
     const inputValue = "000"; // Replace with your actual input value
-
-    const isOnlyZeros = /^0+$/.test(name);
-    const hasPattern = /000|00000/.test(name);
-    const hasSpecialCharacters = /[,. -]/.test(name);
-    const hasQuantityPattern = /000|00/.test(name);
+    const containsNonZero = /[1-9]/.test(updatedQuantity);
+    const isOnlyZeros = /^0+$/.test(updatedQuantity);
+    const hasPattern = /000|00000/.test(updatedQuantity);
+    const hasSpecialCharacters = /[, -]/.test(updatedQuantity);
+    const hasQuantityPattern = /000|00/.test(updatedQuantity);
     
     if (isOnlyZeros) {
       setErorrText("Input contains only zeros.");
@@ -110,8 +117,12 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
       setErorrText("Input contains special characters (, or .).");
       setQuantityError(true);
       return;
+    }else if(!containsNonZero)
+    {
+      setQuantityError(true);
+      setErorrText('* Quantity should contain at least one non-zero digit');
+      return;
     }
-    
     if (onRefer) {
       onRefer(updatedQuantity);
     }
@@ -119,7 +130,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
     if (onUpdateQuantity) {
       onUpdateQuantity(updatedQuantity);
     }
-
+ setName('')
     onClose();
   }
 
@@ -143,7 +154,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
           <View style={styles.centeredView}>
             <TouchableOpacity
               style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 5 }]}
-              onPress={onClose}>
+              onPress={()=>{onButton()}}>
               <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
             </TouchableOpacity>
             <Image style={{ marginTop: 15, alignSelf: 'center' }} source={require('../../../assets/Images/ProductFullImage.png')} />

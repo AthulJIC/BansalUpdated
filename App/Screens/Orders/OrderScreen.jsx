@@ -36,6 +36,9 @@ const OrderScreen = ({ navigation }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [is_BookMarked, setis_BookMarked] = useState(false)
     const [disable, setDisable] = useState(false)
+    const [isEndReachedLoading, setIsEndReachedLoading] = useState(false);
+    const [page, setPage] =useState(1);
+    const [nextUrl, setNextUrl] = useState(null);
     const { t } = useTranslation();
      console.log("searchText",searchText, value)
     const {
@@ -64,9 +67,7 @@ const OrderScreen = ({ navigation }) => {
     useEffect(() => {
         ordersList()
     }, [value, searchText])
-    // useEffect(() => {
-    //     ordersList()
-    // }, [value, searchText])
+
     useEffect(() => {
         ordersList()
     }, [is_BookMarked,isBookmarkDeleted])
@@ -109,24 +110,55 @@ const OrderScreen = ({ navigation }) => {
             setisLoading(false)
           
         }
-        OrderService(value, searchText).then((res) => {
-            // if(res.status === 200){
+        OrderService(value, searchText,page).then((res) => {
+            if(res.status === 200){
             //     console.log('success',)
             //     setOrdersList(res.data.results)
             // }
+            const newData = res.data.results;
             console.log('Received data:', res.data.results);
-            if (value != null) {
-                setOrdersList(res.data.results)
-                setisLoading(false)
-            }
-            else{
-                setisLoading(false)
-            }
-
-        }).catch((err) => {
-            setisLoading(false)
-        })
+            if (page === 1) {
+                if (value != null) {
+                    setOrdersList(newData);
+                    setisLoading(false)
+                }
+                else{
+                    setisLoading(false)
+                }
+               
+              } else {
+                setOrdersList((prevData) => {
+                  const newData = new Set([...prevData, ...res.data.results]);
+                  return Array.from(newData);
+                });
+              }
+              setisLoading(false);
+              setNextUrl(res.data.next);
+              setIsEndReachedLoading(false);
+            }else {
+                setisLoading(false);
+                setIsEndReachedLoading(false);
+              }
+             
+             }).catch(function (error) {
+            console.log("order screen erorr",error);
+            setIsEndReachedLoading(false);
+            setisLoading(false);
+          });
     }
+    async function endReachedHandler() {
+        console.log('end', isEndReachedLoading)
+        if (isEndReachedLoading || !nextUrl) {
+          setPage(1)
+          return;
+       }
+        setPage(page + 1);
+        setIsEndReachedLoading(true);
+        if(selectedFilter?.title === 'All Transactions'){
+          getHistoryList();
+        }
+        else getHistoryStatusList(selectedFilter?.value)
+      }
     useFocusEffect(
         useCallback(() => {
           const getValueFromStorage = async () => {
@@ -411,7 +443,8 @@ const OrderScreen = ({ navigation }) => {
                 onScroll={Animated.event(
                     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                     { useNativeDriver: false }
-                )} />
+                )} 
+                onEndReached={endReachedHandler}/>
             <ReferLead isVisible={modalVisible} onClose={(params)=>closeModal(params)} onRefer={(params) => handleRefer(params)} />
             {isLoading && <LoadingIndicator visible={isLoading} text='Loading...' />}
         </View>

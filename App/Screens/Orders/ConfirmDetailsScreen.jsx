@@ -19,7 +19,7 @@ function ConfirmDetailsScreen() {
     const { t } = useTranslation();
     const navigation = useNavigation()
     let ton = details.quantity
-    console.log('referParams=====',referParams);
+    console.log('referParams=====', details);
     useBackButtonHandler(navigation, false);
     const updateDetails = (newDetails) => {
         setDetails(newDetails)
@@ -42,7 +42,7 @@ function ConfirmDetailsScreen() {
                 selectedProduct: null,
                 uiParams,
                 page: 'leads',
-                ton
+               ton
             });
         })
 
@@ -65,7 +65,7 @@ function ConfirmDetailsScreen() {
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={{ flexDirection: 'row', }}>
                 <Text style={{ fontSize: 16, color: 'rgba(57, 57, 57, 1)', marginLeft: 20, fontFamily: 'Poppins-Medium' }}>Details</Text>
-                <Pressable style={{ flexDirection: 'row', justifyContent: 'flex-end', marginRight: 27, marginLeft:'auto' }} onPress={() => setModalVisible(true)}>
+                <Pressable style={{ flexDirection: 'row', justifyContent: 'flex-end', marginRight: 27, marginLeft: 'auto' }} onPress={() => setModalVisible(true)}>
                     <PenIcon width={18} height={18} color='#2B59C3' />
                     <Text style={{ color: '#2B59C3', fontSize: 14, marginLeft: 4, fontFamily: 'Poppins-Medium' }}>{t('Change')}</Text>
                 </Pressable>
@@ -98,7 +98,7 @@ function ConfirmDetailsScreen() {
                     </Text>
                 </TouchableOpacity>
             </View>
-            <ReferLead onUpdateDetails={updateDetails} isVisible={modalVisible} onClose={closeModal} editName={referParams.name} editMobile={referParams.mobileNo} editLocation={referParams.location} editquantity={referParams.quantity} onEdit={true} />
+            <ReferLead onUpdateDetails={updateDetails} isVisible={modalVisible} onClose={closeModal} editName={details.name} editMobile={details.mobileNo} editLocation={details.location} editquantity={details.quantity} onEdit={true} />
         </View>
     )
 }

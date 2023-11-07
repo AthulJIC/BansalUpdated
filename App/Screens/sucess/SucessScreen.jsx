@@ -60,10 +60,17 @@ function SuccessScreen({ route }) {
       <View style={[styles.container, styles.shadowProp]}>
         {pages == "orders" || pages == "leads" ?
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#848484', paddingBottom: 25 }}>
-            <Text style={{
+            {pages=='orders' ?
+           ( <Text style={{
               width: 95, height: 28, fontFamily: 'Poppins-Medium',
               fontWeight: '500', fontSize: 19.2, lineHeight: 28, color: '#393939'
-            }}>+{points} t{('points3')}</Text>
+            }}>+{points} t{('points3')}</Text>):
+            (<Text style={{
+              width: 95, height: 28, fontFamily: 'Poppins-Medium',
+              fontWeight: '500', fontSize: 19.2, lineHeight: 28, color: '#393939'
+            }}>+25 t{('points3')}</Text>)
+            }
+            
             <TouchableOpacity style={{ borderRadius: 8, paddingHorizontal: 15, paddingVertical: 8, backgroundColor: 'rgba(31, 134, 255, 0.2)', justifyContent: 'center', }}>
               <Text style={{
                 width: 70, height: 16, fontFamily: 'Poppins-Medium',
@@ -89,7 +96,7 @@ function SuccessScreen({ route }) {
           {pages == 'orders' ?
             (<Text style={[styles.descriptionValues, { color: '#B1292C' }]}>{ton} {t('Ton')}</Text>)
             : page === 'leads' ?
-              (<Text style={[styles.descriptionValues, { color: '#B1292C' }]}>{addressItem.quantity} {t('Ton')}</Text>) :
+              (<Text style={[styles.descriptionValues, { color: '#B1292C' }]}>{ton} {t('Ton')}</Text>) :
               (<Text style={[styles.descriptionValues, { color: '#B1292C' }]}>{selectedProduct?.title}</Text>)
           }
         </View>
