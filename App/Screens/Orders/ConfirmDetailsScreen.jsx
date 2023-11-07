@@ -42,7 +42,7 @@ function ConfirmDetailsScreen() {
                 selectedProduct: null,
                 uiParams,
                 page: 'leads',
-                ton
+               ton
             });
         })
 

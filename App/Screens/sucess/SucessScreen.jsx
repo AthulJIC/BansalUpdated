@@ -96,7 +96,7 @@ function SuccessScreen({ route }) {
           {pages == 'orders' ?
             (<Text style={[styles.descriptionValues, { color: '#B1292C' }]}>{ton} {t('Ton')}</Text>)
             : page === 'leads' ?
-              (<Text style={[styles.descriptionValues, { color: '#B1292C' }]}>{addressItem.quantity} {t('Ton')}</Text>) :
+              (<Text style={[styles.descriptionValues, { color: '#B1292C' }]}>{ton} {t('Ton')}</Text>) :
               (<Text style={[styles.descriptionValues, { color: '#B1292C' }]}>{selectedProduct?.title}</Text>)
           }
         </View>

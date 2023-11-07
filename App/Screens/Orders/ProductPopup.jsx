@@ -95,10 +95,10 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
 
     const updatedQuantity = onEdit ? editQuantity : name;
     const inputValue = "000"; // Replace with your actual input value
-
+    const containsNonZero = /[1-9]/.test(updatedQuantity);
     const isOnlyZeros = /^0+$/.test(updatedQuantity);
     const hasPattern = /000|00000/.test(updatedQuantity);
-    const hasSpecialCharacters = /[,. -]/.test(updatedQuantity);
+    const hasSpecialCharacters = /[, -]/.test(updatedQuantity);
     const hasQuantityPattern = /000|00/.test(updatedQuantity);
     
     if (isOnlyZeros) {
@@ -116,6 +116,11 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
     if (hasSpecialCharacters || hasQuantityPattern) {
       setErorrText("Input contains special characters (, or .).");
       setQuantityError(true);
+      return;
+    }else if(!containsNonZero)
+    {
+      setQuantityError(true);
+      setErorrText('* Quantity should contain at least one non-zero digit');
       return;
     }
     if (onRefer) {
