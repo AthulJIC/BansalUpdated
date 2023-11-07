@@ -238,9 +238,9 @@ const DistributorHistory = ({navigation}) => {
               <Text style={{ fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)', marginTop:7, marginLeft:2 }}>
                 {'\u2B24'}
               </Text>
-              <Text style={{ fontWeight: '500', fontSize: 13, color: 'rgba(57, 57, 57, 1)' ,fontFamily: 'Poppins-Regular',marginLeft:3}}>
+              {/* <Text style={{ fontWeight: '500', fontSize: 13, color: 'rgba(57, 57, 57, 1)' ,fontFamily: 'Poppins-Regular',marginLeft:3}}>
                 {itemData.item.transaction_id}
-              </Text>
+              </Text> */}
             </View>
             <View style={{ flexDirection: 'row', flexWrap: 'nowrap', marginLeft: 25 }}>
               <Text style={{ marginHorizontal: 3, fontSize: 11, color: 'black', fontFamily: 'Poppins-Regular' }}>{date}</Text>

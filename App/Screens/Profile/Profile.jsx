@@ -24,7 +24,7 @@ const Profile =({route})=>{
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     let navigation = useNavigation();
-   // useBackButtonHandler(navigation, false);
+    useBackButtonHandler(navigation, false);
     let profileData=[
        
         {

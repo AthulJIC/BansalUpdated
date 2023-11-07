@@ -21,6 +21,7 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import SearchIcon from '../../../assets/Icon/SearchIcon';
 import { useAppContext } from '../../context/AppContext';
 import { useFocusEffect } from '@react-navigation/native';
+import { OrderApi } from '../../service/order/orderservice';
 
 const OrderScreen = ({ navigation }) => {
     const [ordersLists, setOrdersList] = useState([])
@@ -70,7 +71,7 @@ const OrderScreen = ({ navigation }) => {
         ordersList()
     }, [is_BookMarked,isBookmarkDeleted])
 
-    const locationHistory = () => {
+    const locationHistory = useCallback(() => {
         LocationService().then((res) => {
 
             if (res.status === 200) {
@@ -83,6 +84,25 @@ const OrderScreen = ({ navigation }) => {
             }
         })
     }
+    )
+    function searchTextHandler(text){
+       if(text !== ''){
+           OrderApi.getLocation(text).then((res) => {
+               console.log('location', res.data)
+               if(res.status === 200){
+                   setLocationList(res.data.results);
+                   orderData = locationList.map((dataPoint) => ({
+                       value: dataPoint.district,
+                       label: dataPoint.district,
+                   }));
+                   console.log('list======', orderData, value)
+               }
+           }).catch((err) => {
+               console.error(err)
+           })
+       }
+    }
+    
     const ordersList = () => {
         if(searchText!='')
         {
@@ -332,6 +352,7 @@ const OrderScreen = ({ navigation }) => {
                     <View>
                         <View style={{ flexDirection: 'row', marginTop: 5 }}>
                             <Dropdown
+                                key={value}
                                 style={styles.dropdown}
                                 placeholderStyle={styles.placeholderStyle}
                                 selectedTextStyle={styles.selectedTextStyle}
@@ -347,9 +368,11 @@ const OrderScreen = ({ navigation }) => {
                                 searchPlaceholder="Search..."
                                 value={value}
                                 onChange={item => {
+                                    console.log('item=====',item)
                                     setValue(item.value);
                                     setIsOpen(false);
                                 }}
+                                onChangeText={(text) => searchTextHandler(text)}
                                 itemTextStyle={{ color: 'black', fontSize: 12, fontFamily: 'Poppins-Regular' }}
                                 containerStyle={styles.dropdownContainer}
                                 renderRightIcon={() => (

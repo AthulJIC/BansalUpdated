@@ -212,18 +212,19 @@ const Requests = ({navigation}) => {
     function clearHandler() {
         setSearchText('')
         setShowIcon(false)
-        if (isEndReachedLoading || !nextUrl) {
-            setPage(1)
-            return;
-        }
-        setPage(page + 1)
-        searchHandler('')
+        // if (isEndReachedLoading || !nextUrl) {
+        //     setPage(1)
+        //     return;
+        // }
+        // setPage(page + 1)
+        // searchHandler('')
         getRequestList()
         
     }
     const HEADER_HEIGHT = 200;
     const scrollY = new Animated.Value(0);
     const requestData = ( itemData ) => {   
+        console.log('itemData====', itemData.item.name)
         const objectLength = Object.keys(itemData.item).length;
         if (objectLength === 0 || !itemData.item) {
             return (

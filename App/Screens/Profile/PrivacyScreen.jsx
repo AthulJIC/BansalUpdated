@@ -2,7 +2,7 @@ import { Text, ScrollView,View} from "react-native";
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
 const PrivacyScreen = ({navigation}) => {
-    //useBackButtonHandler(navigation, false);
+    useBackButtonHandler(navigation, false);
     return(
         <ScrollView style={{flex:1, backgroundColor:'white',padding:9}}>
             <Text style={{color:'black', fontSize:15, fontFamily:'Poppins-Regular'}}>This Privacy Policy explains how Bansal TMT may collect, use, store, disclose or otherwise process your personal data including personal data provided when using our Mobile Application and describes the rights you have with respect to your personal data.</Text>
