@@ -22,15 +22,15 @@ function HeaderComponent() {
   const [notiAlert,setNotiAlert]=useState('')
   const { changeLanguage } = useAppContext();
   const[username, setUsername] = useState('') ;
-  // const notificationAlert=()=>{
-  //   HomeApi.getNotificationAlert().then((res) => {
-  //     console.log("notificationAlert",res.data)
-  //     setNotiAlert(res.data.unread_count)
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error,"Notification alert error");
-  //   });
-  // }
+  const notificationAlert=()=>{
+    HomeApi.getNotificationAlert().then((res) => {
+      console.log("notificationAlert",res.data)
+      setNotiAlert(res.data.unread_count)
+    })
+    .catch(function (error) {
+      console.log(error,"Notification alert error");
+    });
+  }
   
   useFocusEffect(
     useCallback(() => {
@@ -45,7 +45,7 @@ function HeaderComponent() {
         }
       };
       getValueFromStorage();
-      //notificationAlert()
+      notificationAlert()
     }, [])
   );
   const handleButtonPress = (buttonName) => {

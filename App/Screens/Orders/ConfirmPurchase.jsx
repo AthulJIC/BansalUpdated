@@ -153,7 +153,7 @@ function ConfirmPurchase({route,navigation}){
                     </Text>
                 </Pressable>
             </View>
-            <ProductPopup  onUpdateQuantity={updateTon}  isVisible={modalVisible} onClose={()=> setModalVisible(false)} quantity={item.quantity} onEdit={true} />
+            <ProductPopup  onUpdateQuantity={updateTon}  isVisible={modalVisible} onClose={()=> setModalVisible(false)} quantity={ton} onEdit={true} />
             {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'/>}
         </View>
     )

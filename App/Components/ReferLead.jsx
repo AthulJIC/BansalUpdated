@@ -1,5 +1,5 @@
 import { useFocusEffect } from "@react-navigation/native";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { View, TouchableOpacity, TextInput, Pressable, Text, StyleSheet, KeyboardAvoidingView, ScrollView } from "react-native";
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
@@ -19,6 +19,19 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
   const [validationError,setvalidationError]=useState(false)
   const [erorrLocation,setErorrLocation]=useState('')
   const [quantityErorr,setQuantityErorr]=useState('')
+  console.log("edit value",editquantity, editLocation, editMobile, editName)
+  console.log("value",localName,localLocation,localMobile,localQuantity)
+  const nameRef = useRef(null);
+  const mobileNoRef = useRef(null);
+  const locationRef = useRef(null);
+  const quantityRef = useRef(null);
+  useEffect(() => {
+   setLocalName(editName)
+   setLocalLocation(editLocation)
+   setLocalMobile(editMobile)
+   setLocalQuantity(editquantity)
+  }, [isVisible]);
+  
   // const resetState = () => {
   //   setName('');
   //   setMobileNo('');
@@ -40,6 +53,13 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
     setMobileNo('');
     setLocation('');
     setQuantity('');
+    setLocalLocation('')
+    setLocalName('')
+    setLocalMobile('')
+    setLocalQuantity('')
+    seterorrMessageName(''); 
+    setErorrLocation(false); 
+    seterorrMessageMobile(false); 
     onClose(); 
   }
   function handleRef() {
@@ -49,14 +69,24 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
       location: onEdit == true ? localLocation : location,
       quantity: onEdit == true ? localQuantity : quantity,
     };
+    const containsNonZero = /[1-9]/.test(params.quantity);
     const isOnlyZeros = /^0+$/.test(quantity);
     const hasPattern = /000|00000/.test(name);
     const hasSpecialCharacters = /[,.]/.test(quantity);
     const hasQuantityPattern = /000|00/.test(quantity);
+    const emojiPattern = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{1F200}-\u{1F251}\u{1F004}\u{1F0CF}\u{1F18E}\u{1F191}\u{1F198}\u{1F1E7}\u{1F1E9}\u{1F1EC}\u{1F1F7}\u{1F1F8}\u{1F1FA}\u{1F201}\u{1F21A}\u{1F22F}\u{1F232}\u{1F233}\u{1F234}\u{1F235}\u{1F236}\u{1F237}\u{1F238}\u{1F239}\u{1F23A}\u{1F250}]/gu;
+    const emoji= emojiPattern.test(params.name)
+    const emojiAddress=emojiPattern.test(params.location)
+   
     if(params.name==='')
     {
       setvalidationError(true)
       seterorrMessageName('* Name Required')
+      return
+    }else if (emoji)
+    {
+      setvalidationError(true)
+      seterorrMessageName('Field Contains Emojis')
       return
     }
     if (params.mobileNo.length<10 || params.mobileNo.length > 10)
@@ -71,19 +101,31 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
     setErorrLocation('* Location Field is empty')
     return
     }
+    else if (emojiAddress)
+    {
+      setvalidationError(true)
+    setErorrLocation('Field Contains Emojis')
+      return
+    }
     if (params.quantity === '' ) {
       setvalidationError(true);
       setQuantityErorr('* Quantity Required');
       return
-    } else if (isOnlyZeros || hasSpecialCharacters || hasQuantityPattern) {
+    } else if ( hasSpecialCharacters ) {
       setvalidationError(true);
       setQuantityErorr('* Enter a valid number');
       return
+    }else if (!containsNonZero) {
+      setvalidationError(true);
+      setQuantityErorr('* Quantity should contain at least one non-zero digit');
+      return;
     }
+    
+    
     if(params.quantity>500)
     {
       setvalidationError(true);
-      setQuantityErorr('* Limit Exceeded');
+      setQuantityErorr('*Your Limit 500 Exceeded');
       return
     }
    if (onRefer) {
@@ -123,6 +165,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
               </TouchableOpacity>
               <TextInput
                 style={styles.inputContainer}
+                keyboardType={Platform.OS === 'android' ? 'email-address' : 'ascii-capable'}
                 placeholder="Name"
                 onFocus={() => {
                   seterorrMessageName(''); 
@@ -141,6 +184,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
               )
             }
               <TextInput
+              ref={nameRef}
                 style={styles.inputContainer}
                 onFocus={() => {
                   seterorrMessageName(''); 
