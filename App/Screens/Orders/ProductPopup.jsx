@@ -21,7 +21,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
   const [quantityError, setQuantityError] = useState(false);
   const [erorrText,setErorrText] =useState('')
   const [role, setRole] = useState('')
-  console.log('role',role)
+  console.log('role',role,editQuantity)
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -46,12 +46,13 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
   const handleRef = () => {
     // ...
   
-    if (editQuantity > 300 && role === 'Contractor') {
+    const updatedQuantity = onEdit ? editQuantity : name;
+    if (updatedQuantity > 300 && role === 'Contractor') {
       setQuantityError(true);
       setErorrText('Maximum Limit exceeded. Your Limit is up to 300 in a single order');
       return;
     }
-    if (editQuantity > 500 && (role === 'Engineer' || role === 'Architect')) {
+    if (updatedQuantity > 500 && (role === 'Engineer' || role === 'Architect')) {
       setQuantityError(true);
       setErorrText('Maximum Limit exceeded. Your Limit is up to 500 in a single order');
       return;
@@ -63,7 +64,6 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
       return;
     }
   
-    const updatedQuantity = onEdit ? editQuantity : name;
   
     const containsNonZero = /[1-9]/.test(updatedQuantity);
     const isOnlyZeros = /^0+$/.test(updatedQuantity);

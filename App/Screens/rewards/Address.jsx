@@ -425,6 +425,7 @@ const deleteHandler=()=>{
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setName(text)}
                   value={name}
+                  maxLength={25}
                   onFocus={() => handleInputFocus('name')}
                 />
                 {nameError ? <Text style={{ color: '#B1292C' }}>{nameError}</Text> : null}
@@ -445,6 +446,7 @@ const deleteHandler=()=>{
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setLocation(text)}
                   value={location}
+                  maxLength={25}
                  
                 />
                 <TextInput
@@ -453,6 +455,7 @@ const deleteHandler=()=>{
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setArea(text)}
                   value={area}
+                  maxLength={25}
                 />
                 <TextInput
                   style={styles.inputContainer}
@@ -460,6 +463,7 @@ const deleteHandler=()=>{
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setLandMark(text)}
                   value={landMark}
+                  maxLength={25}
                   onFocus={() => handleInputFocus('landMark')}
                 />
                 <TextInput
@@ -479,6 +483,7 @@ const deleteHandler=()=>{
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setTown(text)}
                   value={Value}
+                  maxLength={25}
                   onFocus={() => handleInputFocus('town')}
                 />
                 {townError ? <Text style={{ color: '#B1292C' }}>{townError}</Text> : null}
@@ -557,7 +562,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: 'white',
     height: 116,
-    alignSelf:'center'
+    alignSelf:'center',
+    height:'auto'
  
   },
   addaddressItem: {
@@ -575,6 +581,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins-Medium',
     color: '#000',
+    width:'80%'
   },
   address: {
     fontSize: 16,
