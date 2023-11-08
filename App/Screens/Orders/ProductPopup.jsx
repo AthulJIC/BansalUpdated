@@ -44,95 +44,61 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
     onClose()
   }
   const handleRef = () => {
-    console.log('type====', role)
-   
-    // if (
-    //   (onEdit && (parseFloat(editQuantity) < 1 || parseFloat(editQuantity) > 300)) ||
-    //   (!onEdit && (parseFloat(name) < 1 || parseFloat(name) > 300))
-    // ) {
-    //   setQuantityError(true);
-    //   return;
-    // }
+    // ...
   
-    // const eQuantity = parseFloat(editQuantity) || 0; 
-    // const nQuantity = parseFloat(name) || 0; 
+    if (editQuantity > 300 && role === 'Contractor') {
+      setQuantityError(true);
+      setErorrText('Maximum Limit exceeded. Your Limit is up to 300 in a single order');
+      return;
+    }
+    if (editQuantity > 500 && (role === 'Engineer' || role === 'Architect')) {
+      setQuantityError(true);
+      setErorrText('Maximum Limit exceeded. Your Limit is up to 500 in a single order');
+      return;
+    }
   
-    // const updatedQuantity = onEdit ? eQuantity.toString() : nQuantity.toString();
-
-    
-    // if (onRefer) {
-    //   onRefer(updatedQuantity);
-    // }
-    
-    // if (onUpdateQuantity) {
-    //   onUpdateQuantity(updatedQuantity);
-    // }
-
-    // onClose();
-    if(editQuantity>300 || name>300 && role==='Contractor')
-    {
-      setQuantityError(true)
-      setErorrText('Maximum Limit exceeded. Your Limit is upto 300 in a single order')
-      return
-    }
-    if(editQuantity>500 || name>500 && role==='Engineer')
-    {
-      setQuantityError(true)
-      setErorrText('Maximum Limit exceeded. Your Limit is upto 500 in a single order')
-      return
-    }
-    if(editQuantity>500 || name>500 && role==='Architect')
-    {
-      setQuantityError(true)
-      setErorrText('Maximum Limit exceeded. Your Limit is upto 500 in a single order')
-      return
-    }
     if ((onEdit && !editQuantity) || (!onEdit && !name)) {
       setQuantityError(true);
-      setErorrText('Please, enter valid quantity')
+      setErorrText('Please, enter valid quantity');
       return;
     }
-
+  
     const updatedQuantity = onEdit ? editQuantity : name;
-    const inputValue = "000"; // Replace with your actual input value
+  
     const containsNonZero = /[1-9]/.test(updatedQuantity);
     const isOnlyZeros = /^0+$/.test(updatedQuantity);
-    const hasPattern = /000|00000/.test(updatedQuantity);
-    const hasSpecialCharacters = /[, -]/.test(updatedQuantity);
-    const hasQuantityPattern = /000|00/.test(updatedQuantity);
-    
+    const hasSpecialCharacters = /[^\d\s]/.test(updatedQuantity);
+  
     if (isOnlyZeros) {
-      setErorrText("Input contains only zeros.");
+      setErorrText('Input contains only zeros.');
       setQuantityError(true);
       return;
     }
-    
-    // if (hasPattern) {
-    //   setErorrText("Input contains the specified pattern.");
-    //   setQuantityError(true);
-    //   return;
-    // }
-    
-    if (hasSpecialCharacters || hasQuantityPattern) {
-      setErorrText("Input contains special characters (, or .).");
+  
+    if (hasSpecialCharacters) {
+      setErorrText('Input contains special characters or letters.');
       setQuantityError(true);
       return;
-    }else if(!containsNonZero)
-    {
+    }
+  
+    if (!containsNonZero) {
       setQuantityError(true);
       setErorrText('* Quantity should contain at least one non-zero digit');
       return;
     }
+  
     if (onRefer) {
       onRefer(updatedQuantity);
     }
-    
+  
     if (onUpdateQuantity) {
       onUpdateQuantity(updatedQuantity);
     }
- setName('')
+  
+    setName('');
     onClose();
-  }
+  };
+  
 
   const description = t('description')
 

@@ -69,17 +69,17 @@ function HeaderComponent() {
     changeNewLanguage(newLanguage === 'en' ? 'English' : 'Hindi');
     //await AsyncStorage.setItem('Language', (newLanguage === 'en' ? 'English' : 'Hindi'))
   }
-  // const handleNotificationClick = () => {
-  //   HomeApi.getNotificationUnread().then((res) => {
-  //     console.log("notificationAlert handleNotificationClick",res)
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error,"Notification alert error");
-  //   });
-  //   navigation.navigate('Notification')
-  //   setNotificationMessage('New notification message here');
-  //   setNotificationVisible(true);
-  // };
+  const handleNotificationClick = () => {
+    HomeApi.getNotificationUnread().then((res) => {
+      console.log("notificationAlert handleNotificationClick",res)
+    })
+    .catch(function (error) {
+      console.log(error,"Notification alert error");
+    });
+    navigation.navigate('Notification')
+    setNotificationMessage('New notification message here');
+    setNotificationVisible(true);
+  };
 
   function openModal() {
     setActiveButton(language);
@@ -100,7 +100,7 @@ function HeaderComponent() {
           <TouchableOpacity style={styles.iconContainer} onPress={openModal}>
             <LanguageIcon width={24} height={24} color='#F18C13' />
           </TouchableOpacity >
-          <TouchableOpacity onPress={() =>  navigation.navigate('Notification')} style={styles.iconContainer} >
+          <TouchableOpacity onPress={() => handleNotificationClick() } style={styles.iconContainer} >
             <BellIcon width={24} height={24} />
             <View style={[styles.notific,]}>
             {notiAlert!=0 ?
