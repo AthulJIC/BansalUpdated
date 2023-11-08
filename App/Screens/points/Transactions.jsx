@@ -10,6 +10,9 @@ import { Image } from "react-native";
 import LoadingIndicator from "../../Components/LoadingIndicator";
 import { useFocusEffect } from "@react-navigation/native";
 import { HistoryApi } from "../../service/history/historyservice";
+import LeadAcceptedIcon from "../../../assets/Icon/LeadAcceptedIcon";
+import LeadProcessingIcon from "../../../assets/Icon/LeadProcessingIcon";
+import LeadRejectedIcon from "../../../assets/Icon/LeadRejectedIcon";
 
 const Transactions=()=>{
     const [filteredData, setFilteredData] = useState([]);
@@ -121,28 +124,44 @@ const Transactions=()=>{
           paddingRight:24,
           flex:1
         }}>
-            { itemData.item.status === 'Accepted' ? (
-              <View style={{backgroundColor: 'rgba(24, 183, 88, 0.2)',
-              borderRadius: 8,
-              padding: 8,
-              height:47}}>
-                <ArrowDown width={32} height={32} color="#18B758"/> 
-              </View>
-            ) : itemData.item.status === 'Processing' ? (
-              <View style={{backgroundColor: 'rgba(31, 134, 255, 0.2)',
-              borderRadius: 8,
-              padding: 8,
-              height:47}}>
-              <ProcessingIcon/>
-              </View>
-            ) :(
-              <View style={{backgroundColor: 'rgba(235, 28, 28, 0.2)',
-              borderRadius: 8,
-              padding: 8,
-              height:47}}>
-              <RejectedIcon/>
-              </View>
-            )}
+           { itemData.item.status === 'Accepted' ? (
+          <View style={{backgroundColor: 'rgba(24, 183, 88, 0.2)',
+          borderRadius: 8,
+          padding: 8,
+          height:47,
+          }}>
+            {itemData.item.lead !== null ? (
+                <LeadAcceptedIcon/>
+            ): 
+            <AcceptedIcon/> 
+            }
+          </View>
+        ) : itemData.item.status === 'Processing' ? (
+          <View style={{backgroundColor: 'rgba(31, 134, 255, 0.2)',
+          borderRadius: 8,
+          padding: 8,
+          height:47,
+          }}>
+            {itemData.item.lead !== null ? (
+                <LeadProcessingIcon/>
+            ): 
+            <ProcessingIcon/>
+            }
+         
+          </View>
+        ) :(
+          <View style={{backgroundColor: 'rgba(235, 28, 28, 0.2)',
+          borderRadius: 8,
+          padding: 8,
+          height:47,
+          }}>
+            {itemData.item.lead !== null ? (
+                <LeadRejectedIcon/>
+            ): 
+            <RejectedIcon/>
+        }
+          </View>
+        )}
             <View style={{flexDirection:'column',marginHorizontal:15}}>
               
               <View style={{flexDirection:'row',justifyContent:'flex-start'}}>
