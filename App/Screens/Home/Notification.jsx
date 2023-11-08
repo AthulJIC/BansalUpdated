@@ -20,7 +20,7 @@ const Notification = ({navigation}) => {
             if(res.status === 200){
                 setIsLoading(false)
                 setRefreshing(false)
-                setData(res.data.results)
+                setData(res.data.notifications)
             }
         }).catch((err) => {
             setIsLoading(false)

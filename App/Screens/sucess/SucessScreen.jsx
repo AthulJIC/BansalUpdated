@@ -53,7 +53,7 @@ function SuccessScreen({ route }) {
     }
   }
   return (
-    <ImageBackground source={require('../../../assets/Images/Success_bg.png')} style={{ width: '98%', height:250, alignSelf: 'center', backgroundColor: 'white', flex: 1 }}>
+    <ImageBackground source={require('../../../assets/Images/Success_bg.png')} style={{ width: '98%', height: 200, alignSelf: 'center', backgroundColor: 'white', flex: 1 }}>
       <View style={{ alignSelf: 'center', marginTop: 80 }}>
         <SuccessIcon />
       </View>
