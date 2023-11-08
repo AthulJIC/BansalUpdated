@@ -38,6 +38,41 @@ const BarGraph = ({refresh}) => {
     const referenceLine2Position = totalOrders * 0.65;
     const referenceLine3Position = totalOrders;
    console.log("barValue",barMonth)
+
+//    useFocusEffect(
+//     useCallback(() => {
+//       const fetchData = async () => {
+//         try {
+//           const user = await AsyncStorage.getItem('role');
+//           setRole(user);
+//           setIsLoading(true);
+//           setValue('Monthly');
+//           setBarMonth([]);
+//           setBarSpacing(11);
+//           setBarWidth(12);
+//           //setActiveButton('Orders');
+//           if(role === 'Distributor'){
+//             setIsLoading(true)
+//             distributorOrder();
+//           }
+//           else{
+//             setIsLoading(true)
+//             getMonthlyOrders();
+//           }
+//         } catch (error) {
+//           // Handle error if needed
+//           console.error('Error fetching data from AsyncStorage:', error);
+//         }
+       
+        
+//       };
+  
+//       fetchData();
+
+
+//     }, [activeButton,role])
+//   );
+
    useFocusEffect(
      useCallback(() => {
       const fetchData = async () => {
@@ -58,6 +93,28 @@ const BarGraph = ({refresh}) => {
   
           setIsRefreshing(false);
           setTotalOrders(0);
+        }
+        else{
+            try {
+                const user = await AsyncStorage.getItem('role');
+                setRole(user);
+                setIsLoading(true);
+                setValue('Monthly');
+                setBarMonth([]);
+                setBarSpacing(11);
+                setBarWidth(12);
+                setActiveButton('Orders');
+                if(role === 'Distributor'){
+                  setIsLoading(true)
+                  distributorOrder();
+                }
+                else{
+                  setIsLoading(true)
+                  getMonthlyOrders();
+                }
+              } catch (error) {
+                console.error('Error fetching data from AsyncStorage:', error);
+              }
         }
       };
   
@@ -138,33 +195,7 @@ const BarGraph = ({refresh}) => {
                 label : moment(dataPoint.date).format('ddd').toLocaleString('en-US')
             }))
         }
-useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          const user = await AsyncStorage.getItem('role');
-          setRole(user);
-          if(role === 'Distributor'){
-            setIsLoading(true)
-            distributorOrder();
-          }
-          else{
-            setIsLoading(true)
-            getMonthlyOrders();
-          }
-        } catch (error) {
-          // Handle error if needed
-          console.error('Error fetching data from AsyncStorage:', error);
-        }
-       
-        
-      };
-  
-      fetchData();
 
-
-    }, [activeButton,role])
-  );
   
     function getMonthlyOrders(){
         console.log('contractor working')
@@ -294,7 +325,7 @@ useFocusEffect(
     }
     
     const handleButton = (buttonName) => {
-        setTotalOrders(0)
+        setTotalOrders(prevTotalOrders => 0); 
         setIsLoading(true)
         setActiveButton(buttonName);
         setValue('Monthly')
