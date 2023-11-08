@@ -178,36 +178,38 @@ const Requests = ({navigation}) => {
         setSearchText(text)
         //setIsLoading(true);
         setIsEndReachedLoading(true);
-        RequestApi.searchRequest(page,text).then((res) => {
-            if (res.status === 200) {
-                if (res.data.results.length > 0) {
-                  if (page == 1) {
-                    setRequestList(res.data.results);
-                  }
-                  else {
-                    setRequestList([...requestList, ...res.data.results]);
-                  }
-                  //setPage(page + 1);
-                  //setIsLoading(false)
-                  setNextUrl(res.data.next)
+        if(text.length >= 3){
+            RequestApi.searchRequest(page,text).then((res) => {
+                if (res.status === 200) {
+                    if (res.data.results.length > 0) {
+                      if (page == 1) {
+                        setRequestList(res.data.results);
+                      }
+                      else {
+                        setRequestList([...requestList, ...res.data.results]);
+                      }
+                      //setPage(page + 1);
+                      //setIsLoading(false)
+                      setNextUrl(res.data.next)
+                    }
+                    else {
+                      if (page == 1) {
+                        setRequestList([]);
+                       // setIsLoading(false)
+                      }
+                    }
+                  setIsEndReachedLoading(false);
                 }
                 else {
-                  if (page == 1) {
-                    setRequestList([]);
-                   // setIsLoading(false)
-                  }
+                  setIsEndReachedLoading(false);
                 }
-              setIsEndReachedLoading(false);
-            }
-            else {
-              setIsEndReachedLoading(false);
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-            setIsEndReachedLoading(false);
-           //setIsLoading(false)
-          });
+            })
+            .catch(function (error) {
+                console.log(error);
+                setIsEndReachedLoading(false);
+               //setIsLoading(false)
+              });
+        }
     }
     function clearHandler() {
         setSearchText('')

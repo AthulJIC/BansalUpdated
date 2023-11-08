@@ -87,7 +87,7 @@ const OrderScreen = ({ navigation }) => {
     }
     )
     function searchTextHandler(text){
-       if(text !== ''){
+       if(text !== '' && text.length >= 3){
            OrderApi.getLocation(text).then((res) => {
                console.log('location', res.data)
                if(res.status === 200){
