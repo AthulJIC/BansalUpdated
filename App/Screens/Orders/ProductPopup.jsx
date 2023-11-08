@@ -56,6 +56,10 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
       setQuantityError(true);
       setErorrText('Maximum Limit exceeded. Your Limit is up to 500 in a single order');
       return;
+    }else if (/\s/.test(updatedQuantity) || /[^\d]/.test(updatedQuantity)) {
+      setQuantityError(true);
+      setErorrText('* Only Numeric Values Excepted ');
+      return;
     }
   
     if ((onEdit && !editQuantity) || (!onEdit && !name)) {

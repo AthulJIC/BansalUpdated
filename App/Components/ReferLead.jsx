@@ -82,17 +82,23 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
     const emoji= emojiPattern.test(params.name)
     const emojiAddress=emojiPattern.test(params.location)
    
-    if(params.name==='')
-    {
-      setvalidationError(true)
-      seterorrMessageName('* Name Required')
+    if (params.name === '') {
+      setvalidationError(true);
+      seterorrMessageName('* Name Required');
       return
-    }else if (emoji)
-    {
-      setvalidationError(true)
-      seterorrMessageName('Field Contains Emojis')
+    } else if (/\d/.test(params.name[0])) {
+      setvalidationError(true);
+      seterorrMessageName('First character cannot be a number');
       return
-    }
+    } else if (/^\s+$/.test(params.name)) {
+      setvalidationError(true);
+      seterorrMessageName('Field contains spaces only');
+      return
+    } else if (emoji) {
+      setvalidationError(true);
+      seterorrMessageName('Field Contains Emojis');
+      return
+    } 
     if (!/^[0-9]*$/.test(params.mobileNo)) {
       setvalidationError(true);
       seterorrMessageMobile('* Please enter a valid mobile Number');
@@ -107,7 +113,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
       seterorrMessageMobile('* Mobile Number should not contain special characters (except spaces)');
       return;
     }
-    if(params.location===null)
+    if(params.location==='')
     {
       setvalidationError(true)
     setErorrLocation('* Location Field is empty')
@@ -117,6 +123,10 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
     {
       setvalidationError(true)
     setErorrLocation('Field Contains Emojis')
+      return
+    }else if (/^\s+$/.test(params.location)) {
+      setvalidationError(true);
+      setErorrLocation('Field contains spaces only');
       return
     }
     if (params.quantity === '' ) {
@@ -139,7 +149,12 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
       setvalidationError(true);
       setQuantityErorr('*Your Limit 500 Exceeded');
       return
+    }else if (/\s/.test(params.quantity) || /[^\d]/.test(params.quantity)) {
+      setvalidationError(true);
+      setQuantityErorr('* Only Numeric Values Excepted ');
+      return;
     }
+  
    if (onRefer) {
       onRefer(params);
     }
@@ -222,6 +237,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                   seterorrMessageName(''); 
                   setErorrLocation(false); 
                 }}
+                maxLength={25}
                 placeholder="Site Location"
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalLocation(text) : setLocation(text)}

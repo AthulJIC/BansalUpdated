@@ -383,8 +383,8 @@ const deleteHandler=()=>{
   return (
     <View style={{ backgroundColor: '#ffffff', height: '100%', borderRadius: 8 }}>
       <TouchableOpacity onPress={() => {onAddAddress(); setRemoveButton(false) }} style={styles.addaddressItem}>
-        <Text style={{color:"#393939",fontFamily:"Poppins-Medium",fontSize:16,fontWeight:500,lineHeight:24}}>{t('address')}</Text>
-        <ArrowIcon width={24} height={24} color="#393939" />
+        <Text style={{color:"#B1292C",fontFamily:"Poppins-Medium",fontSize:16,fontWeight:500,lineHeight:24}}>+{t('address')}</Text>
+        {/* <ArrowIcon width={24} height={24} color="#393939" /> */}
       </TouchableOpacity>
     
 {addresses.length !== 0 ?
@@ -468,12 +468,8 @@ const deleteHandler=()=>{
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setLocation(text)}
                   value={location}
-<<<<<<< HEAD
                   maxLength={25}
-                 
-=======
-                  onFocus={() => handleInputFocus('houseNo')}
->>>>>>> origin/main
+                 onFocus={() => handleInputFocus('houseNo')}
                 />
                {houseNoError ? <Text style={{ color: '#B1292C' }}>{houseNoError}</Text> : null}
                 <TextInput
@@ -482,11 +478,8 @@ const deleteHandler=()=>{
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setArea(text)}
                   value={area}
-<<<<<<< HEAD
                   maxLength={25}
-=======
                   onFocus={() => handleInputFocus('area')}
->>>>>>> origin/main
                 />
                 {areaError ? <Text style={{ color: '#B1292C' }}>{areaError}</Text> : null}
                 <TextInput

@@ -182,40 +182,6 @@ const Requests = ({ navigation }) => {
         setSearchText(text)
         //setIsLoading(true);
         setIsEndReachedLoading(true);
-<<<<<<< HEAD
-        console.log("page,text", page, text)
-        RequestApi.searchRequest(page, text).then((res) => {
-            console.log("searchRequest", res.data.results)
-            if (res.status === 200) {
-                if (res.data.results.length > 0) {
-                    if (page == 1) {
-                        setRequestList(res.data.results);
-                    }
-                    else {
-                        setRequestList([...requestList, ...res.data.results]);
-                    }
-                    //setPage(page + 1);
-                    //setIsLoading(false)
-                    setNextUrl(res.data.next)
-                }
-                else {
-                    if (page == 1) {
-                        setRequestList([]);
-                        // setIsLoading(false)
-                    }
-                }
-                setIsEndReachedLoading(false);
-            }
-            else {
-                setIsEndReachedLoading(false);
-            }
-        })
-            .catch(function (error) {
-                console.log(error);
-                setIsEndReachedLoading(false);
-                //setIsLoading(false)
-            });
-=======
         if(text.length >= 3){
             RequestApi.searchRequest(page,text).then((res) => {
                 if (res.status === 200) {
@@ -248,36 +214,22 @@ const Requests = ({ navigation }) => {
                //setIsLoading(false)
               });
         }
->>>>>>> origin/main
     }
     function clearHandler() {
         // setSearchText('')
         setShowIcon(false)
-<<<<<<< HEAD
-        if (isEndReachedLoading || !nextUrl) {
-            setPage(1)
-            return;
-        }
-        setPage(page + 1)
-=======
         // if (isEndReachedLoading || !nextUrl) {
         //     setPage(1)
         //     return;
         // }
         // setPage(page + 1)
->>>>>>> origin/main
         // searchHandler('')
         getRequestList()
 
     }
     const HEADER_HEIGHT = 200;
     const scrollY = new Animated.Value(0);
-<<<<<<< HEAD
     const requestData = (itemData) => {
-=======
-    const requestData = ( itemData ) => {   
-        console.log('itemData====', itemData.item.name)
->>>>>>> origin/main
         const objectLength = Object.keys(itemData.item).length;
         if (objectLength === 0 || !itemData.item) {
             return (
