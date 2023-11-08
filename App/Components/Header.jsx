@@ -100,7 +100,7 @@ function HeaderComponent() {
           <TouchableOpacity style={styles.iconContainer} onPress={openModal}>
             <LanguageIcon width={24} height={24} color='#F18C13' />
           </TouchableOpacity >
-          <TouchableOpacity onPress={() => handleNotificationClick() } style={styles.iconContainer} >
+          <TouchableOpacity onPress={() =>navigation.navigate('Notification')} style={styles.iconContainer} >
             <BellIcon width={24} height={24} />
             <View style={[styles.notific,]}>
             {notiAlert!=0 ?
