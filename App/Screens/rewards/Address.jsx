@@ -41,6 +41,8 @@ const AddressList = ({navigation,route}) => {
   const [pinCodeError, setPinCodeError] = useState('');
   const [statesError, setStatesError] = useState('');
   const [landMarkError, setLandMarkError] = useState('');
+  const [houseNoError, setHouseNoError] = useState('');
+  const [areaError, setAreaError] = useState('')
   const [townError, setTownError] = useState('');
   const [isLoading,setisLoading]=useState(false)
   const [value, setValue] = useState('');
@@ -126,6 +128,12 @@ function findStateNameById(stateId) {
       case 'landMark':
         setLandMarkError('');
         break;
+      case 'houseNo' : 
+        setHouseNoError('');
+        break;
+      case 'area':
+        setAreaError('');
+        break;
       case 'town':
         setTownError('');
         break;
@@ -167,6 +175,8 @@ function findStateNameById(stateId) {
     setStatesError('');
     setLandMarkError('');
     setTownError('');
+    setAreaError('');
+    setHouseNoError('');
     let isValid = true;
     if (name.trim() === '') {
       setNameError('Name is required');
@@ -209,6 +219,16 @@ function findStateNameById(stateId) {
       isValid = false;
       setisLoading(false)
 
+    }
+    if(area.trim() === ''){
+      setAreaError('Area is required');
+      isValid = false;
+      setisLoading(false)
+    }
+    if(location.trim() === ''){
+      setHouseNoError('House/Flat No is required');
+      isValid = false;
+      setisLoading(false)
     }
     if (isValid) {
       addressHandler();
@@ -319,6 +339,8 @@ const deleteHandler=()=>{
   setStatesError('');
   setLandMarkError('');
   setTownError('');
+  setAreaError('');
+  setHouseNoError('');
  }
  const renderItem = ({ item }) => {
   //console.log('item1===', item)
@@ -446,17 +468,27 @@ const deleteHandler=()=>{
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setLocation(text)}
                   value={location}
+<<<<<<< HEAD
                   maxLength={25}
                  
+=======
+                  onFocus={() => handleInputFocus('houseNo')}
+>>>>>>> origin/main
                 />
+               {houseNoError ? <Text style={{ color: '#B1292C' }}>{houseNoError}</Text> : null}
                 <TextInput
                   style={styles.inputContainer}
                   placeholder={t('area')}
                   placeholderTextColor={'rgba(132, 132, 132, 1)'}
                   onChangeText={text => setArea(text)}
                   value={area}
+<<<<<<< HEAD
                   maxLength={25}
+=======
+                  onFocus={() => handleInputFocus('area')}
+>>>>>>> origin/main
                 />
+                {areaError ? <Text style={{ color: '#B1292C' }}>{areaError}</Text> : null}
                 <TextInput
                   style={styles.inputContainer}
                   placeholder={t("landMark")}
@@ -466,6 +498,7 @@ const deleteHandler=()=>{
                   maxLength={25}
                   onFocus={() => handleInputFocus('landMark')}
                 />
+                {landMarkError ? <Text style={{ color: '#B1292C' }}>{landMarkError}</Text> : null}
                 <TextInput
                   style={styles.inputContainer}
                   placeholder={t("pin")}
@@ -515,7 +548,10 @@ const deleteHandler=()=>{
                       renderRightIcon={() => (
                           <Icons name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={27} color="rgba(57, 57, 57, 0.9)" style={{bottom:1.5}}/>
                       )}
-                      onFocus={() => setIsOpen(true)}
+                      onFocus={() => {
+                        setIsOpen(true)
+                        setStatesError('')
+                      }}
                       onBlur={() => setIsOpen(false)} 
                   />
                 </View>

@@ -2,7 +2,7 @@ import { Text, View,ScrollView } from "react-native";
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
 const AboutScreen = ({navigation}) => {
-   // useBackButtonHandler(navigation, false);
+   useBackButtonHandler(navigation, false);
     return(
         <ScrollView style={{flex:1, backgroundColor:'white',padding:9}}>
         <Text style={{color:'black', fontSize:15, fontFamily:'Poppins-Regular'}}>Bansal TMT is the leading iron industry in Madhya Pradesh established in 2007 

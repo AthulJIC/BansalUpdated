@@ -212,7 +212,6 @@ async function handleUsername(text){
         secureTextEntry={!showPassword}
         style={styles.input}
         onPressIn={() => setPasswordError(false)}
-        maxLength={15}
       />
       <TouchableOpacity
         onPress={togglePasswordVisibility}

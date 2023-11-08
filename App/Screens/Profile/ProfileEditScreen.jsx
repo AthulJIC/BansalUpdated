@@ -13,7 +13,7 @@ const ProfileEditScreen = ({navigation}) => {
     const [mobile, setMobile] = useState();
     const [userError, setUserError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    //useBackButtonHandler(navigation, false);
+    useBackButtonHandler(navigation, false);
     function saveHandler(){
         setIsLoading(true)
         Keyboard.dismiss()
