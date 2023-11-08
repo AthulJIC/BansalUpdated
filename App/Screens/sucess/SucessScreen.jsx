@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View,BackHandler } from "react-native";
 import SuccessIcon from "../../../assets/Icon/SuccessIcon";
 import { Pressable } from "react-native";
 import { useNavigation } from '@react-navigation/native';
@@ -30,6 +30,10 @@ function SuccessScreen({ route }) {
 
 
   }, [addressItem]);
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => true)
+    return () => backHandler.remove()
+  }, [])
   const orderPoints = (user) => {
     if (page === 'orders' || page === 'leads') {
       OrderPointsService(user, ton).then((res) => {
