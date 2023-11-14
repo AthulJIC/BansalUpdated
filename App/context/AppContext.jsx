@@ -11,7 +11,6 @@ export const AppProvider = ({ children }) => {
   const [pointsValue,setPoints]=useState("")
   const [orderData, setOrderData] = useState([]); 
   const [isBookmarkDeleted, setIsBookmarkDeleted] = useState(false)
-
   const updateUserDetails = (userData) => {
     setUserDetails(userData);
   };
@@ -45,6 +44,7 @@ export const AppProvider = ({ children }) => {
         updateOrderData, 
         isBookmarkDeleted, 
         markBookmarkDeleted,
+        // UpdateUserIdDetails,
       }}
     >
       {children}
