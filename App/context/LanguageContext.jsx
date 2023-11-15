@@ -13,7 +13,7 @@ export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('');
   const { changeLanguage } = useAppContext();
 
-  const changeNewLanguage = async(newLanguage) => {
+  const changeNewLanguage = async (newLanguage) => {
     setLanguage(newLanguage);
     await AsyncStorage.setItem('Language', newLanguage);
   };
@@ -26,7 +26,7 @@ export const LanguageProvider = ({ children }) => {
           i18n.changeLanguage(storedLanguage === 'English' ? 'en' : 'hi')
           changeLanguage(i18n.language === 'en' ? 'en' : 'hi')
         } else {
-          setLanguage('English'); // You can set any default language you prefer
+          setLanguage('English');
         }
       } catch (error) {
         console.error('Error fetching language from AsyncStorage:', error);

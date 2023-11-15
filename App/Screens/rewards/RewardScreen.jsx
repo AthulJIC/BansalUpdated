@@ -85,6 +85,7 @@ const RewardScreen = (r) => {
       }
       else{
         seterorrVisible(true)
+        // setModalVisible(true)
       }
     })
     

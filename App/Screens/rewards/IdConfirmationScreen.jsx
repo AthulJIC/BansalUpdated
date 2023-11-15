@@ -34,15 +34,15 @@ function IdConfirmationScreen({navigation, route}){
          <View style={{height:120, width:'95%', backgroundColor:'rgba(255, 255, 255, 1)', elevation:5, alignSelf:'center', borderRadius:8, marginTop:10, justifyContent:'space-evenly', padding:15}}>
              <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                  <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>ID Type</Text>
-                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>{user?.id_type}</Text>
+                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>{userDetails.id_Type}</Text>
              </View>
              <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                  <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>ID Number</Text>
-                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>{user?.id_number}</Text>
+                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>{userDetails.id_number}</Text>
              </View>
              <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                  <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>Name</Text>
-                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>{user?.name}</Text>
+                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>{userDetails.name}</Text>
              </View>
          </View>
          <View style={styles.modalButtonContainer}>

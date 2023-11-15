@@ -13,9 +13,18 @@ const ConfirmPage=({route,navigation})=>{
     const [visible,setVisible]=useState(false)
     const { t } = useTranslation();
     const {addressItem}=route.params
+    const {userDetails}=useAppContext()
     useBackButtonHandler(navigation, false);
     const confirmHandler=(id)=>{
               confirmService(id).then((res) => {
+                console.log(res,"confirmHandler")
+                RewardsApi.IdVerificationUpdate(userDetails.id,res.data.id).then((res)=>{
+                    if(res.status===200){
+                      console.log('IdVerificationUpdate succesfull')
+                    }
+                  }).catch((err)=>{
+                    console.log("IdVerificationUpdate erorr",err)
+                  })
             // if(res.status === 200){
             //     console.log('success',)
             //     setOrdersList(res.data.results)
