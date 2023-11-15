@@ -29,6 +29,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
       try {
         const user = await AsyncStorage.getItem('role'); 
         setRole(user)
+        setErorrText('')
       } catch (error) {
         console.error('Error fetching data from AsyncStorage:', error);
       }
@@ -41,11 +42,11 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
   const onButton=()=>{
     setName('')
     setEditQuantity('')
+    setErorrText('')
     onClose()
   }
   const handleRef = () => {
-    // ...
-  
+    const nonZeroNumberRegex = /^(?!0+$)[0-9]+$/;
     const updatedQuantity = onEdit ? editQuantity : name;
     if (updatedQuantity > 300 && role === 'Contractor') {
       setQuantityError(true);
@@ -56,40 +57,41 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
       setQuantityError(true);
       setErorrText('Maximum Limit exceeded. Your Limit is up to 500 in a single order');
       return;
-    }else if (/\s/.test(updatedQuantity) || /[^\d]/.test(updatedQuantity)) {
+    }
+    // else if (/\s/.test(updatedQuantity) || /[^\d]/.test(updatedQuantity)) {
+    //   setQuantityError(true);
+    //   setErorrText('* Only Numeric Values Excepted ');
+    //   return;
+    // }
+  
+    if ((onEdit && (!editQuantity || !nonZeroNumberRegex.test(editQuantity)) ) || (!onEdit && (!name || !nonZeroNumberRegex.test(name))) ) {
       setQuantityError(true);
-      setErorrText('* Only Numeric Values Excepted ');
+      setErorrText('Please enter valid quantity');
       return;
     }
   
-    if ((onEdit && !editQuantity) || (!onEdit && !name)) {
-      setQuantityError(true);
-      setErorrText('Please, enter valid quantity');
-      return;
-    }
   
+    // const containsNonZero = /[1-9]/.test(updatedQuantity);
+    // const isOnlyZeros = /^0+$/.test(updatedQuantity);
+    // const hasSpecialCharacters = /[^\d\s]/.test(updatedQuantity);
   
-    const containsNonZero = /[1-9]/.test(updatedQuantity);
-    const isOnlyZeros = /^0+$/.test(updatedQuantity);
-    const hasSpecialCharacters = /[^\d\s]/.test(updatedQuantity);
+    // if (isOnlyZeros) {
+    //   setErorrText('Input contains only zeros.');
+    //   setQuantityError(true);
+    //   return;
+    // }
   
-    if (isOnlyZeros) {
-      setErorrText('Input contains only zeros.');
-      setQuantityError(true);
-      return;
-    }
+    // if (hasSpecialCharacters) {
+    //   setErorrText('Input contains special characters or letters.');
+    //   setQuantityError(true);
+    //   return;
+    // }
   
-    if (hasSpecialCharacters) {
-      setErorrText('Input contains special characters or letters.');
-      setQuantityError(true);
-      return;
-    }
-  
-    if (!containsNonZero) {
-      setQuantityError(true);
-      setErorrText('* Quantity should contain at least one non-zero digit');
-      return;
-    }
+    // if (!containsNonZero) {
+    //   setQuantityError(true);
+    //   setErorrText('* Quantity should contain at least one non-zero digit');
+    //   return;
+    // }
   
     if (onRefer) {
       onRefer(updatedQuantity);

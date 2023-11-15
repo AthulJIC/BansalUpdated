@@ -9,6 +9,8 @@ import LoadingIndicator from '../../Components/LoadingIndicator';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import NetInfo from '@react-native-community/netinfo';
 import { useFocusEffect } from '@react-navigation/native';
+import axios from 'axios';
+import { ApiUrl } from '../../service/config';
 
 const LoginPage = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -20,8 +22,10 @@ const LoginPage = ({navigation}) => {
   const [checkboxError, setCheckBoxError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [errorMessage, setErrorMessage] = useState('');
   const { t } = useTranslation();
-  console.log('checkbox', rememberSelect)
+  console.log('checkbox', loginAttempts)
   useFocusEffect(
     React.useCallback(() => {
       const addInputValues = async () => {
@@ -115,18 +119,20 @@ const LoginPage = ({navigation}) => {
     loginHandler() 
 }
 async function loginHandler(){
-  
   setIsLoading(true)
   NetInfo.fetch().then(state => {
     if (state.isConnected) {
+      const url = ApiUrl + 'account/token/';
       const data ={
         email: username,
         password: password
       }
       console.log('data', data)
-      LoginApi.userLogin(data).then(async(res) => {
-       console.log('res', res.data);
+      axios.post(url, data).then(async(res)  => {
+      // LoginApi.userLogin(data).then(async(res) => {
+       console.log('res', res);
         if(res.status === 200){
+          setLoginAttempts(0)
           await AsyncStorage.setItem('access_token', res.data.access);
           await AsyncStorage.setItem('refresh_token', res.data.refresh);
           await AsyncStorage.setItem('mobile_no', res.data.mobile);
@@ -144,9 +150,23 @@ async function loginHandler(){
         }
          
        
-      }).catch((err) => {
-          setIsLoading(false)
       })
+      .catch((err) => {
+        setIsLoading(false);
+      
+        const errorMessage = err.response.data.error;
+      
+        if (err.response.status === 401) {
+          setLoginAttempts(loginAttempts + 1);
+          if (loginAttempts >= 5) {
+            Alert.alert('Login Failed', "Account Locked! Contact admin or wait for 30mins. ", [{ text: 'OK' }]);
+          } else {
+            Alert.alert('Login Failed', errorMessage, [{ text: 'OK' }]);
+          }
+        } else {
+          Alert.alert('Login Failed', errorMessage, [{ text: 'OK' }]);
+        }
+      });
     } else {
       setIsLoading(false)
       Alert.alert(

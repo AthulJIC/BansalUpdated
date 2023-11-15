@@ -38,7 +38,7 @@ function ConfirmDetailsScreen() {
             navigation.navigate('Success', {
                 title: 'Lead Referral Successful',
                 content: 'Pts for this referral would be credited once the request has been Accepted.',
-                addressItem: referParams,
+                addressItem: details,
                 selectedProduct: null,
                 uiParams,
                 page: 'leads',
@@ -89,7 +89,7 @@ function ConfirmDetailsScreen() {
                     <Text style={{ color: 'rgba(241, 140, 19, 1)', fontSize: 15, fontFamily: 'Poppins-Regular', marginLeft: 5 }}>{t('500 Pts')}</Text>
                     <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 15, fontFamily: 'Poppins-Regular', marginLeft: 5 }}>{t('on confirmation')}</Text>
                 </View>
-                <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 11, fontFamily: 'Poppins-Regular', marginTop: 5 }}>{t('lines')}</Text>
+                <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 11, fontFamily: 'Poppins-Regular', marginTop: 5 }}>{t('referrallines')}</Text>
             </View>
             <View style={styles.modalButtonContainer}>
                 <TouchableOpacity onPress={confirmHandler} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)C', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >

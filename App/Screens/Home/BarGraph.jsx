@@ -422,7 +422,7 @@ const BarGraph = ({refresh}) => {
             { totalOrders === 0 ?
                     <View style={{justifyContent:'center', alignItems:'center',marginTop:30}}>
                         <Text style={{color:'white',fontSize:40}}>--</Text>
-                        <Text style={{color:'white', fontSize:14, fontFamily:'Poppins-Regular'}}>Complete your first order to view insights</Text>
+                        <Text style={{color:'white', fontSize:14, fontFamily:'Poppins-Regular'}}>{t('GraphText')}</Text>
                     </View>
                     :
             <View>

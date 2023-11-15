@@ -23,7 +23,7 @@ const ContactScreen = ({navigation}) => {
     ]
     const makePhoneCall = (id) => {
         if(id === 2){
-            const url = `tel:${'6380388906'}`;
+            const url = `tel:${'9109176304'}`;
             Linking.canOpenURL(url)
               .then((supported) => {
                 if (supported) {

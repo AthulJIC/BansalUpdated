@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Pressable, KeyboardAvoidingView, ScrollView, TextInput,Image, ActivityIndicator ,Alert} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Pressable, KeyboardAvoidingView, ScrollView, TextInput,Image, ActivityIndicator ,Alert, RefreshControl,ToastAndroid} from 'react-native';
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Feather';
 import ArrowIcon from '../../../assets/Icon/Arrow';
@@ -35,6 +35,8 @@ const AddressList = ({navigation,route}) => {
   const [editPress,setEditPress]=useState(false)
   const [textVisible,setTextVisible]=useState(false)
   const [isOpen, setIsOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
 
   const [nameError, setNameError] = useState('');
   const [mobileNoError, setMobileNoError] = useState('');
@@ -60,16 +62,18 @@ const AddressList = ({navigation,route}) => {
     label: item.state,
 }));
 function findStateNameById(stateId) {
-  const state = stateList.find(item => item.id === stateId);
-  return state ? state.state_name : '';
+  const state = stateList.find(item => item.state === stateId);
+  console.log('state=====', state)
+  return state ? state.state : '';
 }
   useEffect(() => {
     addressList();
     getStateList();
     if (stateId) {
       const selectedStateName = findStateNameById(stateId);
-      console.log('StateName====', selectedStateName);
       setValue(selectedStateName);
+      console.log('StateName====', selectedStateName);
+
     }
 }, [isVisible, stateId]);
 
@@ -111,6 +115,12 @@ function findStateNameById(stateId) {
     states:states,
     isDefault:rememberSelect
   }
+  const onRefresh = () => {
+    setRefreshing(true);
+    setaddresses([]);
+    addressList()
+    setRefreshing(false);
+};
   const handleInputFocus = (field) => {
     switch (field) {
       case 'name':
@@ -149,9 +159,11 @@ function findStateNameById(stateId) {
       const selectedAddress = addresses.find(address => address.state_name === stateId);
       console.log('id===', selectedAddress);
       if (selectedAddress) {
-        setValue(selectedAddress.state_name);
+        setValue(selectedAddress?.state_name);
       }
-      console.log("selectedStateName====", selectedStateName);
+      console.log("selectedStateName====", addresses,stateId);
+      setisLoading(false)
+    }).catch((err) =>{
       setisLoading(false)
     })
   }
@@ -178,26 +190,24 @@ function findStateNameById(stateId) {
     setAreaError('');
     setHouseNoError('');
     let isValid = true;
-    if (name.trim() === '') {
-      setNameError('Name is required');
+    const regex = /^[a-zA-Z][a-zA-Z ]*$/;
+    const numbersOnlyRegex = /^[0-9]+$/;
+    const nonZeroNumberRegex = /^(?!0+$)[0-9]+$/;
+    const locationRegex = /^[a-zA-Z0-9#&()[\]{}_+-.,<>?/\\~`'":;]+$/;
+    const specialCharacters = /^[!@#$%^&*()[\]{}_+-.,<>?/\\|'":;]+$/;
+    if (name.trim() === '' || !regex.test(name)) {
+      setNameError('Please enter valid name');
       isValid = false;
       setisLoading(false)
     }
 
-    if (mobileNo.trim() === '') {
-      setMobileNoError('Mobile number Required');
+    if (mobileNo.trim() === '' || !numbersOnlyRegex.test(mobileNo) || (mobileNo.length > 0 && mobileNo.length !== 10)) {
+      setMobileNoError('Please enter valid mobile no');
       isValid = false;
       setisLoading(false)
     }
-    if(mobileNo.length > 0 && mobileNo.length !== 10)
-    {
-      setMobileNoError('Mobile number Should be 10 digits');
-      isValid = false;
-      setisLoading(false)
-    }
-
-    if (pinCode.trim() === '' || pinCode.length !== 6 || pinCode.length >6 ) {
-      setPinCodeError('Pin code should be 6 digits');
+    if (pinCode.trim() === '' || pinCode.length !== 6 || pinCode.length > 6 || !numbersOnlyRegex.test(pinCode)) {
+      setPinCodeError('Please enter valid pincode');
       isValid = false;
       setisLoading(false)
     }
@@ -208,25 +218,25 @@ function findStateNameById(stateId) {
       setisLoading(false)
     }
 
-    if (landMark.trim() === '') {
-      setLandMarkError('Landmark is required');
+    if (landMark.trim() === '' || !locationRegex.test(landMark) || specialCharacters.test(landMark)) {
+      setLandMarkError('Please enter valid landmark');
       isValid = false;
       setisLoading(false)
     }
 
-    if (Value.trim() === '') {
-      setTownError('Town is required');
+    if (Value.trim() === '' || !regex.test(Value)) {
+      setTownError('Please enter valid town/city');
       isValid = false;
       setisLoading(false)
 
     }
-    if(area.trim() === ''){
-      setAreaError('Area is required');
+    if(area.trim() === '' || !locationRegex.test(area) || specialCharacters.test(area)){
+      setAreaError('Please enter valid area');
       isValid = false;
       setisLoading(false)
     }
-    if(location.trim() === ''){
-      setHouseNoError('House/Flat No is required');
+    if(location.trim() === '' || !locationRegex.test(location) || specialCharacters.test(location)){
+      setHouseNoError('Please enter valid house/flat no');
       isValid = false;
       setisLoading(false)
     }
@@ -253,6 +263,7 @@ function addressHandler(){
     console.log('success',res.status);
          if(res.status === 200){
           setVisible(false);
+          ToastAndroid.show('Address updated successfully', ToastAndroid.SHORT);
           setisLoading(false)
          }
      }).catch((err) => {
@@ -276,6 +287,7 @@ function addressHandler(){
          console.log('success',res.status);
          if(res.status === 201){
           setVisible(false);
+          ToastAndroid.show('Address added successfully', ToastAndroid.SHORT);
           setisLoading(false)
          }
      }).catch((err) => {
@@ -293,6 +305,7 @@ const deleteHandler=()=>{
     console.log(res.status)
     if(res.status === 204){
       setVisible(false)
+      ToastAndroid.show('Address deleted successfully', ToastAndroid.SHORT);
       setisLoading(false)
     }
  }).catch((err) => {
@@ -310,7 +323,9 @@ const deleteHandler=()=>{
     setLandMark(item.land_mark)
     setTown(item.city)
     //setValue(item.state_name);
-    setStateId(item.state_name)
+    const stateId = findStateNameById(item.state_name);
+    setValue(stateId);
+    //setStateId(item.state_name)
     setrememberSelect(item.is_default)
     setUserId(item.id)
     setEditPress(true)
@@ -343,7 +358,7 @@ const deleteHandler=()=>{
   setHouseNoError('');
  }
  const renderItem = ({ item }) => {
-  //console.log('item1===', item)
+  console.log('item1===', item)
 
     return (
       <Pressable
@@ -374,7 +389,7 @@ const deleteHandler=()=>{
           </TouchableOpacity>
         </View>
         <Text style={styles.address}>
-          {item.address_1},{item.address_2},{item.land_mark},{item.city},{item.state}
+          {item.address_1},{item.address_2},{item.land_mark},{item.city},{item.state_name}-{item.pincode}
         </Text>
         <Text style={{ marginTop: 8 }}>{item.mobile}</Text>
       </Pressable>
@@ -395,6 +410,9 @@ const deleteHandler=()=>{
         renderItem={renderItem}
         keyExtractor={(item) => item?.id}
         contentContainerStyle={{ paddingBottom: 20 }} 
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
       />
       {textVisible ?
       <Text style={{color:'rgba(177, 41, 44, 1)',fontFamily:"Poppins",fontSize:13.33,textAlign:'center',lineHeight:20}}>

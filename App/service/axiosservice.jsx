@@ -24,15 +24,6 @@ AxiosInstance.interceptors.response.use(
               await AsyncStorage.removeItem('access_token'); 
 
             })
-            // const refresh = await AsyncStorage.getItem('refresh_token') ;
-            // await axios.post(ApiUrl + 'api/token/refresh/', {
-            //   refresh: refresh
-            // })
-            // .then(async (response) => {
-            //   console.log('response', response.data)
-            //   await AsyncStorage.setItem('access_token', response.data.access)
-            //   config.headers.Authorization = `Bearer ${response.data.access}`;
-            // })
         }
         else if (!error.response?.config?.url?.includes('Login') || error.response?.status >= 500) {
           AlertService.ShowSingleActionAlert(AlertMsg.UnableToConnectToServer).then((data) => {

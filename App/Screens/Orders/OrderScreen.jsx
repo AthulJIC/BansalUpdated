@@ -1,11 +1,9 @@
-import { View, Text, Pressable, Animated, TextInput, TouchableOpacity, StyleSheet, FlatList, Image, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Text, Pressable, Animated, TextInput, StyleSheet, FlatList, Image, RefreshControl } from 'react-native'
 import DownArrowIcon from '../../../assets/Icon/DownArrowIcon';
 import Icon from 'react-native-vector-icons/Feather';
 import React, { useCallback, useEffect, useState } from 'react';
 import BookmarkIcon from '../../../assets/Icon/BookmarkIcon';
 import { Dropdown } from 'react-native-element-dropdown';
-
-import Modal from 'react-native-modal'
 import ReferLead from '../../Components/ReferLead';
 import BookMarkActiveIcon from '../../../assets/Icon/BookmarkActiveIcon';
 import { useTranslation } from 'react-i18next';
@@ -37,14 +35,15 @@ const OrderScreen = ({ navigation }) => {
     const [is_BookMarked, setis_BookMarked] = useState(false)
     const [disable, setDisable] = useState(false)
     const [isEndReachedLoading, setIsEndReachedLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const [page, setPage] =useState(1);
     const [nextUrl, setNextUrl] = useState(null);
+    const [width, setWidth] = useState(null);
     const { t } = useTranslation();
      console.log("searchText",searchText, value)
     const {
         isBookmarkDeleted,
       } = useAppContext(); 
-    //   console.log('Is Bookmark Deleted:', isBookmarkDeleted)
     useBackButtonHandler(navigation, false);
     let orderData = locationList.map((dataPoint) => ({
         value: dataPoint.district,
@@ -54,13 +53,19 @@ const OrderScreen = ({ navigation }) => {
         setName(item.name)
         setQuantity(item.requestId)
     }
+    const onLayout = (event) => {
+        alert('test')
+        const { width } = event.nativeEvent.layout;
+        setWidth(width);
+        console.log('width', width)
+      };
     useEffect(() => {
         locationHistory()
         ordersList()
         setSearchText('')
     }, []);
     useFocusEffect(
-        React.useCallback(() => {
+        useCallback(() => {
             setSearchText('')
         }, [])
     );
@@ -86,6 +91,20 @@ const OrderScreen = ({ navigation }) => {
         })
     }
     )
+    const onRefresh = () => {
+        // if (isEndReachedLoading || !nextUrl) {
+        //     setPage(1)
+        //     return;
+        // }
+        //setPage(page + 1)
+        setRefreshing(true);
+        setLocationList([]);
+        locationHistory();
+        setOrdersList([])
+        ordersList()
+        setSearchText('')
+        setRefreshing(false);
+    };
     function searchTextHandler(text){
        if(text !== '' && text.length >= 3){
            OrderApi.getLocation(text).then((res) => {
@@ -185,39 +204,9 @@ const OrderScreen = ({ navigation }) => {
         console.log('itemchoose====', item);
         navigation.navigate('DistributorExpand', { selectedItem: item })
     }
-    // function bookmarkHandler(itemId, userId) {
-    //    // console.log("itemId", itemId, userId)
-    //     if (bookmarkedItems.includes(itemId)) {
-    //         setBookmarkedItems(bookmarkedItems.filter(id => id !== itemId));
-    //         BookMarkDeleteService(bookMarkId).then((res) => {
-    //             // if(res.status === 200){
-    //             //     console.log('success',)
-    //             //     setOrdersList(res.data.results)
-    //             // }
-    //             // console.log('Book Mark Delete Response:', res);
-    //             // setOrdersList(res.data.results)
-    //         })
-    //     } else {
-    //         setBookmarkedItems([...bookmarkedItems, itemId]);
-    //         BookMarkService(itemId).then((res) => {
-    //             // if(res.status === 200){
-    //             //     console.log('success',)
-    //             //     setOrdersList(res.data.results)
-    //             // }
-    //             // console.log('Received data Book Mark:', res);
-    //             setBookmarkId(res.id)
-    //             // setOrdersList(res.data.results)
-    //         })
-    //     }
-    // }
-    function bookmarkHandler(item) {
-        // console.log("itemId",item.is_bookmarked.bookmark_id)
-           
+    function bookmarkHandler(item) {           
         if (item.is_bookmarked.is_bookmarked) {
             console.log("delete")
-            // setBookmarkedItems(bookmarkedItems.filter(id => id !== item.id));
-            // updateItemIsBookmarked(item.id, false)
-
             const id = item.is_bookmarked.bookmark_id ;
             // console.log('bookmarId====', id)
             setis_BookMarked(true)
@@ -258,40 +247,6 @@ const OrderScreen = ({ navigation }) => {
             })
         }
     }
-
-    // function bookmarkHandler(item) {
-    //     // Check if the item is already bookmarked
-    //     console.log('item====', item)
-    //     if (item.is_bookmarked.is_bookmarked ) {
-    //         console.log('delete')
-    //       // Item is already bookmarked, so delete it
-    //     //   BookMarkApi.deleteBookMark(item.is_bookmarked.bookmark_id).then((res) => {
-    //     //     if (res.status === 200) {
-    //     //       // Bookmark deleted successfully
-    //     //       console.log('Bookmark deleted:', res);
-    //     //       updateItemIsBookmarked(item.id, false);
-    //     //     } else {
-    //     //       console.error('Failed to delete bookmark:', res);
-    //     //     }
-    //     //   });
-    //     } else {
-    //         console.log('add')
-    //       // Item is not bookmarked, so add it
-    //       const data = {
-    //         distributor: item.id,
-    //       };
-    //       console.log('data', data)
-    //       BookMarkApi.addBookMark(data).then((res) => {
-    //         if (res.status === 200) {
-    //           // Bookmark added successfully
-    //           console.log('Bookmark added:', res);
-    //           updateItemIsBookmarked(item.id, true);
-    //         } else {
-    //           console.error('Failed to add bookmark:', res);
-    //         }
-    //       });
-    //     }
-    //   }
     const updateItemIsBookmarked = (itemId, isBookmarked) => {
         // Create a copy of the ordersList array
         const updatedOrdersList = [...ordersLists];
@@ -380,6 +335,9 @@ const OrderScreen = ({ navigation }) => {
                 data={ordersLists.length === 0 ? ['noData'] : ordersLists}
                 renderItem={requestData}
                 keyExtractor={(item) => item.user_id}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
                 ListHeaderComponent={
                     <View>
                         <View style={{ flexDirection: 'row', marginTop: 5 }}>
@@ -387,7 +345,7 @@ const OrderScreen = ({ navigation }) => {
                                 key={value}
                                 style={styles.dropdown}
                                 placeholderStyle={styles.placeholderStyle}
-                                selectedTextStyle={styles.selectedTextStyle}
+                                selectedTextStyle={[styles.selectedTextStyle,{width:width}]}
                                 inputSearchStyle={styles.inputSearchStyle}
                                 iconStyle={styles.iconStyle}
                                 data={orderData}
@@ -408,10 +366,11 @@ const OrderScreen = ({ navigation }) => {
                                 itemTextStyle={{ color: 'black', fontSize: 12, fontFamily: 'Poppins-Regular' }}
                                 containerStyle={styles.dropdownContainer}
                                 renderRightIcon={() => (
-                                    <Icons name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={27} color="rgba(57, 57, 57, 0.9)" style={{ marginRight: 77, bottom: 2 }} />
+                                    <Icons name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={27} color="rgba(57, 57, 57, 0.9)" style={{ bottom: 2 }} />
                                 )}
                                 onFocus={() => setIsOpen(true)}
                                 onBlur={() => setIsOpen(false)}
+                                onLayout={onLayout}
                             />
                             {username != 'Contractor' ?
                                 <View style={{ marginLeft: 'auto', right: 20, width: '30%' }}>
@@ -517,9 +476,6 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 9
     },
     modalView: {
-        // marginTop: 180,
-        //backgroundColor: 'white',
-        //borderRadius: 20,
         padding: 16,
         width: '100%',
         height: '100%',
@@ -533,17 +489,10 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     Modalcard: {
-        backgroundColor: '#ffffff', // Customize button style as needed
-        // padding: 10,
+        backgroundColor: '#ffffff',
         height: 130,
         width: '100%',
-        // paddingRight: 12,
-        // paddingTop: 8,
-        // paddingLeft: 8,
-        // paddingBottom: 18,
         borderRadius: 5,
-        // justifyContent: 'flex-start',
-        // alignItems:'center',
         alignItems: 'center',
         borderRadius: 10,
         flexDirection: 'row',
@@ -563,10 +512,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 36,
         borderRadius: 4,
-        // padding: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        // marginLeft: 12
     },
     buttonText: {
         fontFamily: 'Poppins-Regular',
@@ -583,16 +530,19 @@ const styles = StyleSheet.create({
     dropdown: {
         // margin: 10,
         height: 40,
-        width: '65%'
+        width: '47%',
     },
     placeholderStyle: {
-        fontSize: 16,
+        fontSize: 13,
+        marginLeft: 20,
+        fontFamily: 'Poppins-Regular'
     },
     selectedTextStyle: {
         fontSize: 13,
         marginLeft: 20,
         color: 'rgba(57, 57, 57, 1)',
-        fontFamily: 'Poppins-Regular'
+        fontFamily: 'Poppins-Regular',
+        width:'auto'
     },
     iconStyle: {
         width: 25,

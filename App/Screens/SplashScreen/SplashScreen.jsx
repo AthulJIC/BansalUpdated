@@ -24,7 +24,12 @@ function SplashScreen({ navigation }) {
         <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
             <Image
                 style={styles.tinyLogo}
-                source={require('../../../assets/Images/SplashScreen.png')}/>
+                source={require('../../../assets/Images/Logo.png')}
+                resizeMode='center'></Image>
+            <Image
+            style={styles.logoText}
+            source={require('../../../assets/Images/LogoText.png')}
+            resizeMode="center"/> 
         </View>
              
     )
@@ -33,9 +38,13 @@ function SplashScreen({ navigation }) {
 export default SplashScreen;
 const styles = StyleSheet.create({
     tinyLogo: {
-        width: 220,
-        height: 154,
-        borderRadius: 8,
+        width:'50%',
+        height: 100,
+    },
+    logoText:{
+       width:'39%',
+       height:48,
+       marginTop:20
     },
     statusBarColor:{
         backgroundColor:'#ffffff'

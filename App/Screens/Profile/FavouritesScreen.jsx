@@ -1,4 +1,4 @@
-import { Text, View ,ScrollView,FlatList,Animated,StyleSheet,Pressable,Image, ActivityIndicator} from "react-native";
+import { Text, View ,ScrollView,FlatList,Animated,StyleSheet,Pressable,Image, ActivityIndicator, RefreshControl} from "react-native";
 import ReferLead from "../rewards/addressForm";
 import { useCallback, useEffect, useState } from "react";
 import BookMarkActiveIcon from "../../../assets/Icon/BookmarkActiveIcon";
@@ -16,6 +16,7 @@ function FavouritesScreen({navigation}){
     const [isLoading,setisLoading]=useState(false);
     const [IsSelected,setIsSelected]=useState(false)
     const { markBookmarkDeleted } = useAppContext();
+    const [refreshing, setRefreshing] = useState(false);
     // console.log("bookMarkListValue",bookMarkListValue)
     useBackButtonHandler(navigation, false);
       let isSelected
@@ -45,6 +46,12 @@ function FavouritesScreen({navigation}){
     function chooseHandler(item){
         navigation.navigate('DistributorExpand',{ selectedItem: item })
    }
+   const onRefresh = () => {
+    setRefreshing(true);
+    setBookMarkListValue([]);
+    BookMarkList()
+    setRefreshing(false);
+};
     const handleRefer = () => {
         navigation.navigate('ConfirmDetail');
       };
@@ -123,6 +130,9 @@ function FavouritesScreen({navigation}){
           data={bookMarkListValue.map((item, index) => ({ ...item, index }))}
           renderItem={({ item, index }) => requestData(item, index)}
             keyExtractor={(item,index) => index.toString()}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             onScroll={Animated.event(
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                 { useNativeDriver: false }

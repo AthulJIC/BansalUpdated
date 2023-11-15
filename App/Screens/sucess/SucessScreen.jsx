@@ -12,7 +12,7 @@ function SuccessScreen({ route }) {
   const [roles, setRoles] = useState()
   const [points, setPoints] = useState('')
   const { title, content, addressItem, selectedProduct, uiParams, page, ton } = route?.params;
-  console.log(ton, "kkkkkk")
+  console.log(addressItem, "kkkkkk")
   let pages = page
   const navigation = useNavigation()
   useEffect(() => {

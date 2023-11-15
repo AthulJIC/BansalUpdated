@@ -86,8 +86,16 @@ function IdVerificationScreen({navigation}){
                 setLoading(true)
                 RewardsApi.postIdVerification(bodyFormData).then((res) => {
 
-                  console.log('res====', res)
-                  setLoading(false)
+                  console.log('res====', res.data)
+                  if(res.status === 201){
+
+                    setLoading(false)
+                    navigation.navigate('IdConfirmation',{
+                      name : res.data.name,
+                      id_number : res.data.id_number,
+                      id_type : value,
+                    })
+                  }
                 }).catch((err)=>{
                   console.log(err)
                   setLoading(false)
@@ -95,7 +103,7 @@ function IdVerificationScreen({navigation}){
           }
                 // console.log('imageee',selectedImage)
         })
-          setLoading(true)
+          //setLoading(true)
           // setTimeout(() => {
           //   // After data is loaded, hide the activity indicator
           //   setLoading(false);

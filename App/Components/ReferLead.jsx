@@ -71,88 +71,37 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
       location: onEdit == true ? localLocation : location,
       quantity: onEdit == true ? localQuantity : quantity,
     };
-    const containsNonZero = /[1-9]/.test(params.quantity);
-    const isOnlyZeros = /^0+$/.test(quantity);
-    const hasPattern =/[1-9]/.test(params.mobileNo);;
-    const hasSpecialCharacters = /[,]/.test(quantity);
-    const MobilehasSpecialCharacter=/[,. -]/.test(params.mobileNo)
-    const locationhasSpecialCharacter=/[ ]/.test(params.location)
-    const hasQuantityPattern = /000|00/.test(quantity);
-    const emojiPattern = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{1F200}-\u{1F251}\u{1F004}\u{1F0CF}\u{1F18E}\u{1F191}\u{1F198}\u{1F1E7}\u{1F1E9}\u{1F1EC}\u{1F1F7}\u{1F1F8}\u{1F1FA}\u{1F201}\u{1F21A}\u{1F22F}\u{1F232}\u{1F233}\u{1F234}\u{1F235}\u{1F236}\u{1F237}\u{1F238}\u{1F239}\u{1F23A}\u{1F250}]/gu;
-    const emoji= emojiPattern.test(params.name)
-    const emojiAddress=emojiPattern.test(params.location)
-   
-    if (params.name === '') {
+    const regex = /^[a-zA-Z][a-zA-Z ]*$/;
+    const numbersOnlyRegex = /^[0-9]+$/;
+    const nonZeroNumberRegex = /^(?!0+$)[0-9]+$/;
+    const locationRegex = /^[a-zA-Z0-9#&()[\]{}_+-.,<>?/\\~`'":;]+$/;
+    const specialCharacters = /^[!@#$%^&*()[\]{}_+-.,<>?/\\|'":;]+$/;
+    if (params.name === '' || !regex.test(params.name) || !params.name) {
       setvalidationError(true);
-      seterorrMessageName('* Name Required');
-      return
-    } else if (/\d/.test(params.name[0])) {
-      setvalidationError(true);
-      seterorrMessageName('First character cannot be a number');
-      return
-    } else if (/^\s+$/.test(params.name)) {
-      setvalidationError(true);
-      seterorrMessageName('Field contains spaces only');
-      return
-    } else if (emoji) {
-      setvalidationError(true);
-      seterorrMessageName('Field Contains Emojis');
+      seterorrMessageName('Please enter a valid name');
       return
     } 
-    if (!/^[0-9]*$/.test(params.mobileNo)) {
+    if (params.mobileNo === '' || !numbersOnlyRegex.test(params.mobileNo) || params.mobileNo.length !== 10) {
       setvalidationError(true);
-      seterorrMessageMobile('* Please enter a valid mobile Number');
+      seterorrMessageMobile('Please enter a valid mobile Number');
       return;
-    } else if (params.mobileNo.length !== 10) {
-      setvalidationError(true);
-      seterorrMessageMobile('* Mobile Number Should have 10 digits ');
-     
-      return;
-    } else if (/[^0-9\s]/.test(params.mobileNo)) {
-      setvalidationError(true);
-      seterorrMessageMobile('* Mobile Number should not contain special characters (except spaces)');
-      return;
-    }
-    if(params.location==='')
+    } 
+    if(params.location==='' || !locationRegex.test(params.location) || !params.location || specialCharacters.test(params.location))
     {
       setvalidationError(true)
-    setErorrLocation('* Location Field is empty')
+      setErorrLocation('Please enter a valid location')
     return
     }
-    else if (emojiAddress)
-    {
-      setvalidationError(true)
-    setErorrLocation('Field Contains Emojis')
-      return
-    }else if (/^\s+$/.test(params.location)) {
+    if (params.quantity === '' || !nonZeroNumberRegex.test(params.quantity)) {
       setvalidationError(true);
-      setErorrLocation('Field contains spaces only');
+      setQuantityErorr('Please enter a valid quantity ');
       return
-    }
-    if (params.quantity === '' ) {
-      setvalidationError(true);
-      setQuantityErorr('* Quantity Required');
-      return
-    } else if ( hasSpecialCharacters ) {
-      setvalidationError(true);
-      setQuantityErorr('* Enter a valid number');
-      return
-    }else if (!containsNonZero) {
-      setvalidationError(true);
-      setQuantityErorr('* Quantity should contain at least one non-zero digit');
-      return;
-    }
-    
-    
+    }   
     if(params.quantity>500)
     {
       setvalidationError(true);
-      setQuantityErorr('*Your Limit 500 Exceeded');
+      setQuantityErorr('Your Limit 500 Exceeded');
       return
-    }else if (/\s/.test(params.quantity) || /[^\d]/.test(params.quantity)) {
-      setvalidationError(true);
-      setQuantityErorr('* Only Numeric Values Excepted ');
-      return;
     }
   
    if (onRefer) {
@@ -196,7 +145,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 placeholder="Name"
                 onFocus={() => {
                   seterorrMessageName(''); 
-                  setvalidationError(false); 
+                  //setvalidationError(false); 
                 }}
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalName(text) : setName(text)}
@@ -204,8 +153,8 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 maxLength={15}
               />
                {
-              validationError && (
-                <View style={{ flexDirection: 'row',marginTop:8 }}>
+              erorrMessageName && (
+                <View style={{ flexDirection: 'row',marginTop: erorrMessageName ? 8 : 0 }}>
                   <Text style={{ color: 'red', marginLeft: 5 }}>{erorrMessageName}</Text>
                 </View>
               )
@@ -225,8 +174,8 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 maxLength={10}
               />
                {
-              validationError && (
-                <View style={{ flexDirection: 'row',marginTop:8 }}>
+              erorrMessageMobile && (
+                <View style={{ flexDirection: 'row',marginTop: erorrMessageMobile ? 8 : 0  }}>
                   <Text style={{ color: 'red', marginLeft: 5 }}>{erorrMessageMobile}</Text>
                 </View>
               )
@@ -246,8 +195,8 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
               />
 
                {
-              validationError && (
-                <View style={{ flexDirection: 'row',marginTop:8 }}>
+              erorrLocation && (
+                <View style={{ flexDirection: 'row',marginTop: erorrLocation ? 8 : 0  }}>
                   <Text style={{ color: 'red', marginLeft: 5 }}>{erorrLocation}</Text>
                 </View>
               )
@@ -266,8 +215,8 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 maxLength={3}
               />
                {
-              validationError && (
-                <View style={{ flexDirection: 'row',marginTop:8 }}>
+              quantityErorr && (
+                <View style={{ flexDirection: 'row',marginTop: quantityErorr ? 8 : 0  }}>
                   <Text style={{ color: 'red', marginLeft: 5 }}>{quantityErorr}</Text>
                 </View>
               )

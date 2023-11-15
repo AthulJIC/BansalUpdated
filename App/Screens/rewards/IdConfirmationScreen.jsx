@@ -3,11 +3,13 @@ import { useAppContext } from '../../context/AppContext';
 import { useState } from "react";
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
 
-function IdConfirmationScreen({navigation}){
+function IdConfirmationScreen({navigation, route}){
+    const user = route?.params;
     const [itemName,setItemName]=useState('')
     const [points,setItemPoints]=useState('')
     const [details,setDetails]=useState('')
     const { userDetails, updateUserDetails, updateSelectedProduct } = useAppContext();
+    console.log('user====', user)
     useBackButtonHandler(navigation, false);
     const itemModal=(item)=>{
         updateSelectedProduct(item);
@@ -32,15 +34,15 @@ function IdConfirmationScreen({navigation}){
          <View style={{height:120, width:'95%', backgroundColor:'rgba(255, 255, 255, 1)', elevation:5, alignSelf:'center', borderRadius:8, marginTop:10, justifyContent:'space-evenly', padding:15}}>
              <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                  <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>ID Type</Text>
-                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>Aadhar</Text>
+                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>{user?.id_type}</Text>
              </View>
              <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                  <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>ID Number</Text>
-                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>98765432112</Text>
+                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>{user?.id_number}</Text>
              </View>
              <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                  <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>Name</Text>
-                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>Abhiram Ahuja</Text>
+                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:13, fontFamily:'Poppins-Medium'}}>{user?.name}</Text>
              </View>
          </View>
          <View style={styles.modalButtonContainer}>

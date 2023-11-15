@@ -74,6 +74,7 @@ const RewardScreen = (r) => {
     //     setModalVisible(true)
     //   }
     // })
+    //setModalVisible(true)
     RewardsApi.purchaseRewards(item?.id).then((res) => {
       if(res.status === 200){
           console.log('success redeem',res)

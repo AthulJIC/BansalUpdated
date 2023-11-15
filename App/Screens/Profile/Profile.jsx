@@ -164,6 +164,7 @@ function loginHandler(){
                           );
                     }
                 }).catch((err) => {
+                    setIsLoading(false);
                 })
                   .finally(() => {
                     setIsLoading(false);

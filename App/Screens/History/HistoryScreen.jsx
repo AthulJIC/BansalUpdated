@@ -206,21 +206,39 @@ async function endReachedHandler() {
     let pointsText = ''; 
     let displayText = '';
     let textColor;
-
-  if (itemData.item.status === 'Processing') {
-    statusText = 'Processing'; 
-    pointsText = '500 Pts'; 
-    displayText = itemData.item.quantity;
-    textColor = "rgba(31, 134, 255, 1)";
+  if(itemData.item.lead === null){
+    if (itemData.item.status === 'Processing') {
+      statusText = 'Processing'; 
+      pointsText = '500 Pts'; 
+      displayText = itemData.item.quantity;
+      textColor = "rgba(31, 134, 255, 1)";
+    }
+    else if (itemData.item.status === 'Accepted') {
+      pointsText = '+500 Pts'; 
+      displayText = itemData.item.transaction_id
+      textColor = "rgba(24, 183, 88, 1)";
+    }
+    else{
+      displayText = itemData.item.transaction_id
+      textColor = "rgba(235, 28, 28, 1)";
+    }
   }
-  else if (itemData.item.status === 'Accepted') {
-    pointsText = '+500 Pts'; 
-    displayText = itemData.item.transaction_id
-    textColor = "rgba(24, 183, 88, 1)";
-  }
-  else{
-    displayText = itemData.item.transaction_id
-    textColor = "rgba(235, 28, 28, 1)";
+  else {
+    if (itemData.item.status === 'Processing') {
+      statusText = 'Processing'; 
+      pointsText = '25 Pts'; 
+      // displayText = itemData.item.quantity;
+       textColor = "rgba(31, 134, 255, 1)";
+    }
+    else if (itemData.item.status === 'Accepted') {
+      pointsText = '25 Pts'; 
+      // displayText = itemData.item.transaction_id
+       textColor = "rgba(24, 183, 88, 1)";
+    }
+    else{
+    //   displayText = itemData.item.transaction_id
+        textColor = "rgba(235, 28, 28, 1)";
+     }
   }
     return(
 

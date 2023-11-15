@@ -25,7 +25,7 @@ const Requests = ({ navigation }) => {
     const [page, setPage] = useState(1);
     const [nextUrl, setNextUrl] = useState(null);
     const { t } = useTranslation();
-    console.log('search text', searchText)
+    console.log('search text', distributorItem.location)
     const searchPlaceholder = t('search');
     useBackButtonHandler(navigation, false);
     const showAlert = (item) => {
@@ -54,17 +54,6 @@ const Requests = ({ navigation }) => {
         setShowIcon(false);
         setRefreshing(false);
     };
-    // const onRefresh = useCallback(() => {
-    //     if (isEndReachedLoading || !nextUrl) {
-    //       setPage(1)
-    //       return;
-    //     }
-    //     setRefreshing(true);
-    //     setSearchText('')
-    //     setShowIcon(false);
-    //     getRequestList();
-    //     setRefreshing(false);
-    //   }, [searchText, getRequestList]);
     useFocusEffect(
         useCallback(() => {
             getRequestList();
@@ -72,9 +61,6 @@ const Requests = ({ navigation }) => {
             setShowIcon(false);
         }, [])
     );
-    useEffect(() => {
-        getRequestList();
-      }, [showIcon]);
     async function endReachedHandler(text) {
         console.log('end', isEndReachedLoading)
         if (isEndReachedLoading || !nextUrl) {
@@ -83,14 +69,17 @@ const Requests = ({ navigation }) => {
         }
         setPage(page + 1)
         if (text === '') {
+            console.log('not working')
             getRequestList();
         }
         else {
+            
             searchHandler(text)
         }
     }
 
     function getRequestList() {
+        console.log('working')
         setIsLoading(true);
         setIsEndReachedLoading(true);
         RequestApi.getRequest(page)
@@ -175,14 +164,15 @@ const Requests = ({ navigation }) => {
         setDistributorItem(item)
     }
     function searchHandler(text) {
+        console.log('text====', text)
+        setSearchText(text)
         if (text !== '') {
             setShowIcon(true)
         }
         else setShowIcon(false);
-        setSearchText(text)
-        //setIsLoading(true);
         setIsEndReachedLoading(true);
         if(text.length >= 3){
+            
             RequestApi.searchRequest(page,text).then((res) => {
                 if (res.status === 200) {
                     if (res.data.results.length > 0) {
@@ -192,14 +182,11 @@ const Requests = ({ navigation }) => {
                       else {
                         setRequestList([...requestList, ...res.data.results]);
                       }
-                      //setPage(page + 1);
-                      //setIsLoading(false)
                       setNextUrl(res.data.next)
                     }
                     else {
                       if (page == 1) {
                         setRequestList([]);
-                       // setIsLoading(false)
                       }
                     }
                   setIsEndReachedLoading(false);
@@ -211,19 +198,12 @@ const Requests = ({ navigation }) => {
             .catch(function (error) {
                 console.log(error);
                 setIsEndReachedLoading(false);
-               //setIsLoading(false)
               });
         }
     }
     function clearHandler() {
-        // setSearchText('')
+        setSearchText('')
         setShowIcon(false)
-        // if (isEndReachedLoading || !nextUrl) {
-        //     setPage(1)
-        //     return;
-        // }
-        // setPage(page + 1)
-        // searchHandler('')
         getRequestList()
 
     }
@@ -293,7 +273,7 @@ const Requests = ({ navigation }) => {
                 />
                 {showIcon ? (
                     <Pressable
-                        onPress={() => { clearHandler();setSearchText('') }}>
+                        onPress={() => clearHandler() }>
                         <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
                     </Pressable>
                 ) : (
