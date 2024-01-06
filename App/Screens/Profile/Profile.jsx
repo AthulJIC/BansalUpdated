@@ -66,7 +66,7 @@ const Profile =({route})=>{
            
             {
                 id:1,
-                title:t('favourites'),
+                title:t('Favourites'),
                 image: <BookMarkActiveIcon width={20} height={20} color='rgba(177, 41, 44, 1)'/>,
                 arrowImage: <RightArrowIcon width={24} height={24} color="#393939"/>,
                 navigation : () => navigation.navigate('FavouritesScreen')
@@ -129,15 +129,15 @@ const Profile =({route})=>{
       );
 function loginHandler(){
     Alert.alert(
-        'Logout',
-        'Are you sure you want to exit?',[
+        t('logout'),
+        t('logoutText'),[
         {
-            text: "No",
+            text: t("No"),
             onPress: () => console.log('Cancel Pressed'),
             style: 'cancel',
         },
         {
-            text: "Yes", 
+            text: t("Yes"), 
             onPress:() => {
                 setIsLoading(true)
                 const data = {

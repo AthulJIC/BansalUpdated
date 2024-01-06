@@ -7,19 +7,30 @@ import useBackButtonHandler from "../../Components/BackHandlerUtils";
 function DistributorExpandScreen({navigation, route}){
 
     const { selectedItem } = route?.params;
+    const page = route?.params.page;
     const [modalVisible, setModalVisible] = useState(false);
     useBackButtonHandler(navigation, false);
-    console.log('selectedItem====', selectedItem)
+    console.log('selectedItem====', selectedItem,page)
     const { t } = useTranslation();
     const description = t('description')
     const handleRefer = (quantity) => {
         navigation.navigate('ConfirmPurchase',{
              selectedItem:selectedItem,
              quantity:quantity,
-             page:'favourites'
+             page:page
             });
 
        };
+    let districtText;
+    let stateText;
+    if(page === 'Orders'){
+        stateText = selectedItem.state;
+        districtText = selectedItem.district;
+    }
+    else{
+        stateText = selectedItem.state_name;
+        districtText = selectedItem.district_name;
+    }
     return(
         <View style={{flex:1,backgroundColor:'white'}}>
             <View style={{backgroundColor:'rgba(182, 182, 182, 1)',height:112, width:'90%',borderRadius:8,alignSelf:'center',alignItems:'center',justifyContent:'center'}}>
@@ -28,7 +39,7 @@ function DistributorExpandScreen({navigation, route}){
             <View style={{marginLeft:10,marginTop:7}}>
                 <Text style={{color:'rgba(177, 41, 44, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Medium'}}>{selectedItem.user_id}</Text>
                 <Text style={{color:'rgba(57, 57, 57, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Medium'}}>{selectedItem.name}</Text>
-                <Text style={{color:'rgba(132, 132, 132, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Regular'}}>{selectedItem.district_name}, {selectedItem.state_name}</Text>
+                <Text style={{color:'rgba(132, 132, 132, 1)',marginLeft:15,fontSize:14,fontFamily:'Poppins-Regular',width:'75%'}}>{districtText}, {stateText}</Text>
                 <View style={{ width:'95%',borderBottomColor:'black', borderBottomWidth:1,alignSelf:'center',marginTop:10}}></View>
                 <Text style={{color:'rgba(57, 57, 57, 1)', fontSize:16,fontFamily:'Poppins-Medium',marginLeft:15,marginTop:10}}>{t('Products')}</Text>
             </View>

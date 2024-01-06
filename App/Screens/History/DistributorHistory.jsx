@@ -9,6 +9,7 @@ import LoadingIndicator from '../../Components/LoadingIndicator';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
+import { t } from 'i18next';
 
 
 
@@ -16,22 +17,22 @@ const DistributorHistory = ({navigation}) => {
   const filterTitle = [
     {
       id: 1,
-      title: 'All Requests',
+      title: t('allrequests'),
       value : 'AllRequests '
     },
     {
       id: 2,
-      title: 'Pending',
+      title: t('pending'),
       value : 'Processing'
     },
     {
       id: 3,
-      title: 'Accepted',
+      title: t('accepted'),
       value : 'Accepted '
     },
     {
       id: 4,
-      title: 'Rejected',
+      title: t('rejected'),
       value : 'Rejected '
     },
   ];
@@ -176,6 +177,14 @@ const DistributorHistory = ({navigation}) => {
       const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
       const time = dateTime.format('hh:mm A').toLocaleString('en-US');
       let statusText = itemData.item.user_approval;
+      let textwidth;
+    if(itemData.item.name.length > 8)
+    {
+      textwidth = '35%'
+    }
+    else{
+      textwidth = 'auto'
+    }
       if (itemData.item.user_approval === 'Processing') {
         statusText = 'Pending'
       }
@@ -231,16 +240,17 @@ const DistributorHistory = ({navigation}) => {
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={{ color: 'black',fontSize: 14, fontFamily: 'Poppins-Medium', width:'30%' }}
+                style={{ color: 'black',fontSize: 14, fontFamily: 'Poppins-Medium', width:textwidth,marginHorizontal:'auto' }}
               >
                 {itemData.item.name}
               </Text>
-              <Text style={{ fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)', marginTop:7, marginLeft:2 }}>
+              <Text style={{ fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)', marginTop:7,marginLeft:3}}>
                 {'\u2B24'}
               </Text>
-              {/* <Text style={{ fontWeight: '500', fontSize: 13, color: 'rgba(57, 57, 57, 1)' ,fontFamily: 'Poppins-Regular',marginLeft:3}}>
+              <Text numberOfLines={1}
+                ellipsizeMode="tail" style={{ fontSize: 13, color: 'black' ,fontFamily: 'Poppins-Regular',marginLeft:3,width:'40%', marginTop:1.5}}>
                 {itemData.item.transaction_id}
-              </Text> */}
+              </Text>
             </View>
             <View style={{ flexDirection: 'row', flexWrap: 'nowrap', marginLeft: 25 }}>
               <Text style={{ marginHorizontal: 3, fontSize: 11, color: 'black', fontFamily: 'Poppins-Regular' }}>{date}</Text>
@@ -301,10 +311,10 @@ const DistributorHistory = ({navigation}) => {
                 resizeMode='cover'
               />
               <Text style={{fontFamily:'Poppins-Large',fontWeight:'500',fontSize:16,textAlign:'center',
-              margin:22,lineHeight:24,color:'#393939'}}>No Request History</Text>
+              margin:22,lineHeight:24,color:'#393939'}}>{t("RequestHistory")}</Text>
               <Text  style={{width:'90%',fontFamily:'Poppins-Regular',fontWeight:'500',fontSize:14,textAlign:'center',
               lineHeight:20,color:'#848484',alignSelf:'center'}}>
-              We don’t see any records from your history.</Text>
+              {t("HistoryText")}.</Text>
         </View>
   
       ) : (
@@ -341,7 +351,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     elevation: 8,
     backgroundColor: 'white',
-    marginBottom:20
+    marginBottom:20,
   },
   filterSection: {
     height: 60,

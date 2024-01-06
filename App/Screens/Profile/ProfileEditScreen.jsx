@@ -6,6 +6,7 @@ import { ProfileApi } from '../../service/profile/profileservice';
 import ErrorIcon from '../../../assets/Icon/ErrorIcon';
 import LoadingIndicator from '../../Components/LoadingIndicator';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
+import { t } from 'i18next';
 
 const ProfileEditScreen = ({navigation}) => {
     const [userName, setUserName] = useState();
@@ -60,7 +61,7 @@ const ProfileEditScreen = ({navigation}) => {
       }, []);
    
     function onChangeHandler(){
-        navigation.navigate('ForgetPassword',{ text : 'Make Changes'})
+        navigation.navigate('ForgetPassword',{ text : t('makechanges')})
     }
     return(
         <View style={styles.container}>
@@ -97,7 +98,7 @@ const ProfileEditScreen = ({navigation}) => {
             <View style={styles.modalButtonContainer}>
                 <Pressable onPress={saveHandler} style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
                     <Text style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
-                        Save
+                        {t("save")}
                     </Text>
                 </Pressable>
             </View>

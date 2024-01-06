@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import { Image, View,Text } from "react-native";
 
 function EmptyComponent(){
@@ -10,10 +11,10 @@ function EmptyComponent(){
                 ></Image>
                 <View style={{ marginTop: 20 }}>
                     <Text style={{ color: 'rgba(57, 57, 57, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', textAlign: 'center' }}>
-                    No Results Found
+                    {t("Results")}
                     </Text>
                     <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 13, fontFamily: 'Poppins-Regular', textAlign: 'center' }}>
-                       Please try again with a different keyword.
+                      {t('DiffKeyword')}
                     </Text>
                 </View>
             </View>

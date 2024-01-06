@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
 import { useNavigation } from "@react-navigation/native";
+import LoadingIndicator from '../../Components/LoadingIndicator';
 
 function ConfirmDetailsScreen() {
     const route = useRoute();
@@ -16,6 +17,7 @@ function ConfirmDetailsScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [details, setDetails] = useState(referParams);
     const [username, setUsername] = useState('');
+    const [isLoading,setIsLoading] = useState(false);
     const { t } = useTranslation();
     const navigation = useNavigation()
     let ton = details.quantity
@@ -34,16 +36,23 @@ function ConfirmDetailsScreen() {
         Address: t('Location'),
     }
     const confirmHandler = () => {
+        if (isLoading) {
+            return;
+        }
+        setIsLoading(true);
         ReferService(details.mobileNo, details.name, details.location, details.quantity, details.location).then((res) => {
             navigation.navigate('Success', {
-                title: 'Lead Referral Successful',
-                content: 'Pts for this referral would be credited once the request has been Accepted.',
+                title: t('ReferSuccess'),
+                content: t('ReferText'),
                 addressItem: details,
                 selectedProduct: null,
                 uiParams,
                 page: 'leads',
                ton
             });
+            setIsLoading(false)
+        }) .catch((errr)=>{
+           setIsLoading(false)
         })
 
     }
@@ -64,7 +73,7 @@ function ConfirmDetailsScreen() {
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={{ flexDirection: 'row', }}>
-                <Text style={{ fontSize: 16, color: 'rgba(57, 57, 57, 1)', marginLeft: 20, fontFamily: 'Poppins-Medium' }}>Details</Text>
+                <Text style={{ fontSize: 16, color: 'rgba(57, 57, 57, 1)', marginLeft: 20, fontFamily: 'Poppins-Medium' }}>{t("Details")}</Text>
                 <Pressable style={{ flexDirection: 'row', justifyContent: 'flex-end', marginRight: 27, marginLeft: 'auto' }} onPress={() => setModalVisible(true)}>
                     <PenIcon width={18} height={18} color='#2B59C3' />
                     <Text style={{ color: '#2B59C3', fontSize: 14, marginLeft: 4, fontFamily: 'Poppins-Medium' }}>{t('Change')}</Text>
@@ -83,11 +92,11 @@ function ConfirmDetailsScreen() {
             <View style={styles.inputContainer}>
                 <Text style={{ fontSize: 16, fontFamily: 'Poppins-Regular', color: 'rgba(57, 57, 57, 1)' }}>{details.quantity} {t('Ton')}</Text>
             </View>
-            <View style={{ backgroundColor: 'rgba(4, 4, 4, 1)', width: '90%', height: 92, padding: 12, borderRadius: 4, marginTop: 20, alignSelf: 'center' }}>
+            <View style={{ backgroundColor: 'rgba(4, 4, 4, 1)', width: '90%', height: 'auto', padding: 12, borderRadius: 4, marginTop: 20, alignSelf: 'center' }}>
                 <View style={{ flexDirection: 'row' }}>
                     <StarIcon />
                     <Text style={{ color: 'rgba(241, 140, 19, 1)', fontSize: 15, fontFamily: 'Poppins-Regular', marginLeft: 5 }}>{t('500 Pts')}</Text>
-                    <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 15, fontFamily: 'Poppins-Regular', marginLeft: 5 }}>{t('on confirmation')}</Text>
+                    {/* <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 15, fontFamily: 'Poppins-Regular', marginLeft: 5 }}>{t('on confirmation')}</Text> */}
                 </View>
                 <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 11, fontFamily: 'Poppins-Regular', marginTop: 5 }}>{t('referrallines')}</Text>
             </View>
@@ -99,6 +108,7 @@ function ConfirmDetailsScreen() {
                 </TouchableOpacity>
             </View>
             <ReferLead onUpdateDetails={updateDetails} isVisible={modalVisible} onClose={closeModal} editName={details.name} editMobile={details.mobileNo} editLocation={details.location} editquantity={details.quantity} onEdit={true} />
+            {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'/>}
         </View>
     )
 }

@@ -47,12 +47,10 @@ const AddressList = ({navigation,route}) => {
   const [areaError, setAreaError] = useState('')
   const [townError, setTownError] = useState('');
   const [isLoading,setisLoading]=useState(false)
-  const [value, setValue] = useState('');
+  const [stateValue, setStateValue] = useState();
   const { t } = useTranslation();
   const[stateList, setStateList]= useState([]);
-  const [selectedStateName, setSelectedStateName] = useState('');
-  const [stateId, setStateId ] = useState();
-  console.log(addresses.length)
+  console.log('Addresss====',stateValue)
   useBackButtonHandler(navigation, false);
   const selectAddress = (addressId) => {
     setSelectedAddress(addressId);
@@ -62,20 +60,13 @@ const AddressList = ({navigation,route}) => {
     label: item.state,
 }));
 function findStateNameById(stateId) {
-  const state = stateList.find(item => item.state === stateId);
-  console.log('state=====', state)
-  return state ? state.state : '';
+  const state = stateList.find(item => item.id === stateId);
+  return state ? state.id : '';
 }
   useEffect(() => {
     addressList();
     getStateList();
-    if (stateId) {
-      const selectedStateName = findStateNameById(stateId);
-      setValue(selectedStateName);
-      console.log('StateName====', selectedStateName);
-
-    }
-}, [isVisible, stateId]);
+}, [isVisible]);
 
   const onAddAddress=()=>{
     if(addresses.length===5)
@@ -96,24 +87,13 @@ function findStateNameById(stateId) {
     setPinCode("")
     setTown("")
     //setSelectedStateName('');
-    setValue('')
-    setStateId('')
+    setStateValue('')
+    //setStateId('')
     setLandMark("")
     setTown('')
     setArea("")
     setEditPress(false)
 
-  }
-  const params={
-    mobile:mobileNo,
-    name:name,
-    location:location,
-    area:area,
-    landMark:landMark,
-    pinCode:pinCode,
-    Value:Value,
-    states:states,
-    isDefault:rememberSelect
   }
   const onRefresh = () => {
     setRefreshing(true);
@@ -154,14 +134,7 @@ function findStateNameById(stateId) {
   const addressList=()=>{
     setisLoading(true)
     AddressListService().then((res)=>{
-      console.log('list', res.data.results)
-      setaddresses(res.data.results)
-      const selectedAddress = addresses.find(address => address.state_name === stateId);
-      console.log('id===', selectedAddress);
-      if (selectedAddress) {
-        setValue(selectedAddress?.state_name);
-      }
-      console.log("selectedStateName====", addresses,stateId);
+      setaddresses(res.data.results);
       setisLoading(false)
     }).catch((err) =>{
       setisLoading(false)
@@ -169,9 +142,7 @@ function findStateNameById(stateId) {
   }
   function getStateList(){
       RewardsApi.getState().then((res) => {
-         //console.log('success');
          if(res.status === 200){
-           //console.log(res.data)
            setStateList(res.data.results)
          }
       })
@@ -193,7 +164,7 @@ function findStateNameById(stateId) {
     const regex = /^[a-zA-Z][a-zA-Z ]*$/;
     const numbersOnlyRegex = /^[0-9]+$/;
     const nonZeroNumberRegex = /^(?!0+$)[0-9]+$/;
-    const locationRegex = /^[a-zA-Z0-9#&()[\]{}_+-.,<>?/\\~`'":;]+$/;
+    const locationRegex = /^[a-zA-Z0-9#&()[\]{}_+-.,<>?/\\~`'":; ]+$/;
     const specialCharacters = /^[!@#$%^&*()[\]{}_+-.,<>?/\\|'":;]+$/;
     if (name.trim() === '' || !regex.test(name)) {
       setNameError('Please enter valid name');
@@ -212,7 +183,7 @@ function findStateNameById(stateId) {
       setisLoading(false)
     }
 
-    if (!value) {
+    if (!stateValue) {
       setStatesError('State is required');
       isValid = false;
       setisLoading(false)
@@ -245,64 +216,75 @@ function findStateNameById(stateId) {
     }
 }
 function addressHandler(){
-  console.log('editPress', editPress)
    if(editPress){
-    const data = {
-      mobile: mobileNo,
-      name:name,
-      address_1:location,
-      address_2:area,
-      land_mark:landMark,
-      pincode:pinCode,
-      city:Value,
-      is_default:rememberSelect,
-      state_name:value
-   }
-   console.log('data====',data)
-   RewardsApi.updateAddress(data, userId).then((res) => {
-    console.log('success',res.status);
-         if(res.status === 200){
-          setVisible(false);
-          ToastAndroid.show('Address updated successfully', ToastAndroid.SHORT);
-          setisLoading(false)
-         }
-     }).catch((err) => {
-      setisLoading(false);
-   })
+    console.log('update');
+      updateHandler();
    }
    else{
-     const data = {
-        mobile: mobileNo,
-        name:name,
-        address_1:location,
-        address_2:area,
-        land_mark:landMark,
-        pincode:pinCode,
-        city:Value,
-        is_default:rememberSelect,
-        state_name:value
-     }
-     console.log('data====',data)
-     RewardsApi.addAddress(data).then((res) => {
-         console.log('success',res.status);
-         if(res.status === 201){
-          setVisible(false);
-          ToastAndroid.show('Address added successfully', ToastAndroid.SHORT);
-          setisLoading(false)
-         }
-     }).catch((err) => {
-      setisLoading(false);
-     })
+    console.log('add');
+    addHandler();
    }
 }
-
+function updateHandler(){
+  const data = {
+    mobile: mobileNo,
+    name:name,
+    address_1:location,
+    address_2:area,
+    land_mark:landMark,
+    pincode:pinCode,
+    city:Value,
+    is_default:rememberSelect,
+    state_name:stateValue
+ }
+ const formData = new FormData();
+ Object.keys(data).forEach((key) => {
+   formData.append(key, data[key]);
+ });
+ console.log('data====',formData)
+ RewardsApi.updateAddress(formData, userId).then((res) => {
+       if(res.status === 200){
+        setVisible(false);
+        ToastAndroid.show('Address updated successfully', ToastAndroid.SHORT);
+        setisLoading(false)
+       }
+   }).catch((err) => {
+    setisLoading(false);
+ })
+}
+function addHandler(){
+  const data = {
+    mobile: mobileNo,
+    name:name,
+    address_1:location,
+    address_2:area,
+    land_mark:landMark,
+    pincode:pinCode,
+    city:Value,
+    is_default:rememberSelect,
+    state_name:stateValue
+ }
+ const formData = new FormData();
+Object.keys(data).forEach((key) => {
+  formData.append(key, data[key]);
+});
+ console.log('Adddata====',formData)
+ RewardsApi.addAddress(formData).then((res) => {
+     if(res.status === 201){
+      setVisible(false);
+      ToastAndroid.show('Address added successfully', ToastAndroid.SHORT);
+      setisLoading(false)
+     }
+ }).catch((err) => {
+  setisLoading(false);
+ })
+}
 const deleteHandler=()=>{
   if (isLoading) {
     return;
   }
   setisLoading(true)
   RewardsApi.deleteAddress(userId).then((res) => {
-    console.log(res.status)
     if(res.status === 204){
       setVisible(false)
       ToastAndroid.show('Address deleted successfully', ToastAndroid.SHORT);
@@ -314,7 +296,7 @@ const deleteHandler=()=>{
 }
 
   const onEditPress = (item) => {
-    console.log('item=====', item)
+    // console.log('item=====', item)
     setName(item.name)
     setMobileNo(item.mobile)
     setLocation(item.address_1)
@@ -322,10 +304,8 @@ const deleteHandler=()=>{
     setPinCode(item.pincode)
     setLandMark(item.land_mark)
     setTown(item.city)
-    //setValue(item.state_name);
-    const stateId = findStateNameById(item.state_name);
-    setValue(stateId);
-    //setStateId(item.state_name)
+    const stateId = findStateNameById(item.state_name?.id);
+    setStateValue(stateId);
     setrememberSelect(item.is_default)
     setUserId(item.id)
     setEditPress(true)
@@ -336,14 +316,11 @@ const deleteHandler=()=>{
   }
   else{
    
-    navigation.navigate('Confirm',{addressItem})
+    navigation.navigate('Confirm',{addressItem, page: 'rewards'})
   }
  }
  function stateHandler(item){
-    console.log(item);
-    // const stateName = findStateNameById(item.value);
-    // setSelectedStateName(stateName);
-    setValue(item?.value);
+    setStateValue(item.value);
     setIsOpen(true)
  }
  function closeHandler(){
@@ -389,9 +366,9 @@ const deleteHandler=()=>{
           </TouchableOpacity>
         </View>
         <Text style={styles.address}>
-          {item.address_1},{item.address_2},{item.land_mark},{item.city},{item.state_name}-{item.pincode}
+          {item.address_1},{item.address_2},{item.land_mark},{item.city},{item.state_name?.state}-{item.pincode}
         </Text>
-        <Text style={{ marginTop: 8 }}>{item.mobile}</Text>
+        <Text style={{ marginTop: 8,color:'rgba(132, 132, 132, 1)',fontSize:14, fontFamily:'Poppins-Regular' }}>{item.mobile}</Text>
       </Pressable>
     );
   }
@@ -413,24 +390,8 @@ const deleteHandler=()=>{
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-      />
-      {textVisible ?
-      <Text style={{color:'rgba(177, 41, 44, 1)',fontFamily:"Poppins",fontSize:13.33,textAlign:'center',lineHeight:20}}>
-      Please select an address for delivery.
-      </Text>: null}
-      </View>)
-      :
-      (<View style={{alignSelf:'center',justifyContent:"center",alignItems:'center'}}> 
-        <View style={{width:220,height:200,backgroundColor:'#F2F2F2',justifyContent:"center",alignItems:"center",borderRadius:100,marginTop:20,}}>
-      <Image style={{width:170,height:100}} source={require('../../../assets/Images/AddressEmpty.png')} alt="Image" />
-     </View> 
-     <Text style={{marginTop:20,width:220,height:24,fontFamily:'Poppins-Bold',
-     fontSize:16,fontWeight:'500',alignItems:'center',marginLeft:90,color:'#393939'}}>No addresses yet</Text>
-     <Text style={{fontFamily:"Poppins",fontSize:13.33,color:"#848484",textAlign:'center',lineHeight:20}}>
-     Please add your address for delivery.
-     </Text>
-     </View>)}
-      <View style={styles.modalButtonContainer}>
+      ListFooterComponent={
+        <View style={styles.modalButtonContainer}>
         { !data && 
           <Pressable onPress={()=>{continueButton()}} style={{ marginBottom: 10, borderRadius: 5, width: '90%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} >
             <Text style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
@@ -439,6 +400,25 @@ const deleteHandler=()=>{
           </Pressable>
         }
       </View>
+      }
+      />
+      {textVisible ?
+      <Text style={{color:'rgba(177, 41, 44, 1)',fontFamily:"Poppins",fontSize:13.33,textAlign:'center',lineHeight:20}}>
+      {t("SelectAddress")}
+      </Text>: null}
+      </View>)
+      :
+      (<View style={{alignSelf:'center',justifyContent:"center",alignItems:'center'}}> 
+        <View style={{marginTop:30,}}>
+      <Image style={{width:150,height:150}} source={require('../../../assets/Images/AddressEmpty.png')} />
+     </View> 
+     <Text style={{marginTop:20,width:220,height:24,fontFamily:'Poppins-Bold',
+     fontSize:16,fontWeight:'500',alignItems:'center',marginLeft:90,color:'#393939'}}>{t('noaddress')}</Text>
+     <Text style={{fontFamily:"Poppins",fontSize:13.33,color:"#848484",textAlign:'center',lineHeight:20}}>
+     {t('addaddress')}
+     </Text>
+     </View>)}
+      
       {/* Modal */}
       <View>
         <Modal
@@ -457,7 +437,7 @@ const deleteHandler=()=>{
               <View style={styles.centeredView}>
                 <TouchableOpacity
                   onPress={closeHandler} style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 15 }]}>
-                  <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+                  <Icons name="close" size={24} color="#393939" backgroundColor='#ffffff' />
                 </TouchableOpacity>
                 <TextInput
                   style={styles.inputContainer}
@@ -531,19 +511,11 @@ const deleteHandler=()=>{
                   onFocus={() => handleInputFocus('town')}
                 />
                 {townError ? <Text style={{ color: '#B1292C' }}>{townError}</Text> : null}
-                {/* <TextInput
-                  style={styles.inputContainer}
-                  placeholder={t("state")}
-                  placeholderTextColor={'rgba(132, 132, 132, 1)'}
-                  onChangeText={text => setStates(text)}
-                  value={states}
-                  onFocus={() => handleInputFocus('states')}
-                /> */}
                 <View >
                   <Dropdown
                       style={styles.dropdown}
                       selectedTextStyle={styles.selectedTextStyle}
-                      value={value} 
+                      value={stateValue} 
                       data={stateData}
                       mode='modal'
                       labelField="label"
@@ -580,12 +552,12 @@ const deleteHandler=()=>{
                 <View style={{marginTop:75}}>
                   {removeButton == true ?
                     <TouchableOpacity onPress={()=>{deleteHandler(userId)}}  style={styles.removeButton}>
-                      <Text style={styles.removeText}>Remove</Text>
+                      <Text style={styles.removeText}>{t('remove')}</Text>
                     </TouchableOpacity> : null}
                   <View style={removeButton ? { marginTop: 1 } : { marginTop: 10 }}>
                     <Pressable onPress={confirmHandler} style={styles.referButton} >
                       <Text style={styles.referButtonText}>
-                        Save
+                        {t('save')}
                       </Text>
                     </Pressable>
                   </View>
@@ -608,10 +580,8 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderRadius: 8,
     backgroundColor: 'white',
-    height: 116,
     alignSelf:'center',
-    height:'auto'
- 
+    height:'auto', 
   },
   addaddressItem: {
     flexDirection: 'row',
@@ -631,16 +601,15 @@ const styles = StyleSheet.create({
     width:'80%'
   },
   address: {
-    fontSize: 16,
-    color: '#888',
+    fontSize: 15,
+    color: 'rgba(132, 132, 132, 1)',
   },
   modalButtonContainer: {
-    width: '95%',
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute',
-    bottom: 35,
     alignSelf: 'center',
+    marginTop:20
   },
   modalCard: {
     flexDirection: 'row',
@@ -659,14 +628,14 @@ const styles = StyleSheet.create({
     padding: 15,
     height: '100%',
   },
-  modalButtonContainer: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 20,
-    alignSelf: 'center',
-  },
+  // modalButtonContainer: {
+  //   width: '100%',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   position: 'absolute',
+  //   bottom: 20,
+  //   alignSelf: 'center',
+  // },
   inputContainer: {
     height: 45,
     width: '100%',

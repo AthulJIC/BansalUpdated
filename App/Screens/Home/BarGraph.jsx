@@ -39,40 +39,28 @@ const BarGraph = ({refresh}) => {
     const referenceLine3Position = totalOrders;
    console.log("barValue",barMonth)
 
-//    useFocusEffect(
-//     useCallback(() => {
-//       const fetchData = async () => {
-//         try {
-//           const user = await AsyncStorage.getItem('role');
-//           setRole(user);
-//           setIsLoading(true);
-//           setValue('Monthly');
-//           setBarMonth([]);
-//           setBarSpacing(11);
-//           setBarWidth(12);
-//           //setActiveButton('Orders');
-//           if(role === 'Distributor'){
-//             setIsLoading(true)
-//             distributorOrder();
-//           }
-//           else{
-//             setIsLoading(true)
-//             getMonthlyOrders();
-//           }
-//         } catch (error) {
-//           // Handle error if needed
-//           console.error('Error fetching data from AsyncStorage:', error);
-//         }
-       
-        
-//       };
-  
-//       fetchData();
-
-
-//     }, [activeButton,role])
-//   );
-
+useFocusEffect(
+    useCallback(() => {
+        setValue('Monthly');
+        setBarMonth([]);
+        setBarSpacing(11);
+        setBarWidth(12);
+        if (role === 'Distributor') {
+           distributorOrder();
+        }
+   }, [role])
+ );
+useFocusEffect(
+    useCallback(() => {
+        setValue('Monthly');
+        setBarMonth([]);
+        setBarSpacing(11);
+        setBarWidth(12);
+        if (role !== 'Distributor') {
+            getMonthlyOrders();
+        }
+   }, [role])
+);
    useFocusEffect(
      useCallback(() => {
       const fetchData = async () => {
@@ -122,9 +110,7 @@ const BarGraph = ({refresh}) => {
   
     }, [refresh, isRefreshing, role])
   );
-    useEffect(() => {
-        distributorOrder();
-    },[])
+
     function barHandler(item){
         setIsLoading(true)
         setValue(item.value);
@@ -474,7 +460,7 @@ const BarGraph = ({refresh}) => {
             </View>
                     
             }
-           <LoadingIndicator visible={isLoading}></LoadingIndicator>
+           {/* <LoadingIndicator visible={isLoading}></LoadingIndicator> */}
         </View>
     );
 };

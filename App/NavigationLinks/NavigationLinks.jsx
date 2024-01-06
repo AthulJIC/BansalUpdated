@@ -1,5 +1,5 @@
 
-import { NavigationContainer, useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { createStackNavigator,TransitionPresets } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -48,9 +48,14 @@ import HistoryScreen from '../Screens/History/HistoryScreen';
 import { useTranslation } from 'react-i18next';
 import { LanguageProvider } from '../context/LanguageContext';
 import TermsScreen from '../Screens/login/TermsConditions';
+import { navigationRef } from '../providers/RootNavigator';
+import { TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { HomeApi } from '../service/home/homeservice';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
 
 const customSlideFromLeft = {
   cardStyleInterpolator: ({ current, next, layouts }) => {
@@ -101,8 +106,10 @@ function MyTabs() {
       tabBarInactiveTintColor:'gray',
       tabBarStyle:[{
         display:'flex',
-        backgroundColor:'black'
+        backgroundColor:'black',
       }],
+      tabBarLabelStyle:{fontSize:10},
+      
       
       tabBarIcon: ({ focused }) => {
         let iconComponent;
@@ -165,7 +172,7 @@ function MyTabs() {
         <>
         <Tab.Screen name="Home" component={HomeScreen} options={{
           tabBarLabel: t('home'),
-          initialRouteName:{initialRoute}
+          initialRouteName:{initialRoute},
         }}
         initialParams={{ initialRoute: true }}  />
         <Tab.Screen name="Requests" component={Requests} options={{
@@ -208,9 +215,20 @@ function MyTabs() {
 
 const NavigationLinks = () => {
   const { t } = useTranslation();
+  const navigation = useNavigation();
+  const handleBackButtonPress = () => {
+    HomeApi.getNotificationUnread()
+        .then((res) => {
+          console.log("notificationAlert handleNotificationClick", res);
+          // Perform the necessary actions on notification click
+        })
+        .catch(function (error) {
+          console.log(error, "Notification alert error");
+        });
+        navigation.navigate('Homescreen')
+  };
 
   return (
-    <NavigationContainer>
       <LanguageProvider>
       <Stack.Navigator  
        initialRouteName="SplashScreen"
@@ -248,7 +266,12 @@ const NavigationLinks = () => {
             fontSize: 18,
             fontFamily: 'Poppins-SemiBold',
             fontWeight:'700'
-          }
+          },
+          headerLeft: () => (
+            <TouchableOpacity onPress={handleBackButtonPress} style={{marginLeft:10}}>
+              <Icon name="arrow-back" size={25} color="#000" />  
+            </TouchableOpacity>
+          ),
         }} />
           <Stack.Screen name='Language' component={LanguageScreen} 
           options={{
@@ -289,7 +312,7 @@ const NavigationLinks = () => {
           }
         }}/>
         <Stack.Screen name='ProfileEdit' component={ProfileEditScreen} options={{
-          title: 'User',
+          title: t('user'),
           headerTitleAlign: 'center',
           headerTitleStyle:{
             fontSize: 18,
@@ -314,7 +337,7 @@ const NavigationLinks = () => {
             name="AddressList"
             component={AddressList}
             options={({ route }) => ({
-              title: route.params?.fromProfile ? 'Addresses' : '',
+              title: route.params?.fromProfile ? t('addresses'): '',
               headerTitleAlign: 'center',
               headerTitleStyle: {
                 fontSize: 18,
@@ -324,7 +347,7 @@ const NavigationLinks = () => {
             })}
 />
 <Stack.Screen name='HistoryScreen' component={HistoryScreen} options={{
-          title: 'History',
+          title: t('history'),
           headerTitleAlign: 'center',
           headerTitleStyle:{
             fontSize: 18,
@@ -333,7 +356,7 @@ const NavigationLinks = () => {
           }
         }}/>
         <Stack.Screen name='FavouritesScreen' component={FavouritesScreen} options={{
-          title: 'Favourites',
+          title: t('Favourites'),
           headerTitleAlign: 'center',
           headerTitleStyle:{
             fontSize: 18,
@@ -348,7 +371,6 @@ const NavigationLinks = () => {
      
       </Stack.Navigator> 
       </LanguageProvider>
-    </NavigationContainer>
   )
 };
 

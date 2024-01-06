@@ -7,6 +7,7 @@ import {navigate} from '../providers/RootNavigator'
 import {decode as atob, encode as btoa} from 'base-64'
 
 
+
 const AxiosInstance = axios.create({
     baseURL : ApiUrl,
     timeout: 1000 * 30,
@@ -17,24 +18,42 @@ const AxiosInstance = axios.create({
 AxiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
+      //const navigation = useNavigation();
       console.log("error", error.response);
+      if (!error.response) {
+        // Handle network errors here
+        AlertService.ShowSingleActionAlert(AlertMsg.NetworkError).then(async () => {
+          // Perform any actions needed when encountering a network error
+          // For example: Retry logic, showing a message to the user, etc.
+          await AsyncStorage.removeItem('access_token'); 
+          navigate("Login")
+          console.log('Network error occurred');
+        });
+      } else {
         if (error.response?.status === 401) {
           //navigate("Login")
+          console.log('401=====');
+          
             AlertService.ShowSingleActionAlert(AlertMsg.SessionExpird).then(async (data) => {
               await AsyncStorage.removeItem('access_token'); 
-
+              navigate("Login")
             })
+            
         }
-        else if (!error.response?.config?.url?.includes('Login') || error.response?.status >= 500) {
-          AlertService.ShowSingleActionAlert(AlertMsg.UnableToConnectToServer).then((data) => {
-            //console.log(data.data);
+        else if (error.response?.status >= 500) {
+          AlertService.ShowSingleActionAlert(AlertMsg.UnableToConnectToServer).then(async (data) => {
+            console.log(data.data);
+            // await AsyncStorage.removeItem('access_token'); 
+            // navigate("Login")
           })
         }
-        else if (!error.response?.config?.url?.includes('Login') || error.response?.status === 400) {
-          AlertService.ShowSingleActionAlert(AlertMsg.ServerUnhandledRequest).then((data) => {
-            //console.log(data.data);
+        else if (error.response?.status === 400) {
+          AlertService.ShowSingleActionAlert(AlertMsg.ServerUnhandledRequest).then(async (data) => {
+            // await AsyncStorage.removeItem('access_token'); 
+            // navigate("Login")
           })
         }
+      }
         return Promise.reject(error);
     }
 );
@@ -43,21 +62,35 @@ AxiosInstance.interceptors.request.use(async (config) => {
     //await AsyncStorage.setItem('access_token', ApiToken);
     const token = await AsyncStorage.getItem('access_token');
     const refresh = await AsyncStorage.getItem('refresh_token') ;
-   
     if (token) { 
       try {
         const tokenParts = token.split('.');
         const tokenPayload = JSON.parse(atob(tokenParts[1]));
         const tokenExpiration = tokenPayload.exp * 1000; // Convert to timestamp in milliseconds
+        const tokenAge = Date.now() - tokenExpiration;
        // console.log("tokenExpiration",Date.now(), tokenExpiration);
+       if (tokenAge > 86400000) {
+        // Clear the access token from AsyncStorage
+        await AsyncStorage.removeItem('access_token');
+        // Redirect to the login screen
+        navigate('Login');
+      }
       if (Date.now() > tokenExpiration) {
        //console.log('worked')
           await axios.post(ApiUrl + 'api/token/refresh/', {
             refresh: refresh
           })
           .then(async (response) => {
-            await AsyncStorage.setItem('access_token', response.data.access)
-            config.headers.Authorization = `Bearer ${response.data.access}`;
+            if(response.status === 200){
+              await AsyncStorage.setItem('access_token', response.data.access)
+              config.headers.Authorization = `Bearer ${response.data.access}`;
+            }
+            else{
+              AlertService.ShowSingleActionAlert(AlertMsg.SessionExpird).then(async (data) => {
+                await AsyncStorage.removeItem('access_token'); 
+                navigate("Login")
+              })
+            }
           })
         } else {
           console.log('notworked', refresh)
@@ -66,8 +99,16 @@ AxiosInstance.interceptors.request.use(async (config) => {
           })
           .then(async (response) => {
             console.log('response', response.data)
-            await AsyncStorage.setItem('access_token', response.data.access)
-            config.headers.Authorization = `Bearer ${response.data.access}`;
+            if(response.status === 200){
+              await AsyncStorage.setItem('access_token', response.data.access)
+              config.headers.Authorization = `Bearer ${response.data.access}`;
+            }
+            else{
+              AlertService.ShowSingleActionAlert(AlertMsg.SessionExpird).then(async (data) => {
+                await AsyncStorage.removeItem('access_token'); 
+                navigate("Login")
+              })
+            }
           })
           //config.headers.Authorization = `Bearer ${token}`;
         }
@@ -75,6 +116,9 @@ AxiosInstance.interceptors.request.use(async (config) => {
         console.error(error);
         throw new Error('Refresh failed');
       }
+    }
+    else{
+      navigate('Login')
     }
     return config;
 }, (error) => Promise.reject(error));

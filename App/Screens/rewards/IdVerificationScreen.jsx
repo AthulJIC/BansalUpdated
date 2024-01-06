@@ -1,178 +1,93 @@
 import { useRef, useState } from "react";
 import { Text, View, Pressable, StyleSheet, PermissionsAndroid, TextInput } from "react-native";
-import { launchCamera } from 'react-native-image-picker'
 import LoadingIndicator from "../../Components/LoadingIndicator";
 import { Dropdown } from 'react-native-element-dropdown';
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
 import { RewardsApi } from "../../service/rewards/rewardservice";
 import { useAppContext } from "../../context/AppContext";
+import { t } from "i18next";
 
-function IdVerificationScreen({ navigation }) {
-  const [activeButton, setActiveButton] = useState('Aadhar Card');
-  const [selectedImage, setSelectedImage] = useState(null);
+function IdVerificationScreen({ navigation , route}) {
+  const id = route?.params.id;
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState("aadhar");
-  const [items, setItems] = useState([
-    { label: 'Aadhar Card', value: "aadhar" },
-    { label: 'Pan Card', value: 'pancard' },
-    { label: 'Voter ID', value: 'voter_id' }
-  ]);
+  const [value, setValue] = useState(id?.id_type);
   const [name, setName] = useState('');
-  const [mobileNo, setMobileNo] = useState('');
+  const [mobileNo, setMobileNo] = useState(id?.id_number);
   const [validationError, setvalidationError] = useState(false)
   const [erorrMessageName, seterorrMessageName] = useState('')
   const [erorrMessageid, seterorrMessageid] = useState('')
   const [validationIdError, setvalidationIdError] = useState(false)
+  const [validationTypeError, setValidationTypeError] = useState(false)
+  const [erorrMessagetype, seterorrMessagetype] = useState('')
   const { updateUserDetails } = useAppContext();
-  const nameRef = useRef(null);
+ 
+  console.log('id=====', id);
   useBackButtonHandler(navigation, false);
   const handleButtonPress = (buttonName) => {
     setActiveButton(buttonName);
   };
 
   const handleCameraLaunch = async () => {
-    const namePattern = /^[a-zA-Z]+(?:[ .][a-zA-Z]+)*$/;
     const idNumberPattern = /^[a-zA-Z0-9]+$/;
+    const regex = /^[a-zA-Z][a-zA-Z ]*$/;
 
-    const isNameValid = namePattern.test(name);
-    const isIdNumberValid = idNumberPattern.test(mobileNo);
 
     let nameError = '';
     let idNumberError = '';
 
-    if (!name.trim()) {
+    if (!name.trim() || !regex.test(name) || name === 'null') {
       setvalidationError(true)
-      seterorrMessageName('Name is required');
+      seterorrMessageName('Please enter a valid name');
       return
-    } else if (!isNameValid) {
-      setvalidationError(true)
-      seterorrMessageName('Invalid Input!');
-      return
-    }
+    } 
     else{
       setvalidationError(false)
       seterorrMessageName('');
     }
 
-    if (!mobileNo.trim()) {
+    if (!mobileNo.trim() || !idNumberPattern.test(mobileNo) || mobileNo === 'null') {
       setvalidationIdError(true)
-      seterorrMessageid('ID Number is required');
+      seterorrMessageid('Please enter a valid id number');
       return
-    } else if (!isIdNumberValid) {
-      setvalidationIdError(true)
-      seterorrMessageid('ID Number should contain only characters and numbers');
-      return
-    } else{
+    } 
+     else{
       setvalidationIdError(false)
       seterorrMessageid('');
     }
-
-
-    // if (nameError || idNumberError) {
-    //   setLoading(false);
-    //   return;
-    // }
-
-    var options = {
-      mediaType: 'photo',
-      saveToPhotos: false,
-      includeBase64: false,
-    };
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: "App Camera Permission",
-          message: "App needs access to your camera ",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
-        }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        //console.log("Camera permission given");
-        const result = await launchCamera(options, (res) => {
-          // console.log('Response = ', res);
-          if (res.didCancel) {
-            // console.log('User cancelled image picker');
-          } else if (res.error) {
-            // console.log('ImagePicker Error: ', res.error);
-          } else if (res.customButton) {
-            // console.log('User tapped custom button: ', res.customButton);
-            alert(res.customButton);
-          } else {
-            // let source = res;
-            // var resourcePath1 = source.assets[0].uri;
-            const source = { uri: res.uri };
-            // console.log('response', JSON.stringify(res));
-            setSelectedImage(res)
-            console.log('res=====', res);
-            const imageUri = res.assets[0].uri;
-            // const source = { uri: res.uri };
-            console.log('source response', imageUri);
-            //setSelectedImage(res);
-            // const config = {
-            //   headers: {
-            //     'Content-Type': 'multipart/form-data',
-            //     'Authorization': `Bearer ${token}`
-            //   }
-            // }
-            var bodyFormData = new FormData();
-            bodyFormData.append('name', name);
-            bodyFormData.append('id_number', mobileNo);
-            bodyFormData.append('id_type', value);
-            bodyFormData.append('image', {
-              uri: imageUri,
-              type: 'image/jpeg', // Adjust the type based on your image format
-              name: 'photo.jpeg', // Adjust the name as needed
-            });
-            console.log('formData', bodyFormData);
-            // axios.postForm('https://tmt.ainosaur.com/purchase/verify_id/', bodyFormData, config).then((res) => {
-            //    console.log('res====', res)
-            // }).catch((err) => {
-            //   console.error(err)
-            // })
-            setLoading(true)
-            RewardsApi.postIdVerification(bodyFormData).then((res) => {
-
-              console.log('res====/////', res)
-              updateUserDetails({
-                id: res.data.id,
-                id_number: res.data.id_number,
-                id_Type: res.data.id_type,
-                manual_verification_required: res.data.manual_verification_required,
-                message: res.data.message,
-                name: res.data.name,
-                name_verified: res.data.name_verified,
-              });
-              navigation.navigate('IdConfirmation')
-              setLoading(false)
-            }).catch((err) => {
-              console.log(err)
-              setLoading(false)
-            })
-          }
-          // console.log('imageee',selectedImage)
-        })
-        // setLoading(true)
-        // setTimeout(() => {
-        //   // After data is loaded, hide the activity indicator
-        //   setLoading(false);
-        //   navigation.navigate('IdConfirmation')
-        // }, 2000); 
-      } else {
-        //console.log("Camera permission denied");
-      }
-    } catch (err) {
-      console.warn(err);
+    if (!value.trim() || !regex.test(value) || value === 'null' || (value.toLowerCase() !== 'aadhar' && value.toUpperCase() !== 'AADHAR' && value.toLowerCase() !== 'pan' && value.toUpperCase() !== 'PAN')) {
+      setValidationTypeError(true)
+      seterorrMessagetype('Please enter a valid id type');
+      return
+    } 
+    else{
+      setValidationTypeError(false)
+      seterorrMessagetype('');
     }
-    setName('')
-    setMobileNo('')
+    const data = {
+      name: name , 
+      id_type: value,
+      id_number: mobileNo
+    }
+    RewardsApi.idVerify(data, id?.id).then((res) => {
+      console.log('res=====', res.data)
+      if(res.status === 200) {
+        updateUserDetails({
+          id_number: res.data.id_number,
+          id_Type: res.data.id_type,
+          name:res.data.name,
+          id: id?.id
+        });
+        navigation.navigate('IdConfirmation')
+      }
+    })
+ 
+  setLoading(false)
+
   };
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <Text style={{ color: 'rgba(57, 57, 57, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', marginLeft: 7 }}>Photo ID Verification</Text>
-      <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 13, fontFamily: 'Poppins-Regular', marginLeft: 7 }}>Place ID of your choice on a plane surface with the details clearly visible and take a photo.</Text>
+      <Text style={{ color: 'rgba(57, 57, 57, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', marginLeft: 17 }}>{t("IdVerification")}</Text>
+      <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 13, fontFamily: 'Poppins-Regular', marginLeft: 17 }}>{t("PhotoIdText")}</Text>
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         {/* <Pressable
                     style={[
@@ -192,11 +107,11 @@ function IdVerificationScreen({ navigation }) {
                 >
                 <Text style={[styles.buttonText, activeButton === 'PAN Card' && {color:'rgba(177, 41, 44, 1)'}]}>PAN Card</Text>
                 </Pressable> */}
-        <View style={{
+        {/* <View style={{
           marginHorizontal: 10,
-          width: "95%",
+          width: "93%",
           marginTop: 10,
-          borderRadius: 6,
+          borderRadius: 4,
           backgroundColor: 'white',
           borderColor: 'rgba(132, 132, 132, 1)',
           borderWidth: 1,
@@ -225,7 +140,7 @@ function IdVerificationScreen({ navigation }) {
             itemTextStyle={{ color: 'black', fontSize: 14, fontFamily: 'Poppins-Regular' }}
             containerStyle={styles.dropdownContainer}
           />
-        </View>
+        </View> */}
         <TextInput
           style={styles.inputContainer}
           onFocus={() => {
@@ -237,7 +152,31 @@ function IdVerificationScreen({ navigation }) {
             seterorrMessageName('');
           }}
           maxLength={30}
-          placeholder="Name On ID"
+          placeholder={t('IdType')}
+          placeholderTextColor={'rgba(132, 132, 132, 1)'}
+          onChangeText={text => {setValue(text); seterorrMessageName('')}}
+          value={value}
+         
+        />
+        {
+          validationTypeError && (
+            <View style={{ flexDirection: 'row', marginTop:validationTypeError ? 8 : 0 }}>
+              <Text style={{ color: 'red', marginLeft: 15 }}>{erorrMessagetype}</Text>
+            </View>
+          )
+        }
+        <TextInput
+          style={styles.inputContainer}
+          onFocus={() => {
+            setvalidationError(false);
+            seterorrMessageName('');
+          }}
+          onBlur={() => {
+            setvalidationError(false);
+            seterorrMessageName('');
+          }}
+          maxLength={30}
+          placeholder={t('IdName')}
           placeholderTextColor={'rgba(132, 132, 132, 1)'}
           onChangeText={text => {setName(text); seterorrMessageName('')}}
           value={name}
@@ -245,7 +184,7 @@ function IdVerificationScreen({ navigation }) {
         />
         {
           validationError && (
-            <View style={{ flexDirection: 'row', marginTop: 8 }}>
+            <View style={{ flexDirection: 'row', marginTop:validationError ?  8 : 0 }}>
               <Text style={{ color: 'red', marginLeft: 15 }}>{erorrMessageName}</Text>
             </View>
           )
@@ -261,21 +200,21 @@ function IdVerificationScreen({ navigation }) {
             seterorrMessageid('');
           }}   
           maxLength={35}     
-          placeholder="ID Number"
+          placeholder={t('IdNumber')}
           placeholderTextColor={'rgba(132, 132, 132, 1)'}
           onChangeText={text => {setMobileNo(text);seterorrMessageid('');}}
           value={mobileNo}
         />
         {
           validationIdError && (
-            <View style={{ flexDirection: 'row', marginTop: 8 }}>
+            <View style={{ flexDirection: 'row', marginTop:validationIdError ? 8 : 0 }}>
               <Text style={{ color: 'red', marginLeft: 15 }}>{erorrMessageid}</Text>
             </View>
           )
         }
       </View>
       <Pressable style={{ width: '95%', backgroundColor: 'rgba(177, 41, 44, 1)', height: 50, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', bottom: 15, borderRadius: 5 }} onPress={handleCameraLaunch}>
-        <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', }}>Continue</Text>
+        <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', }}>{t("continueButton")}</Text>
       </Pressable>
       <LoadingIndicator visible={loading} text="Loading..." />
     </View>
@@ -331,14 +270,14 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     height: 45,
-    width: '95%', // Set width to 100% to occupy the whole screen
+    width: '93%', // Set width to 100% to occupy the whole screen
     color: 'rgba(57, 57, 57, 1)',
     borderColor: 'rgba(132, 132, 132, 1)',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 4,
     alignSelf: 'center',
     marginTop: 20,
-    paddingLeft: 15,
+    paddingLeft: 9,
     fontFamily: 'Poppins-Regular',
 
   },

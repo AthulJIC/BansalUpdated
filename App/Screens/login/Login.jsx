@@ -130,19 +130,26 @@ async function loginHandler(){
       console.log('data', data)
       axios.post(url, data).then(async(res)  => {
       // LoginApi.userLogin(data).then(async(res) => {
-       console.log('res', res);
+       console.log('res', res.data);
         if(res.status === 200){
           setLoginAttempts(0)
-          await AsyncStorage.setItem('access_token', res.data.access);
-          await AsyncStorage.setItem('refresh_token', res.data.refresh);
-          await AsyncStorage.setItem('mobile_no', res.data.mobile);
-          await AsyncStorage.setItem('role', res.data.role);
-          await AsyncStorage.setItem('username', res.data.username);
-          await AsyncStorage.setItem('email', res.data.email)
-          await AsyncStorage.setItem('isLoggedIn', "true");
-          await AsyncStorage.setItem('isSelected', isSelected.toString());
+          if(res.data.is_staff !== true && res.data.is_admin !== true){
+            console.log('right');
+            await AsyncStorage.setItem('access_token', res.data.access);
+            await AsyncStorage.setItem('refresh_token', res.data.refresh);
+            await AsyncStorage.setItem('mobile_no', res.data.mobile);
+            await AsyncStorage.setItem('role', res.data.role);
+            await AsyncStorage.setItem('username', res.data.username);
+            await AsyncStorage.setItem('email', res.data.email)
+            await AsyncStorage.setItem('isLoggedIn', "true");
+            await AsyncStorage.setItem('isSelected', isSelected.toString());
+            await navigation.navigate('Homescreen');
+          }
+          else {
+            Alert.alert('Login Failed', 'Invalid user', [{ text: 'OK' }]);
+          }
           setIsLoading(false)
-          await navigation.navigate('Homescreen');
+          setPassword('')
           setNameError(false);
           setPasswordError(false);
           setCheckBoxError(false)
@@ -276,7 +283,7 @@ async function handleUsername(text){
       <Text  style={styles.buttonText}>{t('loginButton')}</Text>
        </Pressable>
       
-       <Pressable style={{ alignItems:'center'}} onPress={() => navigation.navigate('ForgetPassword',{text : 'Reset Password'})}>
+       <Pressable style={{ alignItems:'center'}} onPress={() => navigation.navigate('ForgetPassword',{text : t('resetpassword')})}>
        <Text style={styles.forgotPassword}>{t('forgot')}</Text>
        </Pressable>
        </View>

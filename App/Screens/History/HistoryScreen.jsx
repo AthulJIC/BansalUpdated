@@ -13,6 +13,7 @@ import useBackButtonHandler from '../../Components/BackHandlerUtils';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { t } from 'i18next';
 
 const HistoryScreen = ({navigation}) => {
   const [filteredData, setFilteredData] = useState([]);
@@ -26,22 +27,22 @@ const HistoryScreen = ({navigation}) => {
   let filterTitle = [
     {
       id: 1,
-      title: 'All Transactions',
+      title: t('alltransactions'),
       value: 'AllTransactions'
     },
     {
       id: 2,
-      title: 'Processing',
+      title: t('processing'),
       value: 'Processing'
     },
     {
       id: 3,
-      title: 'Accepted',
+      title: t('accepted'),
       value: 'Accepted'
     },
     {
       id: 4,
-      title: 'Rejected',
+      title: t('rejected'),
       value: 'Rejected'
     },
     
@@ -56,7 +57,7 @@ else{
         ...filterTitle,
         {
           id: 5,
-          title: 'Referral',
+          title: t('referral'),
           value: 'Referral'
         },
     ]
@@ -199,6 +200,7 @@ async function endReachedHandler() {
   //   else getHistoryStatusList(selectedFilter?.value)
   // }
   const requestData = (itemData) => {
+    console.log('itmData===',itemData.item);
     const dateTime = moment(itemData.item.created_at);
     const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
     const time = dateTime.format('hh:mm A').toLocaleString('en-US');
@@ -206,7 +208,18 @@ async function endReachedHandler() {
     let pointsText = ''; 
     let displayText = '';
     let textColor;
+    let textwidth;
+    let name;
+    
   if(itemData.item.lead === null){
+    name = itemData.item.name;
+    if(itemData.item.name.length > 8)
+    {
+      textwidth = '35%'
+    }
+    else{
+      textwidth = 'auto'
+    }
     if (itemData.item.status === 'Processing') {
       statusText = 'Processing'; 
       pointsText = '500 Pts'; 
@@ -221,9 +234,12 @@ async function endReachedHandler() {
     else{
       displayText = itemData.item.transaction_id
       textColor = "rgba(235, 28, 28, 1)";
+      pointsText = '0 Pts'; 
     }
   }
   else {
+    name = 'Referral'
+    textwidth = 'auto'
     if (itemData.item.status === 'Processing') {
       statusText = 'Processing'; 
       pointsText = '25 Pts'; 
@@ -238,6 +254,7 @@ async function endReachedHandler() {
     else{
     //   displayText = itemData.item.transaction_id
         textColor = "rgba(235, 28, 28, 1)";
+        pointsText = '0 Pts'; 
      }
   }
     return(
@@ -291,19 +308,19 @@ async function endReachedHandler() {
           </View>
         )}
         <View style={{flexDirection:'column'}}>
-          <View style={{flexDirection:'row', flexWrap: 'nowrap',  marginLeft: 25, alignItems: 'center'}}>
-                <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: 'black', width: itemData.item.lead !== null ? '0' : '25%',fontSize:14,fontFamily:'Poppins-Medium'}}>{itemData.item.name}</Text>
+          <View style={{flexDirection:'row', flexWrap: 'nowrap',  marginLeft: 15, alignItems: 'center'}}>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: 'black', width: itemData.item.lead !== null ? 'auto' : textwidth,fontSize:14,fontFamily:'Poppins-Medium'}}>{name}</Text>
                 {
                     itemData.item.lead === null && 
                     (
                         <View style={{flexDirection:'row'}}>
-                            <Text style={{  fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)',marginTop:5}}>{'\u2B24'}</Text>
-                            <Text style={{color: 'black', fontSize: 12, fontFamily: 'Poppins-Regular'}}>{displayText}</Text>
+                            <Text style={{  fontWeight: '500', fontSize: 5, color: 'rgba(57, 57, 57, 1)',marginTop:5,marginHorizontal:3}}>{'\u2B24'}</Text>
+                            <Text style={{color: 'black', fontSize: 13, fontFamily: 'Poppins-Medium'}}>{displayText}</Text>
                         </View>
                     )
                 }            
           </View>
-          <View style={{flexDirection:'row',flexWrap: 'nowrap',marginLeft:25}}>
+          <View style={{flexDirection:'row',flexWrap: 'nowrap',marginLeft:15}}>
             <Text style={{marginHorizontal:3,fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{date}</Text>
             <Text style={{fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:5,marginHorizontal:5}}>{'\u2B24'}</Text>
             <Text style={{fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{time}</Text>
@@ -352,10 +369,10 @@ async function endReachedHandler() {
                 resizeMode='cover'
               />
               <Text style={{fontFamily:'Poppins-Large',fontWeight:'500',fontSize:16,textAlign:'center',
-              margin:22,lineHeight:24,color:'#393939'}}>No Request History</Text>
+              margin:22,lineHeight:24,color:'#393939'}}>{t("RequestHistory")}</Text>
               <Text  style={{width:'90%',fontFamily:'Poppins-Regular',fontWeight:'500',fontSize:14,textAlign:'center',
               lineHeight:20,color:'#848484',alignSelf:'center'}}>
-              We don’t see any records from your history.</Text>
+              {t("HistoryText")}</Text>
         </View>
   
       ) : (

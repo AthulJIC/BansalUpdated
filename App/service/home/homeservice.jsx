@@ -23,7 +23,7 @@ export const HomeApi = {
         return await AxiosInstance.get('purchase/weekly-points/');
     },
     getAds: async function(){
-        return await AxiosInstance.get('advertisement/ads/')
+        return await AxiosInstance.get('advertisement/ads_mobile/')
     },
     getDistributorMonthlyOrder : async function(){
         return await AxiosInstance.get('purchase/distributor-monthly/')
@@ -37,8 +37,8 @@ export const HomeApi = {
     getRequest : async function(){
         return await AxiosInstance.get('purchase/distributor-requests/')
     },
-    getNotification : async function(){
-        return await AxiosInstance.get('purchase/notification/');
+    getNotification : async function(params){
+        return await AxiosInstance.get('purchase/admin-notifications/?page='+params);
     },
     getNotificationAlert: async function (){
         return await AxiosInstance.get('purchase/notification-unread/');

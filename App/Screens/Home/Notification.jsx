@@ -1,85 +1,148 @@
 import React, {  useEffect, useState } from 'react';
-import {  Text, StyleSheet, View, Image, ActivityIndicator, ScrollView ,RefreshControl} from 'react-native';
+import {  Text, StyleSheet, View, Image, ActivityIndicator, ScrollView ,RefreshControl, FlatList,BackHandler} from 'react-native';
 import CheckmarkIcon from '../../../assets/Icon/CheckMark';
 import { HomeApi } from '../../service/home/homeservice';
 import moment from 'moment';
 import useBackButtonHandler from '../../Components/BackHandlerUtils';
 import LoadingIndicator from '../../Components/LoadingIndicator';
+import { t } from 'i18next';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
-const Notification = ({navigation}) => {
+const Notification = ({route}) => {
+     const count = route?.params.notiAlert;
      const [data, setData] = useState([]);
      const [isLoading, setIsLoading] = useState(true);
      const [refreshing, setRefreshing] = useState(false);
-    useBackButtonHandler(navigation, false);
+     const [isEndReachedLoading, setIsEndReachedLoading] = useState(false);
+     const [page, setPage] =useState(1);
+     const [nextUrl, setNextUrl] = useState(null);
+     //const [notiCount, setNotiCount] = useState();
+    //useBackButtonHandler(navigation, false);
+    
+    const navigation = useNavigation();
+
     useEffect(() => {
-        getNotificationHandler();
+      const backAction = () => {
+        // Call your function when going back from the Notification screen
+        handleNotificationBack();
+        // Return false to disable the default back functionality
+        return false;
+      };
+  
+      // Add the event listener for Android hardware back button
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+  
+      return () => backHandler.remove(); // Clean up the event listener
+  
     }, []);
+  
+    const handleNotificationBack = () => {
+      // Call the function to handle notification click
+      HomeApi.getNotificationUnread()
+        .then((res) => {
+          console.log("notificationAlert handleNotificationClick", res);
+          // Perform the necessary actions on notification click
+        })
+        .catch(function (error) {
+          console.log(error, "Notification alert error");
+        });
+  
+      // Navigate back to the previous screen
+      navigation.goBack();
+    };
+  
+useFocusEffect(
+    React.useCallback(() => {
+      console.log('count===== ', count);
+      getNotificationHandler();
+    }, [count])
+  );
     function getNotificationHandler(){
-        HomeApi.getNotification().then((res) => {
+        setIsLoading(true)
+        HomeApi.getNotification(page).then((res) => {
             console.log('resss=====', res.data);
-            if(res.status === 200){
-                setIsLoading(false)
-                setRefreshing(false)
-                setData(res.data.notifications)
-            }
+            if (res.status === 200) {
+                const newData = res.data.results;
+                if (page === 1) {
+                    setData(newData);
+                } else {
+                    setData((prevData) => {
+                    const newData = new Set([...prevData, ...res.data.results]);
+                    return Array.from(newData);
+                  });
+                }
+                setIsLoading(false);
+                setNextUrl(res.data.next);
+                setIsEndReachedLoading(false);
+                //setRefreshing(false)
+              } else {
+                setIsLoading(false);
+                setIsEndReachedLoading(false);
+                //setRefreshing(false)
+              }
         }).catch((err) => {
             setIsLoading(false)
-            setRefreshing(false)
+            //setRefreshing(false)
         })
     }
-    const onRefresh = () => {
-        setRefreshing(true);
-       getNotificationHandler();
-       setRefreshing(false)
-      };
-    // if (isLoading) {
-    //     return (
-    //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
-    //             <ActivityIndicator size="large" color="rgba(177, 41, 44, 1)" />
-    //         </View>
-    //     );
-    // }
+      function onEndReached(){
+        console.log('end', isEndReachedLoading)
+        if (isEndReachedLoading || !nextUrl) {
+          setPage(1)
+          return;
+       }
+        setPage(page + 1);
+        setIsEndReachedLoading(true);
+        getNotificationHandler()
+      }
+    function renderItem({item}) {
+        const dateTime = moment(item.created_at);
+        const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
+        const time = dateTime.format('hh:mm A').toLocaleString('en-US');
+        return (
+            <View style={styles.container}>
+                <View style={styles.iconContainer}>
+                    <CheckmarkIcon />
+                </View>
+                <View style={styles.contentContainer}>
+                    <Text style={styles.textItem}>{item.message}</Text>
+                    <Text style={styles.dateText}>{date}.{time}</Text>
+                </View>
+            </View>
+        );
+
+    }
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: 'white' }}
-        refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }>
-         { data.length !== 0 ? (
-            data.map((item, index) => {
-                const dateTime = moment(item.created_at);
-                const date = dateTime.format('DD MMM YYYY').toLocaleString('en-US');
-                const time = dateTime.format('hh:mm A').toLocaleString('en-US');
-                return (
-                    <View key={index} style={styles.container}>
-                        <View style={styles.iconContainer}>
-                            <CheckmarkIcon />
-                        </View>
-                        <View style={styles.contentContainer}>
-                            <Text style={styles.textItem}>{item.message}</Text>
-                            <Text style={styles.dateText}>{date}.{time}</Text>
-                        </View>
-                    </View>
-                );
-            })
+        <View style={{ flex: 1, backgroundColor: 'white' }}
+       >
+         { count !== 0 && data.length !== 0? (
+           <FlatList
+           data={data}
+           renderItem={renderItem}
+           keyExtractor={(item) => item.id.toString()}
+          onEndReached={onEndReached}></FlatList>
         ) : (
-            <View style={{ alignSelf: 'center', backgroundColor: 'white', top: 150 }}>
+            <View style={{ backgroundColor: 'white', flex:1 ,alignItems:'center'}}>
                 <Image
                     source={require('../../../assets/Images/NotificationImage.png')}
-                    style={{ width: '50%', height: 150 }}
+                    style={{ width: '40%', height: 200, marginTop:50}}
                     resizeMode='center'
                 ></Image>
                 <View style={{ marginTop: 20 }}>
                     <Text style={{ color: 'rgba(57, 57, 57, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', textAlign: 'center' }}>
-                        No New Notifications
+                        {t("NewNotification")}
                     </Text>
                     <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 13, fontFamily: 'Poppins-Regular', textAlign: 'center' }}>
-                        You have no new notifications right now.
+                        {t("NotificationText")}
                     </Text>
                 </View>
             </View>
         )}
         {isLoading && <LoadingIndicator visible={isLoading} text='Loading...'></LoadingIndicator>}
-    </ScrollView>
+    </View>
     );
 };
 

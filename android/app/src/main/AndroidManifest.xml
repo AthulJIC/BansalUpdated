@@ -5,8 +5,14 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-feature android:name="android.hardware.camera" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
     <queries>
+    <intent>
+      <action android:name="android.intent.action.DIAL" />
+    </intent>
+    <intent>
+        <action android:name="android.intent.action.SEND"/>
+        <data android:mimeType="*/*" />
+    </intent>
     <intent>
       <action android:name="android.intent.action.VIEW" />
       <data android:scheme="http"/>

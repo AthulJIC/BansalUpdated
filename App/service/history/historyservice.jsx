@@ -1,4 +1,3 @@
-import axios from "axios";
 import AxiosInstance from "../axiosservice";
 
 export const HistoryApi = {

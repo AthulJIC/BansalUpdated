@@ -202,7 +202,7 @@ const OrderScreen = ({ navigation }) => {
     const scrollY = new Animated.Value(0);
     function chooseHandler(item) {
         console.log('itemchoose====', item);
-        navigation.navigate('DistributorExpand', { selectedItem: item })
+        navigation.navigate('DistributorExpand', { selectedItem: item, page : 'Orders' })
     }
     function bookmarkHandler(item) {           
         if (item.is_bookmarked.is_bookmarked) {
@@ -284,12 +284,11 @@ const OrderScreen = ({ navigation }) => {
                     />
                     <Text style={{
                         fontFamily: 'Poppins-Large', fontWeight: '500', fontSize: 16, textAlign: 'center',
-                        margin: 22, lineHeight: 24, color: '#393939'
-                    }}>No Results Found</Text>
+                        margin: 22, color: '#393939'
+                    }}>{t('Results')}</Text>
                     <Text style={{
-                        fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, textAlign: 'center',
-                        lineHeight: 20, color: '#848484'
-                    }}>Please try again with a different keyword.</Text>
+                        fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 14, textAlign: 'center', color: '#848484'
+                    }}>{t('DiffKeyword')}</Text>
                 </View>
 
             ) : (
@@ -354,8 +353,8 @@ const OrderScreen = ({ navigation }) => {
                                 labelField="label"
                                 valueField="value"
                                 iconColor='white'
-                                placeholder="Select item"
-                                searchPlaceholder="Search..."
+                                placeholder={t('Select Location')}
+                                searchPlaceholder={t('search')}
                                 value={value}
                                 onChange={item => {
                                     console.log('item=====',item)
@@ -376,14 +375,14 @@ const OrderScreen = ({ navigation }) => {
                                 <View style={{ marginLeft: 'auto', right: 20, width: '30%' }}>
                                     <Pressable style={{ backgroundColor: 'rgba(43, 89, 195, 1)', height: 37, width: '100%', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}
                                         onPress={() => setModalVisible(true)}>
-                                        <Text style={{ color: 'white', fontSize: 12, fontFamily: 'Poppins-Regular', padding: 7 }}>Refer Leads</Text>
+                                        <Text style={{ color: 'white', fontSize: 12, fontFamily: 'Poppins-Regular', padding: 7 }}>{t("refer")}</Text>
                                     </Pressable>
                                 </View> : ''}
                         </View>
                         <View style={styles.container}>
                             <TextInput
                                 style={styles.input}
-                                placeholder="Search..."
+                                placeholder={t("search")}
                                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                                 onChangeText={text => setSearchText(text)}
                                 value={searchText}
@@ -520,8 +519,8 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
     },
     tinyLogo: {
-        width: 230,
-        height: 190,
+        width: 180,
+        height: 150,
         borderRadius: 8,
         marginLeft: 10,
         marginHorizontal: 20,

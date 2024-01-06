@@ -4,7 +4,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Modal from 'react-native-modal';
 import BellIcon from "../../assets/Icon/Bell";
 import LanguageIcon from "../../assets/Icon/LanguageIcon";
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useTranslation } from 'react-i18next';
 import i18n from "../Languages/i18";
 import { useAppContext } from "../context/AppContext";
@@ -13,25 +13,21 @@ import { useLanguageContext } from "../context/LanguageContext";
 import { HomeApi } from "../service/home/homeservice";
 
 function HeaderComponent() {
+  const navigation = useNavigation();
+  const { t, i18n } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false)
   const { language, changeNewLanguage } = useLanguageContext();
   const [notificationMessage, setNotificationMessage] = useState('');
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [activeButton, setActiveButton] = useState('');
   const [newLanguage, setnewLanguage] = useState('')
-  const [notiAlert,setNotiAlert]=useState('')
+  const [notiAlert,setNotiAlert]=useState()
   const { changeLanguage } = useAppContext();
   const[username, setUsername] = useState('') ;
-  const notificationAlert=()=>{
-    HomeApi.getNotificationAlert().then((res) => {
-      console.log("notificationAlert",res.data)
-      setNotiAlert(res.data.unread_count)
-    })
-    .catch(function (error) {
-      console.log(error,"Notification alert error");
-    });
-  }
   
+ 
+
+
   useFocusEffect(
     useCallback(() => {
       const getValueFromStorage = async () => {
@@ -45,41 +41,41 @@ function HeaderComponent() {
         }
       };
       getValueFromStorage();
-      notificationAlert()
+      notificationAlert();
     }, [])
   );
-  const handleButtonPress = (buttonName) => {
-    setActiveButton(buttonName);
-    setnewLanguage(buttonName);
-  };
-
-  const navigation = useNavigation();
-  const { t, i18n } = useTranslation();
-
-  const englishLanguage = () => {
-    setActiveButton('English')
-    setnewLanguage(i18n.language === 'hi' ? 'en' : 'en');
-  }
-  const hindiLanguage = () => {
-    setActiveButton('Hindi')
-    setnewLanguage(i18n.language === 'en' ? 'hi' : 'hi')
-  };
-  const confirmLanguage = async() => {
-    i18n.changeLanguage(newLanguage);
-    changeNewLanguage(newLanguage === 'en' ? 'English' : 'Hindi');
-    //await AsyncStorage.setItem('Language', (newLanguage === 'en' ? 'English' : 'Hindi'))
-  }
-  const handleNotificationClick = () => {
-    HomeApi.getNotificationUnread().then((res) => {
-      console.log("notificationAlert handleNotificationClick",res)
+  const notificationAlert=()=>{
+    HomeApi.getNotificationAlert().then((res) => {
+      console.log("notificationAlert",res.data)
+      setNotiAlert(res.data.unread_count)
     })
     .catch(function (error) {
       console.log(error,"Notification alert error");
     });
-    navigation.navigate('Notification')
-    setNotificationMessage('New notification message here');
-    setNotificationVisible(true);
+  }
+  const englishLanguage = () => {
+    setActiveButton('English')
+    setnewLanguage(i18n.language === 'en' ? 'hi' : 'en');
+  }
+  const hindiLanguage = () => {
+    setActiveButton('Hindi')
+    setnewLanguage(i18n.language === 'hi' ? 'en' : 'hi')
   };
+  console.log('newLanguage',newLanguage, i18n.language);
+  const confirmLanguage = async() => {
+    i18n.changeLanguage(newLanguage);
+    changeNewLanguage(newLanguage === 'en' ? 'English' : 'Hindi');
+    await AsyncStorage.setItem('Language', (newLanguage === 'en' ? 'English' : 'Hindi'))
+  }
+  // const handleNotificationClick = () => {
+  //   HomeApi.getNotificationUnread().then((res) => {
+  //     console.log("notificationAlert handleNotificationClick",res)
+  //     setNotiAlert(0)
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error,"Notification alert error");
+  //   });
+  // };
 
   function openModal() {
     setActiveButton(language);
@@ -99,15 +95,16 @@ function HeaderComponent() {
         <View style={{ flexDirection: 'row', marginLeft:'auto'}}>
           <TouchableOpacity style={styles.iconContainer} onPress={openModal}>
             <LanguageIcon width={24} height={24} color='#F18C13' />
-          </TouchableOpacity >
-          <TouchableOpacity onPress={() =>navigation.navigate('Notification')} style={styles.iconContainer} >
-            <BellIcon width={24} height={24} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() =>navigation.navigate('Notification',{
+            notiAlert : notiAlert
+          })} style={styles.iconContainer}>
+            <BellIcon width={24} height={24}/>
+            { notiAlert!=0 ?
             <View style={[styles.notific,]}>
-            {notiAlert!=0 ?
-            <Text style={{color:'rgba(177, 41, 44, 1)',fontFamily:'Poppins-Regular',fontSize:16}}>{notiAlert}</Text> : ''
+              <Text style={{color:'white',fontFamily:'Poppins-Regular',fontSize:11}}>{notiAlert}</Text>
+            </View> : ''
             }
-            
-            </View>
            
           </TouchableOpacity>
         </View>
@@ -127,7 +124,7 @@ function HeaderComponent() {
           <TouchableOpacity
             style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 15 }]}
             onPress={handleClose}>
-            <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+            <Icon name="close" size={24} color="#393939" backgroundColor='#ffffff' />
 
           </TouchableOpacity>
           <Pressable
@@ -150,7 +147,7 @@ function HeaderComponent() {
           </Pressable>
           <View style={styles.modalButtonContainer}>
             <Pressable style={{ marginBottom: 10, borderRadius: 5, width: '100%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 }} onPress={()=>{confirmLanguage();setModalVisible(false)}}>
-              <Text  style={{ fontFamily: 'Poppins-Regular', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
+              <Text  style={{ fontFamily: 'Poppins-Medium', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
                 {t('confirmButton')}
               </Text>
             </Pressable>
@@ -296,8 +293,13 @@ const styles = StyleSheet.create({
   },
   notific:{
     position:'absolute',
-    top:17,
-    right:9
+    left:25,
+    backgroundColor:'rgba(177, 41, 44, 1)',
+    borderRadius:15,
+    height:17,
+    width:17,
+    alignItems:'center',
+    justifyContent:'center'
   }
 });
 

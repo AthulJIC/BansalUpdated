@@ -2,7 +2,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { View, TouchableOpacity, TextInput, Pressable, Text, StyleSheet, KeyboardAvoidingView, ScrollView } from "react-native";
 import Modal from "react-native-modal";
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useTranslation } from 'react-i18next';
 
 function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editquantity, editLocation, editMobile, editName, }) {
   const [name, setName] = useState('');
@@ -19,6 +20,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
   const [validationError,setvalidationError]=useState(false)
   const [erorrLocation,setErorrLocation]=useState('')
   const [quantityErorr,setQuantityErorr]=useState('')
+  const { t } = useTranslation();
   console.log("edit value",editquantity, editLocation, editMobile, editName)
   console.log("value",localName,localLocation,localMobile,localQuantity)
   const nameRef = useRef(null);
@@ -74,7 +76,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
     const regex = /^[a-zA-Z][a-zA-Z ]*$/;
     const numbersOnlyRegex = /^[0-9]+$/;
     const nonZeroNumberRegex = /^(?!0+$)[0-9]+$/;
-    const locationRegex = /^[a-zA-Z0-9#&()[\]{}_+-.,<>?/\\~`'":;]+$/;
+    const locationRegex = /^[a-zA-Z0-9#&()[\]{}_+-.,<>?/\\~`'":; ]+$/;
     const specialCharacters = /^[!@#$%^&*()[\]{}_+-.,<>?/\\|'":;]+$/;
     if (params.name === '' || !regex.test(params.name) || !params.name) {
       setvalidationError(true);
@@ -137,12 +139,12 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
               <TouchableOpacity
                 style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 15 }]}
                 onPress={()=>{oNclose()}}>
-                <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+                <Icon name="close" size={24} color="#393939" backgroundColor='#ffffff' />
               </TouchableOpacity>
               <TextInput
                 style={styles.inputContainer}
                 keyboardType={Platform.OS === 'android' ? 'email-address' : 'ascii-capable'}
-                placeholder="Name"
+                placeholder={t("name")}
                 onFocus={() => {
                   seterorrMessageName(''); 
                   //setvalidationError(false); 
@@ -166,7 +168,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                   seterorrMessageName(''); 
                   seterorrMessageMobile(false); 
                 }}
-                placeholder="Mobile Number"
+                placeholder={t('mobile')}
                 keyboardType="phone-pad"
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalMobile(text) : setMobileNo(text)}
@@ -187,7 +189,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                   setErorrLocation(false); 
                 }}
                 maxLength={25}
-                placeholder="Site Location"
+                placeholder={t("SiteLocation")}
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalLocation(text) : setLocation(text)}
                 value={onEdit ? localLocation : location}
@@ -207,7 +209,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                   seterorrMessageName(''); 
                   setQuantityErorr(false); 
                 }}
-                placeholder="Required Quantity in Ton"
+                placeholder={t('Qinput')}
                 keyboardType="numeric"
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalQuantity(text) : setQuantity(text)}
@@ -225,7 +227,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 <Pressable style={styles.referButton}
                   onPress={handleRef} >
                   <Text style={styles.referButtonText}>
-                    Refer
+                    {t("referbutton")}
                   </Text>
                 </Pressable>
               </View>

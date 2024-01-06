@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, FlatList, Pressable, Animated, Alert, ActivityIndicator, KeyboardAvoidingView, ToastAndroid, RefreshControl } from 'react-native'
 import Modal from 'react-native-modal';
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { RequestApi } from '../../service/request/requestservice';
 import EmptyComponent from '../../Components/EmptyComponent';
 import { useTranslation } from 'react-i18next';
@@ -274,7 +274,7 @@ const Requests = ({ navigation }) => {
                 {showIcon ? (
                     <Pressable
                         onPress={() => clearHandler() }>
-                        <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+                        <Icon name="close" size={24} color="#393939" backgroundColor='#ffffff' />
                     </Pressable>
                 ) : (
                     <Pressable>
@@ -318,7 +318,7 @@ const Requests = ({ navigation }) => {
                         <TouchableOpacity
                             style={[styles.button, styles.buttonClose, { alignItems: 'flex-end' }]}
                             onPress={() => setModalVisible(!modalVisible)}>
-                            <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+                            <Icon name="close" size={24} color="#393939" backgroundColor='#ffffff' />
 
                         </TouchableOpacity>
                         <View style={[styles.Modalcard, styles.shadowProp]}>
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     ModalSecondCard: {
         backgroundColor: '#ffffff',
         padding: 10,
-        height: 132,
+        height: 'auto',
         width: '100%',
         paddingRight: 12,
         paddingTop: 12,

@@ -12,9 +12,28 @@ function SuccessScreen({ route }) {
   const [roles, setRoles] = useState()
   const [points, setPoints] = useState('')
   const { title, content, addressItem, selectedProduct, uiParams, page, ton } = route?.params;
-  console.log(addressItem, "kkkkkk")
+  console.log(addressItem, "kkkkkk", addressItem, "ttttttt",selectedProduct, "llllllll", uiParams, 'pppppppp', page, 'hhhhhh', ton )
   let pages = page
   const navigation = useNavigation()
+  let districtText;
+  let stateText;
+  if(page === 'rewards') {
+    stateText = addressItem.state_name.state;
+    districtText = addressItem.city;
+  }
+  else if(page === 'leads'){
+    districtText = addressItem.location
+  }
+  else{
+    if(addressItem.page !== 'Favourites'){
+        stateText = addressItem.selectedItem.state;
+        districtText = addressItem.selectedItem.district;
+    }
+    else if(addressItem.page !== 'Orders'){
+        stateText = addressItem.selectedItem.state_name;
+        districtText = addressItem.selectedItem.district_name;
+    }
+  }
   useEffect(() => {
     const getValueFromStorage = async () => {
       try {
@@ -75,23 +94,23 @@ function SuccessScreen({ route }) {
             }}>+25 t{('points3')}</Text>)
             }
             
-            <TouchableOpacity style={{ borderRadius: 8, paddingHorizontal: 15, paddingVertical: 8, backgroundColor: 'rgba(31, 134, 255, 0.2)', justifyContent: 'center', }}>
+            <TouchableOpacity style={{ borderRadius: 8,  backgroundColor: 'rgba(31, 134, 255, 0.2)', justifyContent: 'center',alignItems:'center' , width:'35%'}}>
               <Text style={{
-                width: 70, height: 16, fontFamily: 'Poppins-Medium',
-                fontWeight: '500', fontSize: 11.2, lineHeight: 16, alignItems: 'center', color: '#1F86FF'
+                 fontFamily: 'Poppins-Medium',
+                 fontSize: 11.2,  alignItems: 'center', color: '#1F86FF'
               }}>{t('Processing')}</Text>
             </TouchableOpacity>
 
           </View> : <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#848484', paddingBottom: 25 }}>
             <Text style={{
               width: 95, height: 28, fontFamily: 'Poppins-Medium',
-              fontWeight: '500', fontSize: 19.2, lineHeight: 28, color: '#393939'
+               fontSize: 19.2,  color: '#393939'
             }}>-{selectedProduct?.points} {t('points3')}</Text>
-            <TouchableOpacity style={{ borderRadius: 8, paddingHorizontal: 15, paddingVertical: 8, backgroundColor: 'rgba(24, 183, 88, 0.2)', justifyContent: 'center', }}>
+            <TouchableOpacity style={{ borderRadius: 8, paddingHorizontal: 15, paddingVertical: 8, backgroundColor: 'rgba(31, 134, 255, 0.2)', justifyContent: 'center', }}>
               <Text style={{
-                width: 58, height: 16, fontFamily: 'Poppins-Medium',
-                fontWeight: '500', fontSize: 11.2, lineHeight: 16, alignItems: 'center', color: '#18B758'
-              }}>{t('Redeemed')}</Text>
+                 fontFamily: 'Poppins-Medium',
+                 fontSize: 11.2, alignItems: 'center', color: '#1F86FF'
+              }}>{t('Processing')}</Text>
             </TouchableOpacity>
 
           </View>}
@@ -107,7 +126,7 @@ function SuccessScreen({ route }) {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
           <Text style={styles.description}>{uiParams.Name}</Text>
           {pages == 'orders' ?
-            <Text style={[styles.descriptionValues, { width: 150 }]}>{addressItem?.selectedItem?.id} </Text>
+            <Text style={[styles.descriptionValues, { width: 150 }]}>{addressItem?.selectedItem?.user_id} </Text>
             :
             <Text style={styles.descriptionValues}>{addressItem?.name}</Text>
           }
@@ -127,13 +146,21 @@ function SuccessScreen({ route }) {
           <Text
             style={styles.description}>{uiParams.Address}</Text>
           {pages == 'orders' ?
-            (<Text style={styles.descriptionValues}>{addressItem.selectedItem.district_name},{addressItem.selectedItem.state_name}</Text>)
+            (
+            <View>
+              <Text style={styles.descriptionValues}>{districtText},</Text>
+              <Text style={styles.descriptionValues}>{stateText}</Text>
+            </View>
+            )
             : pages === 'leads' ?
               (<Text style={[styles.descriptionValues, { width: 120 }]}>
-                {addressItem.location}</Text>) :
-              (<Text style={[styles.descriptionValues, { width: 120 }]}>
-                {addressItem.address_1},{addressItem.address_2},{addressItem.land_mark},
-                {addressItem.city},{addressItem.state}</Text>)}
+                {districtText}</Text>) :
+              (<Text style={[styles.descriptionValues, { width: '52%'}]}>
+                {addressItem.address_1},
+                {addressItem.address_2},
+                {addressItem.land_mark},
+                {addressItem.city},
+                {addressItem.state_name.state}</Text>)}
         </View>
 
       </View>
@@ -152,7 +179,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#ffffff',
     padding: 10,
-    height: 250,
+    height: 'auto',
     width: '87%',
     paddingRight: 20,
     paddingTop: 20,
@@ -171,18 +198,15 @@ const styles = StyleSheet.create({
   },
   description: {
     fontFamily: 'Poppins-Regular',
-    fontWeight: '400',
     fontSize: 13.33,
-    lineHeight: 20,
     color: '#848484',
-    textAlign: 'left'
+    textAlign: 'left',
   },
   descriptionValues: {
     textAlign: 'right',
     fontFamily: "Poppins-Medium",
     color: "#393939",
     fontSize: 13.33,
-    fontWeight: "500"
   },
   modalButtonContainer: {
     width: '87%',

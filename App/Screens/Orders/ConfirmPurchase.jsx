@@ -25,6 +25,16 @@ function ConfirmPurchase({route,navigation}){
     Mobile:t('Mnumber'),
     Address:t('Location'),
     }
+    let districtText;
+    let stateText;
+    if(item.page !== 'Favourites'){
+        stateText = item.selectedItem.state;
+        districtText = item.selectedItem.district;
+    }
+    else{
+        stateText = item.selectedItem.state_name;
+        districtText = item.selectedItem.district_name;
+    }
     useEffect(() => {
         const getValueFromStorage = async () => {
             try {
@@ -135,14 +145,17 @@ function ConfirmPurchase({route,navigation}){
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5}}>
                     <Text style={{color:'#848484',fontFamily:'Poppins-Regular'}}>{t('Location')}</Text>
-                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,textAlign:'right', width:"50%"}}>{item.selectedItem.district_name},{item.selectedItem.state_name}</Text>
+                    <View style={{marginLeft:'auto'}}>
+                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,textAlign:'right'}}>{stateText},</Text>
+                    <Text style={{ color:'#393939',fontFamily:'Poppins-Medium',fontSize:13.33,textAlign:'right'}}>{districtText}</Text>
+                    </View>
                 </View>
             </View>
             <View style={{backgroundColor:'rgba(4, 4, 4, 1)', width:'90%',height:110,padding:12,borderRadius:4,marginTop:20,alignSelf:'center'}}>
                 <View style={{flexDirection:'row'}}>
                     <StarIcon/>
                     <Text style={{color:'rgba(241, 140, 19, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>{t('500 Pts')}</Text>
-                    <Text style={{color:'rgba(255, 255, 255, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>{t('on confirmation')}</Text>
+                    {/* <Text style={{color:'rgba(255, 255, 255, 1)', fontSize:15,fontFamily:'Poppins-Regular',marginLeft:5}}>{t('on confirmation')}</Text> */}
                 </View>
                 <Text style={{color:'rgba(132, 132, 132, 1)', fontSize:11, fontFamily:'Poppins-Regular',marginTop:5}}>{t('orderlines')}</Text>
             </View>

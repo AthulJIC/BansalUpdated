@@ -11,7 +11,7 @@ import {
   Image,
 } from "react-native";
 import Modal from "react-native-modal";
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -127,7 +127,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
             <TouchableOpacity
               style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 5 }]}
               onPress={()=>{onButton()}}>
-              <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+              <Icon name="close" size={24} color="#393939" backgroundColor='#ffffff' />
             </TouchableOpacity>
             <Image style={{ marginTop: 15, alignSelf: 'center' }} source={require('../../../assets/Images/ProductFullImage.png')} />
             <Text style={{ fontSize: 16, color: 'rgba(57, 57, 57, 1)', fontFamily: 'Poppins-Medium', marginLeft: 5, marginTop: 17 }}>TMT Bars</Text>

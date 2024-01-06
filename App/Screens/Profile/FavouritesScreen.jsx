@@ -8,6 +8,7 @@ import { BookMarkDeleteService } from "../../service/Orders/BookMarkService";
 import LoadingIndicator from "../../Components/LoadingIndicator";
 import useBackButtonHandler from "../../Components/BackHandlerUtils";
 import { useAppContext } from "../../context/AppContext";
+import { t } from "i18next";
 
 function FavouritesScreen({navigation}){
     const [modalVisible, setModalVisible] = useState(false);
@@ -44,7 +45,7 @@ function FavouritesScreen({navigation}){
       
     }
     function chooseHandler(item){
-        navigation.navigate('DistributorExpand',{ selectedItem: item })
+        navigation.navigate('DistributorExpand',{ selectedItem: item, page:'Favourites' })
    }
    const onRefresh = () => {
     setRefreshing(true);
@@ -114,14 +115,15 @@ function FavouritesScreen({navigation}){
        <View style={{ alignSelf: 'center', backgroundColor: 'white', top: 150 }}>
        <Image
            source={require('../../../assets/Images/favouritesEmpty.png')}
-           style={{ height: 150,alignSelf:'center' }}
+           style={{ height: 120,alignSelf:'center',width:120}}
+           resizeMode='cover'
        />
        <View style={{ marginTop: 20 }}>
            <Text style={{ color: 'rgba(57, 57, 57, 1)', fontSize: 16, fontFamily: 'Poppins-Medium', textAlign: 'center' }}>
-           No Favourites
+           {t("NoFavourites")}
            </Text>
            <Text style={{ color: 'rgba(132, 132, 132, 1)', fontSize: 13, fontFamily: 'Poppins-Regular', textAlign: 'center' }}>
-           Start adding Distributors to your favourites list.
+           {t("FavouritesText")}
            </Text>
        </View>
    </View>

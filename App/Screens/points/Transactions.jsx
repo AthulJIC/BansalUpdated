@@ -13,6 +13,7 @@ import { HistoryApi } from "../../service/history/historyservice";
 import LeadAcceptedIcon from "../../../assets/Icon/LeadAcceptedIcon";
 import LeadProcessingIcon from "../../../assets/Icon/LeadProcessingIcon";
 import LeadRejectedIcon from "../../../assets/Icon/LeadRejectedIcon";
+import { t } from "i18next";
 
 const Transactions=()=>{
     const [filteredData, setFilteredData] = useState([]);
@@ -91,6 +92,7 @@ const Transactions=()=>{
     transactions();
   }
     const requestData = (itemData) => {
+      console.log('itmData===',itemData.item);
         const createdAt = moment(itemData.item.created_at);
         const Date = createdAt.format('DD MMM YYYY');
         const Time = createdAt.format('h:mm A');
@@ -98,22 +100,54 @@ const Transactions=()=>{
         let statusText = itemData.item.status;
         let pointsText = ''; 
         let displayText = '';
-
-        if (itemData.item.status === 'Processing') {
-          statusText = 'Processing'; 
-          displayText = itemData.item.quantity;
-        }
-        else if (itemData.item.status === 'Accepted') {
-          displayText = itemData.item.transaction_id
+        let textwidth;
+        let name;
+        
+        if(itemData.item.lead === null){
+          name =itemData.item.name;
+          if(itemData.item.name.length > 8)
+          {
+            textwidth = '30%'
+          }
+          else{
+            textwidth = 'auto'
+          }
+          if (itemData.item.status === 'Processing') {
+            statusText = 'Processing'; 
+            displayText = itemData.item.quantity;
+          }
+          else if (itemData.item.status === 'Accepted') {
+            displayText = itemData.item.transaction_id
+          }
+          else{
+            displayText = itemData.item.transaction_id
+          }
+  
+          if(itemData.item.points > 500){
+            pointsText = "+500";
+          }
+          else pointsText = itemData.item.points;
         }
         else{
-          displayText = itemData.item.transaction_id
+          name = 'Referral'
+          textwidth = 'auto'
+          if (itemData.item.status === 'Processing') {
+            statusText = 'Processing'; 
+            pointsText = '25'; 
+            // displayText = itemData.item.quantity;
+             textColor = "rgba(31, 134, 255, 1)";
+          }
+          else if (itemData.item.status === 'Accepted') {
+            pointsText = '25'; 
+            // displayText = itemData.item.transaction_id
+             textColor = "rgba(24, 183, 88, 1)";
+          }
+          else{
+          //   displayText = itemData.item.transaction_id
+              textColor = "rgba(235, 28, 28, 1)";
+              pointsText = '0'; 
+           }
         }
-
-        if(itemData.item.points > 500){
-          pointsText = "+500";
-        }
-        else pointsText = itemData.item.points;
         return(
          
          <View style={{
@@ -174,10 +208,15 @@ const Transactions=()=>{
                 </View>
                 ): 
                 <View style={{flexDirection:'row',justifyContent:'flex-start',width:'85%'}}>
-
-                <Text numberOfLines={1} ellipsizeMode="tail"  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Regular',width: itemData.item.lead !== null ? '15%' : '20%'}}>{itemData.item.name}</Text> 
-                <Text style={{  fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:7,marginHorizontal:5}}>{'\u2B24'}</Text>
-             <Text numberOfLines={1} ellipsizeMode="tail" style={{color:'black',fontSize:14,fontFamily:'Poppins-Regular',width:'50%'}}>{displayText}</Text>
+                  <Text numberOfLines={1} ellipsizeMode="tail"  style={{ color: 'black', fontSize:14,fontFamily:'Poppins-Medium',width: itemData.item.lead !== null ? 'auto' : textwidth}}>{name}</Text> 
+                  {
+                    itemData.item.lead === null && (
+                      <View style={{flexDirection:'row'}}>
+                        <Text style={{  fontWeight: '500', fontSize: 5,color:'rgba(57, 57, 57, 1)', marginTop:7,marginHorizontal:4}}>{'\u2B24'}</Text>
+                        <Text numberOfLines={1} ellipsizeMode="tail" style={{color:'black',fontSize:13,fontFamily:'Poppins-Medium',width:'60%'}}>{displayText}</Text>
+                      </View>
+                    )
+                  }
                 </View>
                 } 
               </View>
@@ -187,10 +226,10 @@ const Transactions=()=>{
                 <Text style={{fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{Time}</Text>
               </View>
             </View>
-            <View style={{marginLeft:'auto',justifyContent:'flex-end'}}>
+            <View style={{marginLeft:'auto'}}>
               <Text style={{color : itemData.item.status === 'Processing' ? '#1F86FF' : itemData.item.status === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)',
               fontFamily:'Poppins-Regular',textAlign:'right'}}>{pointsText}Pts</Text>
-              <Text style={{fontSize:11.11,lineHeight:16,fontFamily:'Poppins-Regular',textAlign:'right',color:'#393939'}}>{statusText.toLocaleUpperCase()}</Text>
+              <Text style={{fontSize:11.11,fontFamily:'Poppins-Regular',textAlign:'right',color:'#393939'}}>{statusText.toLocaleUpperCase()}</Text>
             </View>
          </View>
         )
@@ -198,22 +237,22 @@ const Transactions=()=>{
  return(
     <View style={styles.mainContainer}>
         <Text style={styles.font}>
-            Transactions
+            {t('Transactions')}
         </Text>
         <View style={styles.container}>
       <View style={styles.flatListSection}> 
       {filteredData.length === 0 ? (
-            <View style={{flex:1,marginTop:90}}>
+            <View style={{flex:1,marginTop:90,alignItems:'center'}}>
                  <Image
             style={styles.tinyLogo}
             source={require('../../../assets/Images/TransactionsEmpty.png')}
             resizeMode='cover'
         />
-        <Text style={{fontFamily:'Poppins-Large',fontWeight:'500',fontSize:16,textAlign:'center',
-        margin:22,lineHeight:24,color:'#393939'}}>No Transactions</Text>
-        <Text  style={{width:'90%',fontFamily:'Poppins-Regular',fontWeight:'500',fontSize:16,textAlign:'center',
-          lineHeight:20,color:'#848484',alignSelf:'center'}}>
-          We don’t see any records from your history.</Text>
+        <Text style={{fontFamily:'Poppins-Large',fontSize:16,textAlign:'center',
+        color:'#393939'}}>{t("NoTransactions")}</Text>
+        <Text  style={{fontFamily:'Poppins-Regular',fontSize:14,textAlign:'center',
+          color:'#848484'}}>
+          {t('NoRecords')}</Text>
             </View>
            
         ) :        
@@ -250,9 +289,7 @@ const styles = StyleSheet.create({
       },
     font:{
         fontFamily:'Poppins-Medium',
-        fontWeight:'500',
         fontSize:16,
-        lineHeight:24,
         color:'#393939'
     },
       filterContainer: {
@@ -289,11 +326,9 @@ const styles = StyleSheet.create({
         marginLeft:10
       },
       tinyLogo: {
-        width: 230,
-        height: 190,
-        borderRadius: 8,
-        marginLeft: 10,
-        marginHorizontal: 20,
-        alignSelf:'center'
+        width: 190,
+        height: 155,
+        alignSelf:'center',
+        marginBottom:20
     },
 })

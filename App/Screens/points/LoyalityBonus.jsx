@@ -51,7 +51,7 @@ const LoyalityBonus = () => {
         </View>
         <View style={{marginTop:10}}>
           <Text style={styles.points}>{points +" "+ t('points3')}</Text>
-          <Text style={styles.expire}>{t('points1') +'  240 ' +t('points2') }</Text>
+          <Text style={styles.expire}>{t('points1')}</Text>
         </View>
          <View style={{justifyContent:'center',marginTop:25}}>
             <Text style={{textAlign:'right',fontSize:9.26,

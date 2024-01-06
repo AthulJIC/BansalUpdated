@@ -9,26 +9,26 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const LanguageScreen = ({navigation}) => {
   const { language, changeNewLanguage } = useLanguageContext();
   const [activeButton, setActiveButton] = useState(language); 
-    const [newLanguage, setnewLanguage] = useState('')
+    const [newLanguage, setnewLanguage] = useState(language)
    
 
     const { changeLanguage } = useAppContext();
     const { t, i18n } = useTranslation();
     useBackButtonHandler(navigation, false);
     const englishLanguage = () => {
-      setActiveButton('English');
-      setnewLanguage(i18n.language === 'hi' ? 'en' : 'en' );
-      i18n.changeLanguage(i18n.language === 'hi' ? 'en' : 'en');
-      changeLanguage(i18n.language === 'hi' ? 'en' : 'en');
-      changeNewLanguage('English');
+      setActiveButton('English')
+      setnewLanguage(i18n.language === 'en' ? 'hi' : 'en');
     }
     const hindiLanguage = () => {
-      setActiveButton('Hindi');
-      setnewLanguage(i18n.language === 'en' ? 'hi' : 'hi')
-      i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'hi');
-      changeLanguage(i18n.language === 'en' ? 'hi':'hi' );
-      changeNewLanguage('Hindi');
+      setActiveButton('Hindi')
+      setnewLanguage(i18n.language === 'hi' ? 'en' : 'hi')
     };
+    const confirmLanguage = async() => {
+      i18n.changeLanguage(newLanguage);
+      changeNewLanguage(newLanguage === 'en' ? 'English' : 'Hindi');
+      await AsyncStorage.setItem('Language', (newLanguage === 'en' ? 'English' : 'Hindi'))
+      navigation.navigate('Profile')
+    }
     useEffect(() => {
       setActiveButton(language);
     },[language])
@@ -51,6 +51,11 @@ const LanguageScreen = ({navigation}) => {
                 onPress={hindiLanguage}
             >
                <Text style={[styles.buttonText, activeButton === 'Hindi' && {color:'rgba(177, 41, 44, 1)'}]}>Hindi</Text>
+            </Pressable>
+            <Pressable style={{ marginBottom: 10, borderRadius: 5, width: '95%', backgroundColor: 'rgba(177, 41, 44, 1)', alignItems: 'center', height: 48, radius: 4, padding: 12 ,alignSelf:'center',marginTop:'auto'}} onPress={()=>{confirmLanguage()}}>
+              <Text  style={{ fontFamily: 'Poppins-Medium', fontWeight: '500', fontSize: 16, lineHeight: 24, color: '#ffffff', height: 24 }}>
+                {t('confirmButton')}
+              </Text>
             </Pressable>
         </View>
     )

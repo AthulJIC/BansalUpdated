@@ -23,8 +23,14 @@ const PendingRequest = ({refresh}) => {
             try {
               const user = await AsyncStorage.getItem('role');
               setRole(user);
-              getLoyaltyPoints();
-              getPendingRequest();
+              if(user === 'Distributor'){
+                getPendingRequest();
+              }
+              else{
+                getLoyaltyPoints();
+              }
+              
+             
             } catch (error) {
               console.error('Error fetching data from AsyncStorage:', error);
             }
@@ -33,15 +39,19 @@ const PendingRequest = ({refresh}) => {
           fetchData();
         }, [])
       );
-      if(refresh){
-        getLoyaltyPoints();
-        getPendingRequest();
-      }
+    //   if(refresh){
+    //     getLoyaltyPoints();
+    //     getPendingRequest();
+    //   }
       useEffect(() => {
         if (refresh && !isRefreshing) {
           setIsRefreshing(true);
-          getLoyaltyPoints();
-          getPendingRequest();
+          if(role === 'Distributor'){
+            getPendingRequest();
+          }
+          else {
+            getLoyaltyPoints();
+          }
           setIsRefreshing(false);
         }
       }, [refresh]);
@@ -79,7 +89,7 @@ const PendingRequest = ({refresh}) => {
              (
             <View style={{flexDirection:'row'}}>
                 <View style={{marginTop:20}}>
-                    <Text style={styles.Text}>{t('pending')}</Text>
+                    <Text style={styles.Text}>{t('pendingrequest')}</Text>
                     <Text style={styles.number} >{request}</Text>
                 </View>
                 <Image source={require('../../../assets/Images/Mask_group.png')} style={{width:'100%', height:110,position:'absolute',marginLeft:18  }}></Image>
