@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, TouchableOpacity, TextInput, Pressable, Text, StyleSheet, KeyboardAvoidingView, ScrollView } from "react-native";
 import Modal from "react-native-modal";
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 function ReferLead({ isVisible, onClose, onRefer }) {
     const [name, setName] = useState('');
@@ -34,7 +34,7 @@ function ReferLead({ isVisible, onClose, onRefer }) {
                             <TouchableOpacity
                                 style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 15 }]}
                                 onPress={onClose}>
-                                <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+                                <Icon name="close" size={24} color="#393939" backgroundColor='#ffffff' />
                             </TouchableOpacity>
                             <TextInput
                                 style={styles.inputContainer}

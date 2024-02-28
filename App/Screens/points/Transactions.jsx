@@ -114,7 +114,17 @@ const Transactions=()=>{
           }
           if (itemData.item.status === 'Processing') {
             statusText = 'Processing'; 
-            displayText = itemData.item.quantity;
+            if (itemData.item.quantity >= 10000000)
+          {
+            displayText = (itemData.item.quantity / 10000000).toFixed(1) + 'CR'; 
+          }
+          else if (itemData.item.quantity >= 100000) {
+            displayText =  (itemData.item.quantity / 100000).toFixed(1) + 'L'; // Convert to lakh format
+          } else if (itemData.item.quantity >= 1000) {
+            displayText = (itemData.item.quantity / 1000).toFixed(1) + 'K'; 
+          }
+          else displayText = itemData.item.quantity;
+            // displayText = itemData.item.quantity;
           }
           else if (itemData.item.status === 'Accepted') {
             displayText = itemData.item.transaction_id
@@ -122,9 +132,14 @@ const Transactions=()=>{
           else{
             displayText = itemData.item.transaction_id
           }
-  
-          if(itemData.item.points > 500){
-            pointsText = "+500";
+          if (itemData.item.points >= 10000000)
+          {
+            pointsText = (itemData.item.points / 10000000).toFixed(1) + 'CR'; 
+          }
+          else if (itemData.item.points >= 100000) {
+            pointsText =  (itemData.item.points / 100000).toFixed(1) + 'L'; // Convert to lakh format
+          } else if (itemData.item.points >= 1000) {
+            pointsText = (itemData.item.points / 1000).toFixed(1) + 'K'; 
           }
           else pointsText = itemData.item.points;
         }
@@ -228,7 +243,7 @@ const Transactions=()=>{
             </View>
             <View style={{marginLeft:'auto'}}>
               <Text style={{color : itemData.item.status === 'Processing' ? '#1F86FF' : itemData.item.status === 'Accepted' ? 'rgba(24, 183, 88, 1)' : 'rgba(235, 28, 28, 1)',
-              fontFamily:'Poppins-Regular',textAlign:'right'}}>{pointsText}Pts</Text>
+                fontFamily:'Poppins-Regular',textAlign:'right'}}>{pointsText} Pts</Text>
               <Text style={{fontSize:11.11,fontFamily:'Poppins-Regular',textAlign:'right',color:'#393939'}}>{statusText.toLocaleUpperCase()}</Text>
             </View>
          </View>
@@ -239,10 +254,8 @@ const Transactions=()=>{
         <Text style={styles.font}>
             {t('Transactions')}
         </Text>
-        <View style={styles.container}>
-      <View style={styles.flatListSection}> 
       {filteredData.length === 0 ? (
-            <View style={{flex:1,marginTop:90,alignItems:'center'}}>
+            <View style={{flex:1,marginTop:50,alignSelf:'center'}}>
                  <Image
             style={styles.tinyLogo}
             source={require('../../../assets/Images/TransactionsEmpty.png')}
@@ -267,8 +280,7 @@ const Transactions=()=>{
       />}
 
 <LoadingIndicator visible={isLoading} text='Loading...'/>
-      </View>
-    </View>
+
    
     </View>
  )

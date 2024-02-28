@@ -21,7 +21,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
   const [quantityError, setQuantityError] = useState(false);
   const [erorrText,setErorrText] =useState('')
   const [role, setRole] = useState('')
-  console.log('role',role,editQuantity)
+  console.log('role',role)
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -48,14 +48,14 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
   const handleRef = () => {
     const nonZeroNumberRegex = /^(?!0+$)[0-9]+$/;
     const updatedQuantity = onEdit ? editQuantity : name;
-    if (updatedQuantity > 300 && role === 'Contractor') {
+    // if (updatedQuantity > 300 && role === 'Contractor') {
+    //   setQuantityError(true);
+    //   setErorrText('Maximum Limit exceeded. Your Limit is up to 300 in a single order');
+    //   return;
+    // }
+    if (updatedQuantity > 1000000000) {
       setQuantityError(true);
-      setErorrText('Maximum Limit exceeded. Your Limit is up to 300 in a single order');
-      return;
-    }
-    if (updatedQuantity > 500 && (role === 'Engineer' || role === 'Architect')) {
-      setQuantityError(true);
-      setErorrText('Maximum Limit exceeded. Your Limit is up to 500 in a single order');
+      setErorrText('Maximum Limit exceeded.');
       return;
     }
     // else if (/\s/.test(updatedQuantity) || /[^\d]/.test(updatedQuantity)) {
@@ -98,6 +98,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
     }
   
     if (onUpdateQuantity) {
+      console.log('update======', updatedQuantity);
       onUpdateQuantity(updatedQuantity);
     }
   
@@ -137,7 +138,7 @@ function ProductPopup({ isVisible, onClose, onRefer, quantity, onEdit, onUpdateQ
               <TextInput
                 style={styles.inputContainer}
                 keyboardType="decimal-pad"
-                maxLength={3}
+                maxLength={10}
                 placeholder={t('Qinput')}
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setEditQuantity(text) : setName(text)}

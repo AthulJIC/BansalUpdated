@@ -32,7 +32,8 @@ const BarGraph = ({refresh}) => {
     ]);
     const [activeButton, setActiveButton] = useState('Orders');
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [isLoading ,  setIsLoading] = useState(false)
+    const [isLoading ,  setIsLoading] = useState(false);
+    const [yAxisLabel, setYAxisLable] = useState('');
     let barData;
     const referenceLine1Position = totalOrders * 0.3; 
     const referenceLine2Position = totalOrders * 0.65;
@@ -190,6 +191,7 @@ useFocusEffect(
                 setBarMonth(res.data.order_counts_by_month)
                 setTotalOrders(res.data.total_order_count_current_year)
                 setTotal(res.data.total_order_count_current_year)
+                // setSuffix('');
                 console.log('con===', res.data)
             }
             setIsLoading(false)
@@ -202,9 +204,27 @@ useFocusEffect(
             if(res.status === 200){
                 console.log('res====', res.data, barMonth, barValue)
                 setBarValue(res.data.monthly_points_data)
+                let points_text;
+                if (res.data.total_points_current_year >= 10000000)
+                {
+                    points_text = (res.data.total_points_current_year / 10000000).toFixed(0) + 'CR'; 
+                    // setSuffix('CR')
+                }
+                else if (res.data.total_points_current_year >= 100000) {
+                    points_text =  (res.data.total_points_current_year / 100000).toFixed(0) + 'L'; // Convert to lakh format
+                    // setSuffix('L')
+                } else if (res.data.total_points_current_years >= 1000) {
+                    points_text = (res.data.total_points_current_year / 1000).toFixed(0) + 'K'; 
+                    // setSuffix('K')
+                }
+                else{
+                    points_text = res.data.total_points_current_year.toLocaleString();
+                    // setSuffix('')
+                } 
+                setYAxisLable(points_text)
                 setTotalOrders(res.data.total_points_current_year)
                 setTotal(res.data.total_points_current_year)
-                console.log('worked', barValue, totalOrders)
+                console.log('worked', barValue, points_text,suffix )
             }
             setIsLoading(false)
         }).catch((err) => {
@@ -220,6 +240,7 @@ useFocusEffect(
                     setTotalOrders(res.data.total_order_count_current_year)
                     setTotal(res.data.total_order_count_current_year)
                     console.log('dis===', res.data)
+                    // setSuffix('')
                 }
                 setIsLoading(false)
             }).catch((err) =>{
@@ -235,6 +256,7 @@ useFocusEffect(
                         setBarQuarter(res.data.order_counts_by_quarter)
                         setTotalOrders(res.data.total_order_count_current_year)
                         setTotal(res.data.total_order_count_current_yearer)
+                        // setSuffix('')
                     }
                     setIsLoading(false)
                 }).catch((err) =>{
@@ -245,6 +267,25 @@ useFocusEffect(
                 HomeApi.getQuarterlyPoints().then((res) => {
                     if(res.status ===200){
                         setBarQuarter(res.data.quarterly_points_data)
+                        let points_text;
+                        if (res.data.total_points_current_year >= 10000000)
+                        {
+                            points_text = (res.data.total_points_current_year / 10000000).toFixed() + 'CR'; 
+                            // setSuffix('CR')
+                        }
+                        else if (res.data.total_points_current_year >= 100000) {
+                            points_text =  (res.data.total_points_current_year / 100000).toFixed() + 'L'; // Convert to lakh format
+                            // setSuffix('L')
+                        } else if (res.data.total_points_current_year >= 1000) {
+                            points_text = (res.data.total_points_current_year / 1000).toFixed() + 'K'; 
+                            // setSuffix('K')
+                        }
+                        else{
+                            points_text = res.data.total_points_current_year.toLocaleString();
+                            // setSuffix('')
+                        } 
+                        setYAxisLable(points_text)
+                        // setTotalOrders(points_text)
                         setTotalOrders(res.data.total_points_current_year)
                         setTotal(res.data.total_points_current_year)
                     }
@@ -260,6 +301,7 @@ useFocusEffect(
                     setBarQuarter(res.data.order_counts_by_quarter)
                     setTotalOrders(res.data.total_order_count_current_year)
                     setTotal(res.data.total_order_count_current_year)
+                    // setSuffix('')
                 }
                 setIsLoading(false)
             }).catch((err) =>{
@@ -275,6 +317,7 @@ useFocusEffect(
                         setBarWeekData(res.data.daily_order_counts);
                         setTotalOrders(res.data.total_order_count_current_week)
                         setTotal(res.data.total_order_count_current_week)
+                        // setSuffix('')
                     }
                     setIsLoading(false)
                 }).catch((err) =>{
@@ -285,6 +328,25 @@ useFocusEffect(
                 HomeApi.getWeeklyPoints().then((res) => {
                     if(res.status === 200){
                         setBarWeekData(res.data.daily_points);
+                        let points_text;
+                        if (res.data.total_points >= 10000000)
+                        {
+                            points_text = (res.data.total_points / 10000000).toFixed() + 'CR'; 
+                            // setSuffix('CR')
+                        }
+                        else if (res.data.total_points >= 100000) {
+                            points_text =  (res.data.total_points / 100000).toFixed() + 'L'; // Convert to lakh format
+                            // setSuffix('L')
+                        } else if (res.data.total_points >= 1000) {
+                            points_text = (res.data.total_points / 1000).toFixed() + 'K'; 
+                            // setSuffix('K')
+                        }
+                        else{
+                            points_text = res.data.total_points.toLocaleString();
+                            // setSuffix('')
+                        } 
+                        setYAxisLable(points_text)
+                        // setTotalOrders(points_text)
                         setTotalOrders(res.data.total_points);
                         setTotal(res.data.total_points)
                        
@@ -426,8 +488,8 @@ useFocusEffect(
                 dashGap={2}
                 labelWidth={40}
                 xAxisLabelTextStyle={{color: 'white', textAlign:'center',marginRight:value === 'Quarterly' ? 0 :19, fontSize:10}}
-                yAxisTextStyle={{color:'white',fontSize:10}}
-                yAxisLabelTexts={[0, totalOrders]}
+                yAxisTextStyle={{color:'white',fontSize:7}}
+                yAxisLabelTexts={['0', yAxisLabel ]}
                 xAxisLength={315}
                 yAxisThickness={0}
                 xAxisColor={'rgba(255,255,255,0.3)'}
@@ -454,7 +516,6 @@ useFocusEffect(
                 dashWidth: 2,
                 dashGap: 3,
                 }}
-                
                 />
                
             </View>

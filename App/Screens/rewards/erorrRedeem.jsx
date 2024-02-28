@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import Modal from "react-native-modal";
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 
@@ -38,7 +38,7 @@ function ErrorPopup({ isVisible,onClose}) {
             <TouchableOpacity
               style={[{ alignItems: 'flex-end', marginTop: 15, marginRight: 5 }]}
               onPress={onClose}>
-              <Icon name="x" size={24} color="#393939" backgroundColor='#ffffff' />
+              <Icon name="close" size={24} color="#393939" backgroundColor='#ffffff' />
             </TouchableOpacity>
            
             <Text style={{ fontSize: 16, color: 'rgba(57, 57, 57, 1)',fontWeight:'500', fontFamily: 'Poppins-Medium', marginLeft: 5, marginTop: 17 }}>{t('redeemptionHead')}</Text>

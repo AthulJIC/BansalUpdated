@@ -31,6 +31,9 @@ const RewardScreen = (r) => {
   const [isLoading,setIsLoading]=useState(false)
   const [redeemValue,setRedeemValue]=useState('')
   const [refreshing, setRefreshing] = useState(false);
+  const [isEndReachedLoading, setIsEndReachedLoading] = useState(false);
+  const [page, setPage] =useState(1);
+  const [nextUrl, setNextUrl] = useState(null);
   const navigation = useNavigation();
   const { t } = useTranslation();
   console.log(totalPoints,"hhhhhh")
@@ -96,13 +99,26 @@ const RewardScreen = (r) => {
     setRefreshing(false)
   };
   const RewardsHandler = () => {
-    RewardslistService().then((res) => {
-      // if(res.status === 200){
-      //     console.log('success',)
-      //     setOrdersList(res.data.results)
-      // }
-      setProductsArray(res.data.results)
-      setIsLoading(false)
+    RewardslistService(page).then((res) => {
+      if (res.status === 200) {
+        const newData = res.data.results;
+        if (page === 1) {
+          setProductsArray(newData);
+        } else {
+          setProductsArray((prevData) => {
+            const newData = new Set([...prevData, ...res.data.results]);
+            return Array.from(newData);
+          });
+        }
+        setIsLoading(false);
+        setNextUrl(res.data.next);
+        setIsEndReachedLoading(false);
+      } else {
+        setIsLoading(false);
+        setIsEndReachedLoading(false);
+      }
+      // setProductsArray(res.data.results)
+      // setIsLoading(false)
     }).catch((err) => {
       setIsLoading(false)
     })
@@ -256,6 +272,16 @@ const RewardScreen = (r) => {
       console.warn(err);
     }
   }
+  async function endReachedHandler() {
+    console.log('end', isEndReachedLoading)
+    if (isEndReachedLoading || !nextUrl) {
+      setPage(1)
+      return;
+   }
+    setPage(page + 1);
+    setIsEndReachedLoading(true);
+    RewardsHandler();
+  }
   const renderCard = ({ item }) => {
     console.log('item===', item)
     if (!item.is_active) {
@@ -284,7 +310,7 @@ const RewardScreen = (r) => {
     </View>
     )
   };
-  const activeItems = productsArray.filter(item => item.is_active);
+  // const activeItems = productsArray.filter(item => item.is_active);
   return (
     <View style={{ flex: 1 ,backgroundColor:'#ffffff'}}>
 {/*         
@@ -309,10 +335,11 @@ const RewardScreen = (r) => {
           } */}
           <View style={styles.container}>
           <FlatList
-            data={activeItems}
+            data={productsArray}
             renderItem={renderCard}
             keyExtractor={(item) => item.name}
             numColumns={2}
+            onEndReached={endReachedHandler}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
@@ -344,7 +371,6 @@ const RewardScreen = (r) => {
               width={'100%'}
               style={{ alignItems: 'center', justifyContent: 'flex-end', margin: 0 }}
             >
-              <View style={styles.centeredView}>
 
                 <View style={styles.modalView}>
                   <TouchableOpacity
@@ -357,10 +383,10 @@ const RewardScreen = (r) => {
                     <Image
                       style={styles.ImageModalContainer}
                       source={{ uri: imageDetails }}
-                      resizeMode='stretch'
+                      // resizeMode='stretch'
                     />
                   </View>
-                  <View style={{ alignItems: "flex-start" }}>
+                  <View style={{ alignItems: "flex-start",marginLeft:15 }}>
                     <Text style={styles.modalText}>{itemName}</Text>
                     <Text style={styles.modalPointsText}>{points} {t('points')}</Text>
                     <Text style={styles.detailsModal}>{details}</Text>
@@ -377,7 +403,6 @@ const RewardScreen = (r) => {
                   </View>
                 </View>
 
-              </View>
             </Modal>
           </View>
         </View>
@@ -407,7 +432,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: 'rgba(255, 255, 255, 1)',
     borderRadius: 8,
-   alignSelf:'center',
+    alignSelf:'center',
     elevation: 3,
     width:'94%',
     height:328,
@@ -479,10 +504,10 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   modalView: {
-    marginTop: 70,
+    marginTop: 'auto',
     backgroundColor: 'white',
     width: '100%',
-    height: '100%',
+    height: '80%',
     borderRadius: 20,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
@@ -542,9 +567,10 @@ const styles = StyleSheet.create({
     elevation: 6
   },
   ImageModalContainer: {
-    width: '100%',
-    height: 180,
+    width: '75%',
+    height: 190,
     borderRadius: 8,
+    alignSelf:'center'
 
   },
   modalButtonContainer: {

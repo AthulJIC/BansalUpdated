@@ -14,6 +14,7 @@ function ConfirmPurchase({route,navigation}){
     const item = route?.params;
     const [modalVisible,setModalVisible]=useState(false)
     const [ton,setTons]=useState(item.quantity)
+    const [tonText, setTonText] = useState();
     const[username, setUsername] = useState('') ;
     const { t } = useTranslation();
     const [isLoading,setIsLoading] = useState(false);
@@ -35,11 +36,24 @@ function ConfirmPurchase({route,navigation}){
         stateText = item.selectedItem.state_name;
         districtText = item.selectedItem.district_name;
     }
+
+    useEffect(() => {
+        if (ton >= 10000000) {
+          setTonText((ton / 10000000).toFixed(1) + 'CR'); 
+        } else if (ton >= 100000) {
+          setTonText((ton / 100000).toFixed(1) + 'L'); // Convert to lakh format
+        } else if (ton >= 1000) {
+          setTonText((ton / 1000).toFixed(1) + 'K'); 
+        } else {
+          setTonText(ton);
+        }
+      }, [ton]);
     useEffect(() => {
         const getValueFromStorage = async () => {
             try {
               const user = await AsyncStorage.getItem('role'); 
-              setUsername(user)
+              setUsername(user);
+             
             } catch (error) {
               console.error('Error fetching data from AsyncStorage:', error);
             }
@@ -113,7 +127,7 @@ function ConfirmPurchase({route,navigation}){
                 {/* <Text style={{fontSize:30,fontFamily:'Poppins-SemiBold',color:'rgba(57, 57, 57, 1)'}}>{item.selectedItem.name?.slice(0, 2).toUpperCase()}</Text> */}
                 <Image source={require('../../../assets/Images/ProductImage.png')} style={{height:112, width:'100%'}}></Image>
             </View>
-                <View style={{justifyContent: 'center', marginLeft: 15,height:100,width:'35%'}}>
+                <View style={{justifyContent: 'center', marginLeft: 15,height:100,width:'40%'}}>
                     <Text style={{ fontFamily: 'Poppins-Medium',fontSize: 17 , color:'rgba(57, 57, 57, 1)',marginTop:5}}>{item.selectedItem.name}</Text>
                     <Text style={{
                         fontFamily: 'Poppins-Medium', fontSize: 12,
@@ -121,13 +135,13 @@ function ConfirmPurchase({route,navigation}){
                     }}>Distributor</Text>
                     <Text style={{
                         fontFamily: 'Poppins-Regular',fontSize: 13,
-                        color: '#848484',marginTop:16
+                        color: '#848484',marginTop:13
                     }}>{t('quantity')}</Text>
                     <View style={{flexDirection:'row'}}>
                         <Text style={{
                             fontFamily: 'Poppins-Medium', fontSize: 17,
                             color: '#B1292C'
-                        }}>{ton} {t('Ton')}</Text>
+                        }}>{tonText} {t('Ton')}</Text>
                         <Pressable onPress={() => {setModalVisible(true)}}  style={{marginTop:3,marginLeft:6}}>
                           <PenIcon width={17} height={17} color='rgba(57, 57, 57, 1)'/>
                         </Pressable>

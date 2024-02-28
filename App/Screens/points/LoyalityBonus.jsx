@@ -53,11 +53,11 @@ const LoyalityBonus = () => {
           <Text style={styles.points}>{points +" "+ t('points3')}</Text>
           <Text style={styles.expire}>{t('points1')}</Text>
         </View>
-         <View style={{justifyContent:'center',marginTop:25}}>
+         {/* <View style={{justifyContent:'center',marginTop:25}}>
             <Text style={{textAlign:'right',fontSize:9.26,
             color:'#FFFFFF',fontFamily:'Poppins-Regular'}}>{'+12000 '+ t('points3')}</Text> 
       <ProgressBar progress={ProgressValue} width={windowWidth * 0.85}  height={16} color='#F18C13' borderRadius={22} backgroundColor='#ffffff'/>
-    </View>
+    </View> */}
       </View>
     );
   };
@@ -65,7 +65,7 @@ export default LoyalityBonus
 const styles = StyleSheet.create({
     mainContainer: {
       backgroundColor: '#B1292C',
-      height:180,
+      height:130,
       width:'95%',
       paddingLeft:20,
       paddingTop:20,

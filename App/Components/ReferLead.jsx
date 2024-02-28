@@ -99,10 +99,10 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
       setQuantityErorr('Please enter a valid quantity ');
       return
     }   
-    if(params.quantity>500)
+    if(params.quantity > 1000000000)
     {
       setvalidationError(true);
-      setQuantityErorr('Your Limit 500 Exceeded');
+      setQuantityErorr('Your Limit Exceeded');
       return
     }
   
@@ -214,7 +214,7 @@ function ReferLead({ isVisible,onUpdateDetails, onClose, onRefer, onEdit, editqu
                 placeholderTextColor={'rgba(132, 132, 132, 1)'}
                 onChangeText={text => onEdit ? setLocalQuantity(text) : setQuantity(text)}
                 value={onEdit ? localQuantity : quantity}
-                maxLength={3}
+                maxLength={10}
               />
                {
               quantityErorr && (

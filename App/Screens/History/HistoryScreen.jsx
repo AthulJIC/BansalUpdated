@@ -222,12 +222,12 @@ async function endReachedHandler() {
     }
     if (itemData.item.status === 'Processing') {
       statusText = 'Processing'; 
-      pointsText = '500 Pts'; 
+      // pointsText = '500 Pts'; 
       displayText = itemData.item.quantity;
       textColor = "rgba(31, 134, 255, 1)";
     }
     else if (itemData.item.status === 'Accepted') {
-      pointsText = '+500 Pts'; 
+      // pointsText = '+500 Pts'; 
       displayText = itemData.item.transaction_id
       textColor = "rgba(24, 183, 88, 1)";
     }
@@ -236,6 +236,16 @@ async function endReachedHandler() {
       textColor = "rgba(235, 28, 28, 1)";
       pointsText = '0 Pts'; 
     }
+    if (itemData.item.points >= 10000000)
+    {
+      pointsText = (itemData.item.points / 10000000).toFixed(1) + 'CR' + ' Pts'; 
+    }
+    else if (itemData.item.points >= 100000) {
+      pointsText =  (itemData.item.points / 100000).toFixed(1) + 'L' + ' Pts'; // Convert to lakh format
+    } else if (itemData.item.points >= 1000) {
+      pointsText = (itemData.item.points / 1000).toFixed(1) + 'K' + ' Pts'; 
+    }
+    else pointsText = itemData.item.points + ' Pts';
   }
   else {
     name = 'Referral'
@@ -326,9 +336,9 @@ async function endReachedHandler() {
             <Text style={{fontSize:11,color:'black',fontFamily:'Poppins-Regular'}}>{time}</Text>
           </View>
         </View>
-        <View style={{marginLeft:'auto', marginRight:10}}>
+        <View style={{marginLeft:'auto'}}>
             <Text style={{textAlign:'right', marginRight:5, color : textColor}}>{pointsText}</Text>
-          <Text style={{color : 'rgba(57, 57, 57, 1)', fontSize:11,fontFamily:'Poppins-Medium',marginRight:5}}>{statusText.toLocaleUpperCase()}</Text>
+          <Text style={{color : 'rgba(57, 57, 57, 1)', fontSize:11,fontFamily:'Poppins-Medium',textAlign:'right', marginRight:5}}>{statusText.toLocaleUpperCase()}</Text>
         </View>
      </View>
     )
